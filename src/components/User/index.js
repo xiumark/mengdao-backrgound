@@ -12,6 +12,9 @@ import { Row, Col } from 'antd';
 const SubMenu = Menu.SubMenu;
 
 import { Input } from 'antd';
+
+import { Tree } from 'antd';
+const TreeNode = Tree.TreeNode;
 /**
  * 测试用
  */
@@ -30,6 +33,13 @@ class User extends React.Component {
         this.setState({
             value2: e.target.value,
           }, ()=>{console.log("value1:", this.state.value2)});
+      }
+
+      onSelect = (selectedKeys, info) => {
+        console.log('selected', selectedKeys, info);
+      }
+      onCheck = (checkedKeys, info) => {
+        console.log('onCheck', checkedKeys, info);
       }
     //   func1 = function handleButtonClick(e) {
     //     message.info('Click on left button.');
@@ -137,10 +147,32 @@ class User extends React.Component {
                         <div className="gutter-box">
                             <Card title="选择功能权限" bordered={true}>
                                 {/* <HorizontalForm /> */}
-                                <span>绑定平台用户：</span>
+                                {/* <span>绑定平台用户：</span>
                                 <Dropdown.Button onClick={this.handleButtonClick} overlay={menu2}>
                                 请选择账号
-                                </Dropdown.Button>
+                                </Dropdown.Button> */}
+                                <Tree
+                                    checkable
+                                    defaultExpandedKeys={['0-0', '0-1', '0-2']}
+                                    defaultSelectedKeys={['0-0-0', '0-0-1']}
+                                    defaultCheckedKeys={['0-0', '0-2']}
+                                    onSelect={this.onSelect}
+                                    onCheck={this.onCheck}
+                                >
+                                    <TreeNode title="用户管理" key="0-0">
+                                        <TreeNode title="用户管理" key="0-0-0"/>
+                                    </TreeNode>    
+                                    <TreeNode title="运维管理" key="0-1">
+                                        <TreeNode title="服务器管理" key="0-1-0" />
+                                        <TreeNode title="运营商管理" key="0-1-1" />
+                                    </TreeNode>
+                                    <TreeNode title="运营管理" key="0-2">
+                                        <TreeNode title="报表" key="0-2-0" />
+                                        <TreeNode title="月度结算" key="0-2-1" />
+                                        <TreeNode title="游戏管理" key="0-2-2" />
+                                        <TreeNode title="礼品管理" key="0-2-3" />
+                                    </TreeNode>
+                                </Tree>
                             </Card>
                         </div>
                     </Col>
@@ -148,10 +180,31 @@ class User extends React.Component {
                         <div className="gutter-box">
                             <Card title="选择运营商权限" bordered={true}>
                                 {/* <ModalForm /> */}
+                                <Tree
+                                    checkable
+                                    defaultExpandedKeys={['0-0', '0-1', '0-2']}
+                                    defaultSelectedKeys={['0-0-0', '0-0-1']}
+                                    defaultCheckedKeys={['0-0', '0-2']}
+                                    onSelect={this.onSelect}
+                                    onCheck={this.onCheck}
+                                >
+                                    <TreeNode title="运营商名称" key="0-0" >
+                                        <TreeNode title="傲世堂" key="0-0-0" />
+                                        <TreeNode title="37" key="0-0-1" />
+                                        <TreeNode title="5599" key="0-0-2" />
+                                        <TreeNode title="602游戏" key="0-0-3" />
+                                        <TreeNode title="起点" key="0-0-4" />
+                                        <TreeNode title="贪玩游戏" key="0-0-5" />
+                                        <TreeNode title="酷我" key="0-0-6" />
+                                        <TreeNode title="酷狗" key="0-0-7" />
+                                        <TreeNode title="好豆游戏" key="0-0-8" />
+                                    </TreeNode>
+                                </Tree>
                             </Card>
                         </div>
                     </Col>
                 </Row>
+                <Button type="primary" style={{ float: "right",marginRight:'0px',marginTop:'10px' }}>提交</Button>
         </div>;
     }
 
