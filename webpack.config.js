@@ -1,3 +1,4 @@
+const path=require('path');
 const webpack = require('webpack');
 const globalConfig = require('./src/config.js');
 
@@ -19,9 +20,14 @@ const lessLoaderVars = {
 
 module.exports = {
   devtool: 'eval-source-map',
+  devServer: {
+    historyApiFallback:true,
+    inline:true,
+    port: 8000
+  },
 
   entry: [
-    'webpack-dev-server/client?http://0.0.0.0:8080', // WebpackDevServer host and port
+    'webpack-dev-server/client?http://0.0.0.0:8000', // WebpackDevServer host and port
     'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
     'babel-polyfill',  // 可以使用完整的ES6特性, 大概增加100KB
     './src/index.js',  // 编译的入口
@@ -67,13 +73,15 @@ module.exports = {
     }),
     // 生成html文件
     new HtmlWebpackPlugin({
-      template: 'index.html.template',
+      template: 'index.tmpl.html',
       title: globalConfig.name,
 
       // HtmlWebpackPlugin自己有一个favicon属性, 但用起来有点问题, 所以自己重新搞个favIcon属性
-      favIcon: globalConfig.favicon,
+      // favIcon: globalConfig.favicon,
       // 这个属性也是我自己定义的, dev模式下要加载一些额外的js
       devMode: true,
+      favaicon:path.resolve(__dirname,'src/favicon.ico')
     }),
+
   ],
 };

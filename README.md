@@ -68,7 +68,7 @@
 
 1. 保证node版本5.3+，npm版本3.3+
 2. clone下来后，`npm install`，安装必要的依赖
-3. `npm run dev`，启动webpack-dev-server，打开浏览器`http://localhost:8080`查看效果。默认是debug模式，不会请求后端接口，所有数据都是mock的，相关配置见[src/config.js](src/config.js)
+3. `npm run dev`，启动webpack-dev-server，打开浏览器`http://localhost:8000`查看效果。默认是debug模式，不会请求后端接口，所有数据都是mock的，相关配置见[src/config.js](src/config.js)
 4. 如果有必要的话可以把logLevel设置为debug（见[src/config.js](src/config.js)），会输出详细的debug日志，打开chrome的console就可以看到。
 
 用在自己的项目中：

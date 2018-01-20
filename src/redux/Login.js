@@ -5,6 +5,7 @@ export const loginSuccessCreator = (userName) => {
 
 const initState = {
   login: false,  // 是否已登录
+  // login: true,  // 是否已登录
   userName: '未登录', // 登录后的用户名
 };
 

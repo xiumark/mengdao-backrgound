@@ -16,9 +16,7 @@
 
 
 /* 定义action creator */
-export const sidebarCollapseCreator = () => {
-  return {type: 'SIDEBAR_COLLAPSE'};
-};
+export const sidebarCollapseCreator = () => ({type: 'SIDEBAR_COLLAPSE'})
 
 /* 定义初始状态, 每个组件只需要关心自己的状态 */
 const initState = {

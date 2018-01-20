@@ -64,23 +64,24 @@ class Sidebar extends React.PureComponent {
 
     // 菜单项是从配置中读取的, parse过程还是有点复杂的
     // map函数很好用
-    const menu = items.map((level1) => {
+    const menu = items.map(level1=> {
       // parse一级菜单
       paths.push(level1.key);
       level1KeySet.add(level1.key);
       if (this.state.openKeys.length === 0) {
-        this.state.openKeys.push(level1.key);  // 默认展开第一个菜单, 直接修改state, 没必要setState
+        // this.state.openKeys.push(level1.key);  // 默认展开第一个菜单, 直接修改state, 没必要setState
+        this.setState({openKeys:[...this.state.openKeys,level1.key]})
       }
 
       // 是否有子菜单?
       if (level1.child) {
-        const level2menu = level1.child.map((level2) => {
+        const level2menu = level1.child.map(level2 => {
           // parse二级菜单
           paths.push(level2.key);
           level2KeyMap.set(level2.key, level1.key);
 
           if (level2.child) {
-            const level3menu = level2.child.map((level3) => {
+            const level3menu = level2.child.map(level3 => {
               // parse三级菜单, 不能再有子菜单了, 即使有也会忽略
               paths.push(level3.key);
               const tmp = this.transFormMenuItem(level3, paths);

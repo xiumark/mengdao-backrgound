@@ -18,16 +18,22 @@ class Login extends React.PureComponent {
   // 这个login样式是直接从网上找的: https://colorlib.com/wp/html5-and-css3-login-forms/
   // 一般而言公司内部都会提供基于LDAP的统一登录, 用到这个登录组件的场景应该挺少的
 
+  // state = {
+  //   userName: 'h1',  // 当前输入的用户名
+  //   password: '123',  // 当前输入的密码
+  //   requesting: false, // 当前是否正在请求服务端接口
+  // };
   state = {
-    username: '',  // 当前输入的用户名
-    password: '',  // 当前输入的密码
+    userName: 'h1',  // 当前输入的用户名
+    password: '123',  // 当前输入的密码
+    command: 'login', // post 一起传入的参数
     requesting: false, // 当前是否正在请求服务端接口
   };
 
   // controlled components
 
   handleUsernameInput = (e) => {
-    this.setState({username: e.target.value});
+    this.setState({userName: e.target.value});
   };
 
   handlePasswordInput = (e) => {
@@ -44,13 +50,18 @@ class Login extends React.PureComponent {
     this.setState({requesting: true});
     const hide = message.loading('正在验证...', 0);
 
-    const username = this.state.username;
+    const userName = this.state.userName;
     const password = this.state.password;
-    logger.debug('username = %s, password = %s', username, password);
+    const command = this.state.command;
+
+    console.log("inhandlesubmit");
+    console.log("userName:", userName);
+    console.log("password:", password);
+    logger.debug('userName = %s, password = %s', userName, password);
 
     try {
       // 服务端验证
-      const res = await ajax.login(username, password);
+      const res = await ajax.login(userName, password);
       hide();
       logger.debug('login validate return: result %o', res);
 
@@ -78,16 +89,16 @@ class Login extends React.PureComponent {
         {/*debug模式下显示fork me on github*/}
         {globalConfig.debug &&
         <a href="https://github.com/jiangxy/react-antd-admin">
-          <img style={{position: 'absolute', top: 0, right: 0, border: 0}}
+          {/* <img style={{position: 'absolute', top: 0, right: 0, border: 0}}
                src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67"
                alt="Fork me on GitHub"
-               data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"/>
+               data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"/> */}
         </a>}
 
         <div className="login">
           <h1>{globalConfig.name}</h1>
           <form onSubmit={this.handleSubmit}>
-            <input className="login-input" type="text" value={this.state.username}
+            <input className="login-input" type="text" value={this.state.userName}
                    onChange={this.handleUsernameInput} placeholder="用户名" required="required"/>
             <input className="login-input" type="password" value={this.state.password}
                    onChange={this.handlePasswordInput} placeholder="密码" required="required"/>

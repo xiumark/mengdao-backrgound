@@ -27,6 +27,12 @@ class Ajax {
    * @returns {Promise}
    */
   requestWrapper(method, url, {params, data, headers} = {}) {
+    console.log("inrealAjax")
+    console.log("method:", method)
+    console.log("url:", url)
+    console.log("params:", params)
+    console.log("data:", data)
+    console.log("headers:", headers)
     logger.debug('method=%s, url=%s, params=%o, data=%o, headers=%o', method, url, params, data, headers);
     return new Promise((resolve, reject) => {
       const tmp = superagent(method, url);
@@ -73,6 +79,9 @@ class Ajax {
   }
 
   post(url, data, opts = {}) {
+    console.log("inrealPost:")
+    console.log("url:", url)
+    console.log("data:", data)
     return this.requestWrapper('POST', url, {...opts, data});
   }
 
@@ -90,12 +99,13 @@ class Ajax {
   /**
    * 用户登录
    *
-   * @param username
+   * @param userName
    * @param password
    */
-  login(username, password) {
+  login(userName, password) {
+    console.log("userNamepassword:", userName, password);
     const headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    return this.post(`${globalConfig.getAPIPath()}${globalConfig.login.validate}`, {username, password}, {headers});
+    return this.post(`${globalConfig.getAPIPath()}${globalConfig.login.validate}`, {userName, password}, {headers});
   }
 
   /**

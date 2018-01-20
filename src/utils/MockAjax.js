@@ -7,7 +7,7 @@ const result = {  // 暂存mock的ajax返回, 总共有5个字段
   success: true,
   code: 0,
   message: 'just a mock ;) ',
-  total: 10000,
+  total: 10,
   data: {},
 };
 
@@ -197,16 +197,17 @@ class MockAjax {
     });
   }
 
-  login(username, password) {
+  login(userName, password) {
     return mockPromise(resolve => {
-      if (username === 'guest' && password === 'guest') {
+      // if (userName === 'guest' && password === 'guest') {
+        if (userName === 'h1' && password === '123') {
         result.success = true;
         result.data = 'guest';
         resolve(result);
       } else {
         result.success = false;
         result.code = 100;
-        result.message = 'invalid username or password';
+        result.message = 'invalid userName or password';
         resolve(result);
       }
     });

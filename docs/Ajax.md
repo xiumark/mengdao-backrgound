@@ -37,7 +37,7 @@
 * 接口名：`/api/login`
 * 说明：校验用户的登录信息，成功的话返回当前登录的用户名
 * 是否必需：是
-* 输入：request body是一个表单(`Content-Type=application/x-www-form-urlencoded`)，包含两个参数`username`/`password`，后端拿到这两个参数去校验
+* 输入：request body是一个表单(`Content-Type=application/x-www-form-urlencoded`)，包含两个参数`userName`/`password`，后端拿到这两个参数去校验
 * 输出：成功的话返回登录后的用户名，例如：`{"code":0,"data":"guest","message":"","success":true,"total":null}`，否则返回错误信息。
 
 ### 登出

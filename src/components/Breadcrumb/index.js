@@ -51,7 +51,8 @@ class Bread extends React.PureComponent {
     const itemArray = [];
 
     // 面包屑导航的最开始都是一个home图标, 并且这个图标是可以点击的
-    itemArray.push(<Item key="systemHome" href="#"><Icon type="home"/> 首页</Item>);
+    // itemArray.push(<Item key="systemHome" href="#"><Icon type="home"/> 首页</Item>);
+    itemArray.push(<Item key="systemHome" href="#">首页</Item>);
 
     // this.props.routes是react-router传进来的
     for (const route of this.props.routes) {
@@ -61,7 +62,8 @@ class Bread extends React.PureComponent {
       if (name) {
         const icon = this.iconMap.get(route.path);
         if (icon) {
-          itemArray.push(<Item key={name}><Icon type={icon}/> {name}</Item>);  // 有图标的话带上图标
+          // itemArray.push(<Item key={name}><Icon type={icon}/> {name}</Item>);  // 有图标的话带上图标
+          itemArray.push(<Item key={name}>{name}</Item>);  // 有图标的话带上图标
         } else {
           // 这个key属性不是antd需要的, 只是react要求同一个array中各个元素要是不同的, 否则有warning
           itemArray.push(<Item key={name}>{name}</Item>);
