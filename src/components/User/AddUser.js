@@ -18,10 +18,11 @@ const TreeNode = Tree.TreeNode;
 /**
  * 测试用
  */
-class User extends React.Component {
+class AddUser extends React.Component {
     state = {
         value1: 1,
-        value2: 1
+        value2: 1,
+        
       }
       onChange = (e) => {
         console.log('radio checked', e.target.value);
@@ -41,44 +42,11 @@ class User extends React.Component {
       onCheck = (checkedKeys, info) => {
         console.log('onCheck', checkedKeys, info);
       }
-    //   func1 = function handleButtonClick(e) {
-    //     message.info('Click on left button.');
-    //     console.log('click left button', e);
-    //   }
-      
-    //   func2 = function handleMenuClick(e) {
-    //     message.info('Click on menu item.');
-    //     console.log('click', e);
-    //   }
-    // menu = (
-    // <Menu>
-    //     <Menu.Item>
-    //     <a target="_blank" rel="noopener noreferrer" href="#">账号1</a>
-    //     </Menu.Item>
-    //     <Menu.Item>
-    //     <a target="_blank" rel="noopener noreferrer" href="#">账号2</a>
-    //     </Menu.Item>
-    //     <Menu.Item>
-    //     <a target="_blank" rel="noopener noreferrer" href="#">账号3</a>
-    //     </Menu.Item>
-    // </Menu>
-    // );
+      submit = () =>{
+        //   this.setState({})
+      }
 
     render() {
-        // const menu = (
-        //     <Menu>
-        //         <Menu.Item>
-        //         <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">1st menu item</a>
-        //         </Menu.Item>
-        //         <Menu.Item>
-        //         <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">2nd menu item</a>
-        //         </Menu.Item>
-        //         <Menu.Item>
-        //         <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">3rd menu item</a>
-        //         </Menu.Item>
-        //     </Menu>
-        //     );
-        // let {menu} = this.menu;
         const menu = (
             <Menu onClick={handleMenuClick}>
               <Menu.Item key="1">账号1</Menu.Item>
@@ -86,20 +54,6 @@ class User extends React.Component {
               <Menu.Item key="3">账号3</Menu.Item>
             </Menu>
           );
-        const menu2 = (
-        <Menu>
-            <Menu.Item>1st menu item</Menu.Item>
-            <Menu.Item>2nd menu item</Menu.Item>
-            <SubMenu title="sub menu">
-            <Menu.Item>3rd menu item</Menu.Item>
-            <Menu.Item>4th menu item</Menu.Item>
-            </SubMenu>
-            <SubMenu title="disabled sub menu" disabled>
-            <Menu.Item>5d menu item</Menu.Item>
-            <Menu.Item>6th menu item</Menu.Item>
-            </SubMenu>
-        </Menu>
-        );
           function handleButtonClick(e) {
             message.info('Click on left button.');
             console.log('click left button', e);
@@ -110,18 +64,22 @@ class User extends React.Component {
             console.log('click', e);
           }
         return <div>
-            {/* <h1 className="testStyle">Hello, User!</h1> */}
+                <Card title="操作">
+                    <Row>
+                        <Col className="gutter-row" md={3}>
+                        <span>创建用户名：</span>
+                        </Col>
+                        <Col className="gutter-row" md={4}>
+                        <Input placeholder="userName" />
+                        </Col>
+                    </Row>
+                </Card>
                 <Card title="平台">
                     <span>是否绑定平台：</span>
                     <RadioGroup onChange={this.onChange} value={this.state.value1}>
                         <Radio value={1}>是</Radio>
                         <Radio value={2}>否</Radio>
                     </RadioGroup>
-                    {/* <Dropdown overlay={this.menu}>
-                        <a className="ant-dropdown-link" href="#">
-                        选择账号 <Icon type="down" />
-                        </a>
-                    </Dropdown> */}
                     <span>绑定平台用户：</span>
                     <Dropdown.Button onClick={this.handleButtonClick} overlay={menu}>
                     请选择账号
@@ -146,11 +104,6 @@ class User extends React.Component {
                     <Col className="gutter-row" md={12}>
                         <div className="gutter-box">
                             <Card title="选择功能权限" bordered={true}>
-                                {/* <HorizontalForm /> */}
-                                {/* <span>绑定平台用户：</span>
-                                <Dropdown.Button onClick={this.handleButtonClick} overlay={menu2}>
-                                请选择账号
-                                </Dropdown.Button> */}
                                 <Tree
                                     checkable
                                     defaultExpandedKeys={['0-0', '0-1', '0-2']}
@@ -179,7 +132,6 @@ class User extends React.Component {
                     <Col className="gutter-row" md={12}>
                         <div className="gutter-box">
                             <Card title="选择运营商权限" bordered={true}>
-                                {/* <ModalForm /> */}
                                 <Tree
                                     checkable
                                     defaultExpandedKeys={['0-0', '0-1', '0-2']}
@@ -204,10 +156,9 @@ class User extends React.Component {
                         </div>
                     </Col>
                 </Row>
-                <Button type="primary" style={{ float: "right",marginRight:'0px',marginTop:'10px' }}>提交</Button>
+                <Button type="primary" onClick = {this.submit} style={{ float: "right",marginRight:'0px',marginTop:'10px' }}>提交</Button>
         </div>;
     }
-
 }
 
-export default User;
+export default AddUser;

@@ -33,8 +33,8 @@ const sidebarMenu = [
         // icon: 'bulb',
       },
       {
-        key: 'unfreeze',
-        name: '解冻',
+        key: 'thawAccount',
+        name: '冻结解冻',
         // icon: 'bulb',
       },
       {
@@ -92,6 +92,10 @@ const sidebarMenu = [
         name: '游戏管理',
         child: [
           {
+            key: 'playerManagement',
+            name: '玩家管理',
+          },
+          {
             key: 'roleQuery',
             name: '角色查询',
           },
@@ -115,7 +119,7 @@ const sidebarMenu = [
       },
       {
         key: 'giftManagement',  // 最多只能到三级导航
-        name: '礼包管理',
+        name: '礼品管理',
         child: [
           {
             key: 'gift',

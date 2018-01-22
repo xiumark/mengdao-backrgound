@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux'
+import {connect, connectAdvanced} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import globalConfig from 'config';
 import ajax from '../../utils/ajax';
@@ -24,8 +24,8 @@ class Login extends React.PureComponent {
   //   requesting: false, // 当前是否正在请求服务端接口
   // };
   state = {
-    userName: 'h1',  // 当前输入的用户名
-    password: '123',  // 当前输入的密码
+    userName: 'admin',  // 当前输入的用户名
+    password: 'a384b6463fc216a5f8ecb6670f86456a',  // 当前输入的密码
     command: 'login', // post 一起传入的参数
     requesting: false, // 当前是否正在请求服务端接口
   };
@@ -54,20 +54,29 @@ class Login extends React.PureComponent {
     const password = this.state.password;
     const command = this.state.command;
 
-    console.log("inhandlesubmit");
+    console.log("inhandllesubmit");
     console.log("userName:", userName);
     console.log("password:", password);
-    logger.debug('userName = %s, password = %s', userName, password);
+    console.log("command:", command);
+    // logger.debug('userName = %s, password = %s', userName, password);
+    logger.debug('userName = %s, password = %s, command = %s', userName, password, command);
 
     try {
+      console.log("尝试登录")
+      
       // 服务端验证
-      const res = await ajax.login(userName, password);
+      const res = await ajax.login(userName, password, command);
+      // const res = await ajax.login(userName, password, command);
+      console.log("尝试登录2")
+      console.log("res",res)
+      let state = JSON.parse(res.text).state
       hide();
       logger.debug('login validate return: result %o', res);
 
-      if (res.success) {
+      if (state=="1") {
         message.success('登录成功');
         // 如果登录成功, 触发一个loginSuccess的action, payload就是登录后的用户名
+        console.log("res.data",res.data)
         this.props.handleLoginSuccess(res.data);
       } else {
         message.error(`登录失败: ${res.message}, 请联系管理员`);

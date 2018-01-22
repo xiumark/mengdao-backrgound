@@ -33,7 +33,8 @@ class App extends React.Component {
   // 3. Login组件中登录成功后, 会触发一个loginSuccess action, 修改redux中的状态, 进而触发App组件的re-render
 
   state = {
-    tryingLogin: true, // App组件要尝试登录, 在屏幕正中显示一个正加载的动画
+    // tryingLogin: true, // App组件要尝试登录, 在屏幕正中显示一个正加载的动画
+    tryingLogin: false, // App组件要尝试登录, 在屏幕正中显示一个正加载的动画
 
     // tab模式相关的状态
     currentTabKey: '',  // 当前激活的是哪个tab
@@ -77,17 +78,23 @@ class App extends React.Component {
   /**
    * App组件挂载后要先尝试去服务端获取已登录的用户
    */
+  //暂时不执行这一步，以后优化
   async componentDidMount() {
     if (!this.props.login) {
       const hide = message.loading('正在获取用户信息...', 0);
 
       try {
         // 先去服务端验证下, 说不定已经登录了
+        console.log('hahahahaha111')
+        
         const res = await ajax.getCurrentUser();
+        // const res = ajax.getCurrentUser();
+        console.log('res:', res)
+        console.log('hahahahaha')
         hide();
-
+        let loginState = JSON.parse(res.text).state;
         // 注意这里, debug模式下每次刷新都必须重新登录
-        if (res.success && !globalConfig.debug) {
+        if (loginState=="1" && !globalConfig.debug) {//loginstate是获取的state参数
           // 这里不需要setState了, 因为setState的目的是为了re-render, 而下一句会触发redux的状态变化, 也会re-render
           // 所以直接修改状态, 就是感觉这么做有点奇怪...
           this.state.tryingLogin = false;

@@ -14,7 +14,12 @@ import App from './components/App';
 import Welcome from './components/Welcome';
 import Error from './components/Error';
 import Hello from './components/Hello';
-import User from './components/User';
+import AddUser from './components/User/AddUser';
+import EditUser from './components/User/EditUser';
+import PasswordReset from './components/User/PasswordReset';
+import ThawAccount from './components/User/ThawAccount';
+import DeleteUser from './components/User/DeleteUser';
+import PlayerManagement from './components/Player/PlayerManagement';
 //import DBTable from './components/DBTable';
 
 // 将DBTable组件做成动态路由, 减小bundle size
@@ -35,11 +40,14 @@ const routes = (
         <IndexRoute component={Welcome}/>
 
         <Route path="userManagement">
-          <Route path="addUser" component={User}/>
-          <Route path="editUser" tableName="testSms" getComponent={DBTableContainer}/>
-          <Route path="passwordReset" tableName="testAction" getComponent={DBTableContainer}/>
+          <Route path="addUser" component={AddUser}/>
+          <Route path="editUser" component={EditUser}/>
+          <Route path="passwordReset" component={PasswordReset}/>
+          <Route path="thawAccount" component={ThawAccount}/>
+          <Route path="deleteUser" component={DeleteUser}/>
+          {/* <Route path="passwordReset" tableName="testAction" getComponent={DBTableContainer}/>
           <Route path="unfreeze" tableName="testAction" getComponent={DBTableContainer}/>
-          <Route path="deleteUser" tableName="testAction" getComponent={DBTableContainer}/>
+          <Route path="deleteUser" tableName="testAction" getComponent={DBTableContainer}/> */}
         </Route>
 
         <Route path="operationManagement">
@@ -55,7 +63,8 @@ const routes = (
 
         <Route path="businessManagement">
           <Route path="gameManagement">
-            <Route path="roleQuery" component={Hello}/>
+            <Route path="playerManagement" component={PlayerManagement}/>
+            <Route path="roleQuery" tableName="testAction" getComponent={DBTableContainer}/>
             <Route path="wordsBlock" component={Hello}/>
             <Route path="announcementManagement" component={Hello}/>
             <Route path="serverAnnouncement" component={Hello}/>

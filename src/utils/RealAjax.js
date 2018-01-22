@@ -27,18 +27,19 @@ class Ajax {
    * @returns {Promise}
    */
   requestWrapper(method, url, {params, data, headers} = {}) {
-    console.log("inrealAjax")
+    console.log("inrequesstWrapper")
     console.log("method:", method)
     console.log("url:", url)
     console.log("params:", params)
     console.log("data:", data)
     console.log("headers:", headers)
     logger.debug('method=%s, url=%s, params=%o, data=%o, headers=%o', method, url, params, data, headers);
-    return new Promise((resolve, reject) => {
+    let promise =  new Promise((resolve, reject) => {
       const tmp = superagent(method, url);
       // 是否是跨域请求
       if (globalConfig.isCrossDomain()) {
-        tmp.withCredentials();
+      console.log("是跨域请求")
+      tmp.withCredentials();
       }
       // 设置全局的超时时间
       if (globalConfig.api.timeout && !isNaN(globalConfig.api.timeout)) {
@@ -60,22 +61,39 @@ class Ajax {
       }
       // 包装成promise
       tmp.end((err, res) => {
+        console.log("err:", err)
+        console.log("res:", res)
+        console.log("res.body:", res.body)
         logger.debug('err=%o, res=%o', err, res);
         // 我本来在想, 要不要在这里把错误包装下, 即使请求失败也调用resolve, 这样上层就不用区分"网络请求成功但查询数据失败"和"网络失败"两种情况了
         // 但后来觉得这个ajax方法是很底层的, 在这里包装不合适, 应该让上层业务去包装
-        if (res && res.body) {
-          resolve(res.body);
+
+        // if (res && res.body) {
+          if (res) {
+          console.log("获取用户信息成功:")
+          // resolve(res.body);
+          // resolve(res);
+          resolve(res);
         } else {
+          console.log("获取用户信息失败:")
           reject(err || res);
+          // return false;
         }
       });
+      // console.log("tmp:", tmp)
+      // return tmp;
     });
+
+    console.log("promise:", promise)
+    return promise;
   }
 
   // 基础的get/post方法
 
   get(url, opts = {}) {
+    console.log("inrealGet:")
     return this.requestWrapper('GET', url, {...opts});
+    console.log("get执行完成")
   }
 
   post(url, data, opts = {}) {
@@ -102,10 +120,15 @@ class Ajax {
    * @param userName
    * @param password
    */
-  login(userName, password) {
-    console.log("userNamepassword:", userName, password);
+  // login(userName, password) {
+  login(userName, password, command) {
+    console.log("inreallogin:")
+    console.log("userNamepasswordcommand:", userName, password, command);
+    console.log("tmpApiPath:",globalConfig.getAPIPath());
     const headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    return this.post(`${globalConfig.getAPIPath()}${globalConfig.login.validate}`, {userName, password}, {headers});
+    let loginstate = this.post(`${globalConfig.getAPIPath()}${globalConfig.login.validate}?command=${command}&userName=${userName}&password=${password}`, {command, userName, password}, {headers});
+    console.log("loginstate:", loginstate);
+    return loginstate;
   }
 
   /**

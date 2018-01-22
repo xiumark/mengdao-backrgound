@@ -15,6 +15,7 @@ module.exports = {
   footer: '</a>版权所有 © 2018-2020',  // footer中显示的字, 可以嵌入html标签
 
   debug: true,  // 是否开启debug模式, 不会请求后端接口, 使用mock的数据
+  // debug: false,  // 是否开启debug模式, 不会请求后端接口, 使用mock的数据
 
   tabMode: {  // tab模式相关配置
     enable: false,  // 是否开启tab模式
@@ -37,14 +38,14 @@ module.exports = {
   // },
 
   api: {  // 对后端请求的相关配置
-    host: 'http://116.62.233.28:5011',  // 调用ajax接口的地址, 默认值空, 如果是跨域的, 服务端要支持CORS
+    // host: 'http://116.62.233.28:5011',  // 调用ajax接口的地址, 默认值空, 如果是跨域的, 服务端要支持CORS
     path: '/root',  // ajax请求的路径
     timeout: 5000,  // 请求的超时时间, 单位毫秒
   },
 
   login: {  // 登录相关配置
     // getCurrentUser: '/getCurrentUser',  // 后端必须要提供接口校验当前用户的身份, 如果拿不到用户信息, 才会尝试登录
-    getCurrentUser: '/gateway.action',  // 后端必须要提供接口校验当前用户的身份, 如果拿不到用户信息, 才会尝试登录
+    getCurrentUser: '/gateway.action?command=login&userName=admin&password=a384b6463fc216a5f8ecb6670f86456a',  // 后端必须要提供接口校验当前用户的身份, 如果拿不到用户信息, 才会尝试登录
 
     // 登录有两种情况:
 
@@ -167,6 +168,7 @@ module.exports = {
 
     const tmpApiPath = paths.join('/');
     this.tmpApiPath = tmpApiPath;
+    // console.log("tmpApiPath:", tmpApiPath)
     return tmpApiPath;
   },
 

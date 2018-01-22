@@ -5,8 +5,8 @@ import RealAjax from './RealAjax';
 const mockAjax = new MockAjax();
 const realAjax = new RealAjax();
 
-const tmp = globalConfig.debug === true ? mockAjax : realAjax;
-// const tmp = globalConfig.debug === true ? realAjax : realAjax;
+// const tmp = globalConfig.debug === true ? mockAjax : realAjax;
+const tmp = globalConfig.debug === true ? realAjax : realAjax;
 export default tmp;
 
 // 按我之前的写法有些问题, 可能导致import的时候得到一个空对象, 猜测是循环引用的问题
