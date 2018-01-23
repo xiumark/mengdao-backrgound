@@ -97,7 +97,7 @@ const sidebarMenu = [
           },
           {
             key: 'roleQuery',
-            name: '角色查询',
+            name: '角色查询列表并管理(包含解禁封禁禁言等功能)',
           },
           {
             key: 'wordsBlock',

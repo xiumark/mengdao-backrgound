@@ -20,11 +20,6 @@ const lessLoaderVars = {
 
 module.exports = {
   devtool: 'eval-source-map',
-  // devServer: {
-  //   historyApiFallback:true,
-  //   inline:true,
-  //   port: 8000
-  // },
   devServer: {
     historyApiFallback:true,
     inline:true,
@@ -33,10 +28,6 @@ module.exports = {
       '/root': {
           changeOrigin: true,
           target: 'http://116.62.233.28:5011/',
-          // target: 'localhost:8000',
-          // host:'http://116.62.233.28:5011',
-          // host:'localhost:8000',
-          // secure: false,
       }
 
     }
