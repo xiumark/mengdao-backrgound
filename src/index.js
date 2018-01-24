@@ -20,6 +20,8 @@ import PasswordReset from './components/User/PasswordReset';
 import ThawAccount from './components/User/ThawAccount';
 import DeleteUser from './components/User/DeleteUser';
 import PlayerManagement from './components/Player/PlayerManagement';
+import GiftPackage from './components/Gift/GiftPackage';
+import GiftCode from './components/Gift/GiftCode';
 //import DBTable from './components/DBTable';
 
 // 将DBTable组件做成动态路由, 减小bundle size
@@ -78,8 +80,8 @@ const routes = (
             <Route path="recharge" component={Hello}/>
           </Route>
           <Route path="giftManagement">
-            <Route path="gift" component={Hello}/>
-            <Route path="giftCode" component={Hello}/>
+            <Route path="gift" component={GiftPackage}/>
+            <Route path="giftCode" component={GiftCode}/>
           </Route>
         </Route>
 

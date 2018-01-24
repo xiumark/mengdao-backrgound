@@ -77,12 +77,12 @@ class RoleContainer extends React.Component {//表格
           title: 'playerName',
           dataIndex: 'playerName',
         //   width: '20%',
-          render: (text, record) => (
-            <EditableCell
-              value={text}
-              onChange={this.onCellChange(record.key, 'name')}
-            />
-          ),
+          // render: (text, record) => (
+          //   <EditableCell
+          //     value={text}
+          //     onChange={this.onCellChange(record.key, 'name')}
+          //   />
+          // ),
         }, 
         {
             title: 'cityName',

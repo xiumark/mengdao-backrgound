@@ -1,8 +1,6 @@
 import React from 'react';
 import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button } from 'antd';
 import './index.less';
-const FormItem = Form.Item;
-const Option = Select.Option;
 //单选框
 import { Radio } from 'antd';
 const RadioGroup = Radio.Group;
@@ -45,24 +43,22 @@ class AddUser extends React.Component {
       submit = () =>{
         //   this.setState({})
       }
-
+      handleButtonClick=(e)=> {
+        // message.info('Click on left button.');
+        console.log('click left button', e);
+      }
+      handleMenuClick=(e)=> {
+        // message.info('Click on menu item.');
+        console.log('click', e);
+      }
     render() {
         const menu = (
-            <Menu onClick={handleMenuClick}>
+            <Menu onClick={this.handleMenuClick}>
               <Menu.Item key="1">账号1</Menu.Item>
               <Menu.Item key="2">账号2</Menu.Item>
               <Menu.Item key="3">账号3</Menu.Item>
             </Menu>
           );
-          function handleButtonClick(e) {
-            message.info('Click on left button.');
-            console.log('click left button', e);
-          }
-          
-          function handleMenuClick(e) {
-            message.info('Click on menu item.');
-            console.log('click', e);
-          }
         return <div>
                 <Card title="操作">
                     <Row>
