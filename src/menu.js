@@ -91,26 +91,26 @@ const sidebarMenu = [
         key: 'gameManagement',  // 最多只能到三级导航
         name: '游戏管理',
         child: [
-          {
-            key: 'playerManagement',
-            name: '玩家管理',
-          },
+          // {
+          //   key: 'playerManagement',
+          //   name: '玩家管理',
+          // },
           {
             key: 'roleQuery',
-            name: '角色查询列表并管理(包含解禁封禁禁言等功能)',
+            name: '角色管理',
           },
-          {
-            key: 'wordsBlock',
-            name: '封禁禁言',
-          },
+          // {
+          //   key: 'wordsBlock',
+          //   name: '封禁禁言',
+          // },
           {
             key: 'announcementManagement',
             name: '公告管理',
           },
-          {
-            key: 'serverAnnouncement',
-            name: '新服公告',
-          },
+          // {
+          //   key: 'serverAnnouncement',
+          //   name: '新服公告',
+          // },
           {
             key: 'recharge',
             name: '充值补单',
