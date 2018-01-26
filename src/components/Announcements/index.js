@@ -10,7 +10,7 @@ class Announcements extends React.Component {
     render() {
         
         return <div className="card-container" onChange = {(e) => this.onChange(e)}>
-                <Tabs type="card">
+                <Tabs type="card" >
                     <TabPane tab="系统公告" key="1">
                     <p>这里是系统公告这里是系统公告这里是系统公告这里是系统公告</p>
                     <p>这里是系统公告这里是系统公告这里是系统公告这里是系统公告</p>

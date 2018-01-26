@@ -1,269 +1,175 @@
 import React from 'react';
 import './index.less';
-import { Card } from 'antd';
-import { Table, Input, Icon, Button, Popconfirm } from 'antd';
-
-class EditableCell extends React.Component {//可编辑的单元格
-    state = {
-      value: this.props.value,
-      editable: false,
+import { Card, Table, Dropdown, Button, Menu, Row, Col, Form, Input, Select } from 'antd';
+import { Tabs } from 'antd';
+const TabPane = Tabs.TabPane;
+// import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button } from 'antd';
+const FormItem = Form.Item;
+const Option = Select.Option;
+class RoleContainer extends React.Component {
+  state = {
+    selectedRowKeys: [], // Check here to configure the default column
+    loading: false,
+  };
+  columns = [
+    {
+      title: 'playerId',
+      dataIndex: 'playerId',
+    },
+    {
+      title: 'playerLv',
+      dataIndex: 'playerLv',
+    },
+    {
+      title: 'playerName',
+      dataIndex: 'playerName',
+    },
+    {
+      title: 'cityName',
+      dataIndex: 'cityName',
+    },
+    {
+      title: 'forceId',
+      dataIndex: 'forceId',
+    },
+    {
+      title: 'vipLv',
+      dataIndex: 'vipLv',
     }
-    handleChange = (e) => {
-      const value = e.target.value;
-      this.setState({ value });
+  ];
+  menu = (
+    <Menu onClick={this.handleMenuClick}>
+      <Menu.Item key="1">giftType1</Menu.Item>
+      <Menu.Item key="2">giftType2</Menu.Item>
+      <Menu.Item key="3">giftType3</Menu.Item>
+    </Menu>
+  );
+  getUserData = () => {
+    let data = [];
+    for (let i = 0; i < 5; i++) {
+      data.push({
+        key: `${i}`,
+        playerId: `1900${i}0`,
+        playerLv: '18',
+        playerName: `jesies${i}`,
+        cityName: `幽州${i}0`,
+        forceId: '9',
+        vipLv: '9',
+      });
     }
-    check = () => {
-      this.setState({ editable: false });
-      if (this.props.onChange) {
-        this.props.onChange(this.state.value);
-      }
+    return data;
+  }
+  start = () => {
+    this.setState({ loading: true });
+    // ajax request after empty completing
+    setTimeout(() => {
+      this.setState({
+        selectedRowKeys: [],
+        loading: false,
+      });
+    }, 1000);
+  }
+  onSelectChange = (selectedRowKeys) => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    this.setState({ selectedRowKeys });
+  }
+  handleButtonClick = (e) => {
+    // message.info('Click on left button.');
+    console.log('click left button', e);
+  }
+  render() {
+    const { loading, selectedRowKeys } = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+    };
+    const formItemLayout = {
+      labelCol: { span: 6 },
+      wrapperCol: { span: 14 },
+      style:{ marginBottom: 15 }
     }
-    edit = () => {
-      this.setState({ editable: true });
+    // const layout
+    const buttonItemLayout = {
+      wrapperCol: { span: 16, offset: 16 }
     }
-    render() {
-      const { value, editable } = this.state;
-      return (
-        <div className="editable-cell">
-          {
-            editable ?
-              <div className="editable-cell-input-wrapper">
-                <Input
-                  value={value}
-                  onChange={this.handleChange}
-                  onPressEnter={this.check}
-                />
-                <Icon
-                  type="check"
-                  className="editable-cell-icon-check"
-                  onClick={this.check}
-                />
-              </div>
-              :
-              <div className="editable-cell-text-wrapper">
-                {value || ' '}
-                <Icon
-                  type="edit"
-                  className="editable-cell-icon"
-                  onClick={this.edit}
-                />
-              </div>
-          }
-        </div>
-      );
-    }
-  } 
-
-
-
-
-
-
-
-
-class RoleContainer extends React.Component {//表格
-    constructor(props) {
-        super(props);
-        this.columns = [
-        {
-            title: 'playerId',
-            dataIndex: 'playerId',
-        }, 
-        {
-            title: 'playerLv',
-            dataIndex: 'playerLv',
-        }, 
-        {
-          title: 'playerName',
-          dataIndex: 'playerName',
-        //   width: '20%',
-          // render: (text, record) => (
-          //   <EditableCell
-          //     value={text}
-          //     onChange={this.onCellChange(record.key, 'name')}
-          //   />
-          // ),
-        }, 
-        {
-            title: 'cityName',
-            dataIndex: 'cityName',
-        }, {
-            title: 'forceId',
-            dataIndex: 'forceId',
-        }, {
-          title: 'vipLv',
-          dataIndex: 'vipLv',
-        }, {
-          title: '删除',
-          dataIndex: 'delete',
-          render: (text, record) => {
-            return (
-              this.state.dataSource.length > 1 ?
-              (
-                <Popconfirm title="确定删除?" onConfirm={() => this.onDelete(record.key)}>
-                  <a href="#">删除</a>
-                </Popconfirm>
-              ) : null
-            );
-          },
-        }, {
-            title: '禁言',
-            dataIndex: 'wordBan',
-            render: (text, record) => {
-              return (
-                this.state.dataSource.length > 1 ?
-                (
-                  <Popconfirm title="确认禁言?" onConfirm={() => this.onWordBan(record.key)}>
-                    <a href="#">禁言</a>
-                  </Popconfirm>
-                ) : null
-              );
-            },
-          }, {
-            title: '解除禁言',
-            dataIndex: 'liftWordBan',
-            render: (text, record) => {
-              return (
-                this.state.dataSource.length > 1 ?
-                (
-                  <Popconfirm title="确认解除禁言?" onConfirm={() => this.onLiftWordBan(record.key)}>
-                    <a href="#">解除禁言</a>
-                  </Popconfirm>
-                ) : null
-              );
-            },
-          }, {
-            title: '封禁角色',
-            dataIndex: 'roleBan',
-            render: (text, record) => {
-              return (
-                this.state.dataSource.length > 1 ?
-                (
-                  <Popconfirm title="确认封禁角色?" onConfirm={() => this.onRoledBan(record.key)}>
-                    <a href="#">封禁角色</a>
-                  </Popconfirm>
-                ) : null
-              );
-            },
-          }, {
-            title: '解禁角色',
-            dataIndex: 'liftRoleBan',
-            render: (text, record) => {
-              return (
-                this.state.dataSource.length > 1 ?
-                (
-                  <Popconfirm title="确认解禁角色?" onConfirm={() => this.onLiftRoledBan(record.key)}>
-                    <a href="#">解禁角色</a>
-                  </Popconfirm>
-                ) : null
-              );
-            },
-          }
-    ];
-    
-        this.state = {
-          dataSource: [{
-            key: '0',
-            playerId: '19001',
-            playerLv: '18',
-            playerName: 'jesies',
-            cityName: '幽州',
-            forceId: '9',
-            vipLv: '9',
-          }, {
-            key: '1',
-            playerId: '19002',
-            playerLv: '18',
-            playerName: '耶稣',
-            cityName: '良州',
-            forceId: '9',
-            vipLv: '9',
-          }, {
-            key: '2',
-            playerId: '19003',
-            playerLv: '18',
-            playerName: '如来',
-            cityName: '苏州',
-            forceId: '9',
-            vipLv: '12',
-          }, {
-            key: '3',
-            playerId: '19004',
-            playerLv: '18',
-            playerName: '神奇女侠',
-            cityName: '良州',
-            forceId: '6',
-            vipLv: '6',
-          }
-        ],
-          count: 4,
-        };
-      }
-      onCellChange = (key, dataIndex) => {
-        return (value) => {
-          const dataSource = [...this.state.dataSource];
-          const target = dataSource.find(item => item.key === key);
-          if (target) {
-            target[dataIndex] = value;
-            this.setState({ dataSource });
-          }
-        };
-      }
-      onDelete = (key) => {
-        const dataSource = [...this.state.dataSource];
-        this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-      }
-
-
-      onWordBan = () =>{//禁言
-
-      }
-
-      onLiftWordBan = () => {//解禁
-
-      }
-
-      onRoledBan = () => {//角色封禁
-
-      }
-
-      onLiftRoledBan = () => {//角色解禁
-
-      }
-  
-
-
-      handleAdd = () => {
-        const { count, dataSource } = this.state;
-        const newData = {
-            key: `10${count}`,
-            playerId: `2018${count}`,
-            playerLv: '18',
-            playerName: `新增玩家 ${count}`,
-            cityName: '良州',
-            forceId: '9',
-            vipLv: '9',
-        };
-        this.setState({
-          dataSource: [...dataSource, newData],
-          count: count + 1,
-        });
-      }
-    render() {
-        const { dataSource } = this.state;
-        const columns = this.columns;
-        return <div>
-                <Card title="玩家查询"></Card>
-                <Card title="玩家列表">
-                <Button className="editable-add-btn" onClick={this.handleAdd}>添加角色</Button>
-                <Table bordered dataSource={dataSource} columns={columns} />
+    const hasSelected = selectedRowKeys.length > 0;
+    return (
+      <div>
+        <div style={{ marginBottom: 10 }}>
+          {/* <Card style={{ marginBottom: 0 }}> */}
+          <Form>
+            <Row>
+              <Col span={12} offset={0}>
+                <Card title="玩家查询" className="card-container">
+                  <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
+                  <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
+                  <FormItem {...buttonItemLayout}>
+                    <Button onClick={this.handleButtonClick} type="primary">查询</Button>
+                  </FormItem>
+                  <span>查询成功！/查询失败！</span>
                 </Card>
-        </div>;
-    }
+              </Col>
+              <Col span={12} offset={0}>
+                <Card title="操作" className="card-container" onChange={(e) => this.onChange(e)}>
+                  <Tabs type="card" className="">
+                      <TabPane tab="禁言" key="1">
+                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
+                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
+                        <FormItem {...formItemLayout} label="禁言原因"><Input placeholder="请输入禁言原因" /></FormItem>
+                        <FormItem {...formItemLayout} label="禁言时间"><Input placeholder="请输入禁言时间" /></FormItem>
+                        <FormItem {...buttonItemLayout}>
+                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
+                        </FormItem>
+                      </TabPane>
+                      <TabPane tab="解除禁言" key="2">
+                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
+                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
+                        <FormItem {...buttonItemLayout}>
+                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
+                        </FormItem>
+                      </TabPane>
+                      <TabPane tab="封禁角色" key="3">
+                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
+                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
+                        <FormItem {...formItemLayout} label="封禁原因"><Input placeholder="请输入封禁原因" /></FormItem>
+                        <FormItem {...formItemLayout} label="封禁时间"><Input placeholder="请输入封禁时间" /></FormItem>
+                        <FormItem {...buttonItemLayout}>
+                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
+                        </FormItem>
+                      </TabPane>
+                      <TabPane tab="解禁角色" key="4">
+                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
+                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
+                        <FormItem {...buttonItemLayout}>
+                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
+                        </FormItem>
+                      </TabPane>
+                  </Tabs>
+                </Card>
+              </Col>
+            </Row>
+          </Form>
+          {/* </Card> */}
+
+          {/* <Button
+            type="primary"
+            onClick={this.start}
+            disabled={!hasSelected}
+            loading={loading}
+            style = {{marginTop:12}}
+          >
+            Reload
+          </Button> */}
+          <span style={{ marginLeft: 8 }}>
+            {hasSelected ? `已选中 ${selectedRowKeys.length} 项` : ''}
+          </span>
+        </div>
+        <Card title="查询结果">
+          <Table rowSelection={rowSelection} columns={this.columns} dataSource={this.getUserData()} />
+        </Card>
+      </div>
+    );
+  }
 }
 
 export default RoleContainer;
-
-
-
-
