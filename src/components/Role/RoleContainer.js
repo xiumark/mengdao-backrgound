@@ -1,175 +1,148 @@
 import React from 'react';
-import './index.less';
-import { Card, Table, Dropdown, Button, Menu, Row, Col, Form, Input, Select } from 'antd';
-import { Tabs } from 'antd';
-const TabPane = Tabs.TabPane;
-// import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button } from 'antd';
+import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button,message } from 'antd';
 const FormItem = Form.Item;
-const Option = Select.Option;
-class RoleContainer extends React.Component {
-  state = {
-    selectedRowKeys: [], // Check here to configure the default column
-    loading: false,
-  };
-  columns = [
-    {
-      title: 'playerId',
-      dataIndex: 'playerId',
-    },
-    {
-      title: 'playerLv',
-      dataIndex: 'playerLv',
-    },
-    {
-      title: 'playerName',
-      dataIndex: 'playerName',
-    },
-    {
-      title: 'cityName',
-      dataIndex: 'cityName',
-    },
-    {
-      title: 'forceId',
-      dataIndex: 'forceId',
-    },
-    {
-      title: 'vipLv',
-      dataIndex: 'vipLv',
-    }
-  ];
-  menu = (
-    <Menu onClick={this.handleMenuClick}>
-      <Menu.Item key="1">giftType1</Menu.Item>
-      <Menu.Item key="2">giftType2</Menu.Item>
-      <Menu.Item key="3">giftType3</Menu.Item>
-    </Menu>
-  );
-  getUserData = () => {
-    let data = [];
-    for (let i = 0; i < 5; i++) {
-      data.push({
-        key: `${i}`,
-        playerId: `1900${i}0`,
-        playerLv: '18',
-        playerName: `jesies${i}`,
-        cityName: `幽州${i}0`,
-        forceId: '9',
-        vipLv: '9',
-      });
-    }
-    return data;
-  }
-  start = () => {
-    this.setState({ loading: true });
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-      });
-    }, 1000);
-  }
-  onSelectChange = (selectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
-  }
-  handleButtonClick = (e) => {
-    // message.info('Click on left button.');
-    console.log('click left button', e);
-  }
-  render() {
-    const { loading, selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
-      style:{ marginBottom: 15 }
-    }
-    // const layout
-    const buttonItemLayout = {
-      wrapperCol: { span: 16, offset: 16 }
-    }
-    const hasSelected = selectedRowKeys.length > 0;
-    return (
-      <div>
-        <div style={{ marginBottom: 10 }}>
-          {/* <Card style={{ marginBottom: 0 }}> */}
-          <Form>
-            <Row>
-              <Col span={12} offset={0}>
-                <Card title="玩家查询" className="card-container">
-                  <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
-                  <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
-                  <FormItem {...buttonItemLayout}>
-                    <Button onClick={this.handleButtonClick} type="primary">查询</Button>
-                  </FormItem>
-                  <span>查询成功！/查询失败！</span>
-                </Card>
-              </Col>
-              <Col span={12} offset={0}>
-                <Card title="操作" className="card-container" onChange={(e) => this.onChange(e)}>
-                  <Tabs type="card" className="">
-                      <TabPane tab="禁言" key="1">
-                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
-                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
-                        <FormItem {...formItemLayout} label="禁言原因"><Input placeholder="请输入禁言原因" /></FormItem>
-                        <FormItem {...formItemLayout} label="禁言时间"><Input placeholder="请输入禁言时间" /></FormItem>
-                        <FormItem {...buttonItemLayout}>
-                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
-                        </FormItem>
-                      </TabPane>
-                      <TabPane tab="解除禁言" key="2">
-                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
-                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
-                        <FormItem {...buttonItemLayout}>
-                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
-                        </FormItem>
-                      </TabPane>
-                      <TabPane tab="封禁角色" key="3">
-                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
-                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
-                        <FormItem {...formItemLayout} label="封禁原因"><Input placeholder="请输入封禁原因" /></FormItem>
-                        <FormItem {...formItemLayout} label="封禁时间"><Input placeholder="请输入封禁时间" /></FormItem>
-                        <FormItem {...buttonItemLayout}>
-                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
-                        </FormItem>
-                      </TabPane>
-                      <TabPane tab="解禁角色" key="4">
-                        <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
-                        <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
-                        <FormItem {...buttonItemLayout}>
-                          <Button onClick={this.handleButtonClick} type="primary">确认</Button>
-                        </FormItem>
-                      </TabPane>
-                  </Tabs>
-                </Card>
-              </Col>
-            </Row>
-          </Form>
-          {/* </Card> */}
+import './index.less';
+//单选框
+import { Radio } from 'antd';
+const RadioGroup = Radio.Group;
+//下拉菜单
+import { Menu, Dropdown, Icon } from 'antd';
+import { Row, Col } from 'antd';
+const SubMenu = Menu.SubMenu;
 
-          {/* <Button
-            type="primary"
-            onClick={this.start}
-            disabled={!hasSelected}
-            loading={loading}
-            style = {{marginTop:12}}
-          >
-            Reload
-          </Button> */}
-          <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `已选中 ${selectedRowKeys.length} 项` : ''}
-          </span>
-        </div>
-        <Card title="查询结果">
-          <Table rowSelection={rowSelection} columns={this.columns} dataSource={this.getUserData()} />
-        </Card>
-      </div>
-    );
-  }
+import { Input } from 'antd';
+
+import { Tree } from 'antd';
+const TreeNode = Tree.TreeNode;
+/**
+ * 测试用
+ */
+class RoleContainer extends React.Component {
+    state = {
+        value1: 1,
+        value2: 1,
+
+    }
+    onChange = (e) => {
+        //console.log('radio checked', e.target.value);
+        this.setState({
+            value1: e.target.value,
+        }, );
+    }
+    onChange2 = (e) => {
+        this.setState({
+            value2: e.target.value,
+        }, );
+    }
+
+    onSelect = (selectedKeys, info) => {
+        //console.log('selected', selectedKeys, info);
+    }
+    onCheck = (checkedKeys, info) => {
+    }
+    submit = () => {
+        //   this.setState({})
+    }
+
+    handleMenuClick = (e) => {
+        // message.info('Click on menu item.');
+    }
+
+    handleSubmit = (e) => {  //查询玩家信息
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                console.log('从表单中获取的数据是: ', values);
+                let { noticeType, serverId, duration, times } = values;
+                //serverId可不填
+                const querystring =`noticeType=${noticeType}&serverId=${serverId}&duration=${duration}&times=${times}`
+                let headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+                fetch(`/root/sendNotice.action?${querystring}`,{
+                    credentials: 'include', //发送本地缓存数据
+                    method: 'POST',
+                    headers: {
+                        headers
+                    },
+                    // body
+                }).then(res => {
+                        console.log('res:', res)
+                        if (res.status !== 200) {
+                            throw new Error('添加失败')
+                        }
+                        return res;
+                    })
+                    .then(res =>res.json())
+                    .then(res=>{
+                        //console.log(res)
+                    })
+                    .catch(err=>{
+                        //console.log(err)
+                        message.info('添加失败')
+                    })
+            }
+        });
+    }
+    render() {
+        const { getFieldDecorator } = this.props.form;
+        const formItemLayout = {
+            labelCol: {
+              xs: { span: 24 },
+              sm: { span: 6 },
+            },
+            wrapperCol: {
+              xs: { span: 24 },
+              sm: { span: 14 },
+            },
+          };
+        const tailFormItemLayout = {
+            wrapperCol: {
+              xs: {
+                span: 24,
+                offset: 0,
+              },
+              sm: {
+                span: 14,
+                offset: 6,
+              },
+            },
+          };
+        return <div>
+            <Card title="获取玩家信息">
+                <Row>
+                    <Col className="gutter-row" md={12}>
+                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
+                        <Form  onSubmit={this.handleSubmit}>
+                            <FormItem {...formItemLayout} label={"服务器Id"} >
+                                {getFieldDecorator('serverId', {
+                                    // rules: [{ required: true, message: '请输入公告类型（默认为1）' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="服务器Id" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"角色的名称"}>
+                                {getFieldDecorator('playerName', {
+                                    // rules: [{ required: true, message: '请输入服务器Id' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="角色的名称" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...tailFormItemLayout}>
+                                <Button type="primary" htmlType="submit">获取</Button>
+                            </FormItem>
+                        </Form>
+                    </Col>
+                    <Col className="gutter-row" md={1}>
+                        {/* <span>创建用户名：</span> */}
+                    </Col>
+                    <Col className="gutter-row" md={10}>
+                      <Card title="获取的玩家信息内容">
+                        <textarea style={{ width: "100%" ,height:190 }} placeholder="获取的玩家信息内容" />
+                      </Card>
+                    </Col>
+                </Row>
+            </Card>
+        </div >;
+    }
 }
 
-export default RoleContainer;
+export default Form.create()(RoleContainer);

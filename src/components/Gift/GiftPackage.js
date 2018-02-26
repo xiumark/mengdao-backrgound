@@ -1,152 +1,237 @@
 import React from 'react';
-import './index.less';
-import { Card, Table, Dropdown, Button, Menu, Row, Col, Form, Input, Select } from 'antd';
-// import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button } from 'antd';
+import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message, Icon } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
+import './index.less';
+import { Row, Col } from 'antd';
+import { Input } from 'antd';
+import { Table } from 'antd';
+
 class GiftPackage extends React.Component {
-  state = {
-    selectedRowKeys: [], // Check here to configure the default column
-    loading: false,
-  };
-  columns = [
-    {
-      title: 'playerId',
-      dataIndex: 'playerId',
-    }, 
-    {
-      title: 'playerLv',
-      dataIndex: 'playerLv',
-    }, 
-    {
-    title: 'playerName',
-    dataIndex: 'playerName',
-    }, 
-    {
-      title: 'cityName',
-      dataIndex: 'cityName',
-    }, 
-    {
-      title: 'forceId',
-      dataIndex: 'forceId',
-    }, 
-    {
-    title: 'vipLv',
-    dataIndex: 'vipLv',
+    state = {
+        key: 1,
+        giftPackageItemsData: [
+            { key: '0', type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+            { key: '1', type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
+            { key: '2', type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+        ]
     }
-  ];
-  menu = (
-    <Menu onClick={this.handleMenuClick}>
-      <Menu.Item key="1">giftType1</Menu.Item>
-      <Menu.Item key="2">giftType2</Menu.Item>
-      <Menu.Item key="3">giftType3</Menu.Item>
-    </Menu>
-  );
-  getUserData = ()=>{
-    let data = [];
-    for (let i = 0; i < 12; i++) {
-    data.push({
-      key: `${i}`,
-            playerId: `1900${i}0`,
-            playerLv: '18',
-            playerName: `jesies${i}`,
-            cityName: `幽州${i}0`,
-            forceId: '9',
-            vipLv: '9',
-    });
-  }
-  return data;
-}
-  start = () => {
-    this.setState({ loading: true });
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-      });
-    }, 1000);
-  }
-  onSelectChange = (selectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
-  }
-  handleButtonClick=(e)=> {
-    // message.info('Click on left button.');
-    console.log('click left button', e);
-  }
-  render() {
-    const { loading, selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 12 },
+    columns = [
+        {
+            title: 'name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'type',
+            dataIndex: 'type',
+            key: 'type',
+        },
+        {
+            title: 'wildCard',
+            dataIndex: 'wildCard',
+            key: 'wildCard',
+        },
+    ];
+    componentWillMount() {
+        this.getPackageItemList(
+            (res) => {
+                //获取数据，处理，并放入state中，以待显示
+                // console.log("获取的pckage数据为:", res)
+            }
+        );
     }
-    // const layout
-    const buttonItemLayout = {
-      wrapperCol: { span: 14, offset: 4 }
+    // getPackageItem=()=>{
+    //     this.getPackageItemList(
+    //         (res)=>{
+    //             console.log("回调函数:", res)
+    //     })
+    // }
+    getPackageItemList = () => { //获取权限列表
+        message.info('从这里获取权限列表');
+        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let { serverId } = values;
+                const querystring = `serverId=${serverId}`
+                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                fetch(`/root/getItems.action`, {
+                    credentials: 'include', //发送本地缓存数据
+                    method: 'POST',
+                    headers: {
+                        headers
+                    },
+                    body: querystring
+                }).then(res => {
+                    if (res.status !== 200) {
+                        throw new Error('error')
+                    }
+                    return res.json()
+                })
+                    .then(res => {
+                        console.log("获取的pckage数据为:", res)
+                        let { giftPackageItemsData, key } = this.state;
+                        giftPackageItemsData = [];
+                        let items = res.items;
+                        console.log("获取的pckage数据为:", items);
+                        for (let i = 0; i < items.length; i++) {
+                            let data = items[i]
+                            let tableItem = Object.assign(data, { key: key });
+                            giftPackageItemsData.push(tableItem);
+                            key = key + 1;
+                        }
+                        console.log("giftPackageItemsData:", giftPackageItemsData);
+                        this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
+                            console.log("herere:")
+                        })
+                    }).catch(err => {
+                        console.log(err)
+                    })
+            }
+        })
     }
-    const hasSelected = selectedRowKeys.length > 0;
-    return (
-      <div>
-        <div style={{ marginBottom: 10 }}>
-          <Card style={{ marginBottom: 0 }}>
-            <Form>
-              <Row>
-                <Col span={12} offset={0}>
-                  <FormItem {...formItemLayout} label="title"><Input placeholder="请输入礼包名称" /></FormItem>
-                  <FormItem {...formItemLayout} label="serverId"><Input placeholder="请输入serverId" /></FormItem>
-                  <FormItem {...formItemLayout} label="playerName"><Input placeholder="请输入playerName" /></FormItem>
-                </Col>
-                <Col span={12} offset={0}>
-                  <FormItem label="GiftType" labelCol={{ span: 6 }} wrapperCol={{ span: 8 }}>
-                        <Select
-                          placeholder="请选择礼物类型"
-                          onChange={this.handleSelectChange}
-                        >
-                          {/* <Option value="type">请选择礼物类型</Option> */}
-                          <Option value="type1">type1</Option>
-                          <Option value="type2">type2</Option>
-                        </Select>
-                  </FormItem>
-                  <FormItem label="GiftContent" labelCol={{ span: 6 }} wrapperCol={{ span: 8 }}>
-                        <Select
-                          placeholder="请选择礼物内容"
-                          onChange={this.handleSelectChange}
-                        >
-                          {/* <Option value="type">请选择礼物类型</Option> */}
-                          <Option value="type1">金币</Option>
-                          <Option value="type2">银币</Option>
-                        </Select>
-                  </FormItem>
-                  <FormItem {...formItemLayout} label="duration"><Input placeholder="请输入持续时间" /></FormItem>
-                </Col>
-              </Row>
-              <FormItem {...buttonItemLayout}>
-                <Button onClick={this.handleButtonClick} type="primary">提交</Button>
-              </FormItem>
-            </Form>
-          </Card>
-          <Button
-            type="primary"
-            onClick={this.start}
-            disabled={!hasSelected}
-            loading={loading}
-            style = {{marginTop:15}}
-          >
-            Reload
-          </Button>
-          <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-          </span>
-        </div>
-        <Table rowSelection={rowSelection} columns={this.columns} dataSource={this.getUserData()} />
-      </div>
-    );
-  }
+
+    handleSubmit = (e) => {
+        console.log("e:", e.target.id)
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+                let { giftType, serverId, playerName, giftContent, duration, title } = values;
+                const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContent}&duration=${duration}&title=${title}`
+                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                fetch(`/root/sendGift.action`, {
+                    credentials: 'include', //发送本地缓存数据
+                    method: 'POST',
+                    headers: {
+                        headers
+                    },
+                    body: querystring
+                }).then(res => {
+                    console.log('res:', res)
+                    if (res.status !== 200) {
+                        throw new Error('失败')
+                    }
+                    return res;
+                })
+                    .then(res => res.json())
+                    .then(res => {
+                    })
+                    .catch(err => {
+                        message.info('失败')
+                    })
+            }
+        });
+    }
+
+    render() {
+        const { getFieldDecorator } = this.props.form;
+        const { giftPackageItemsData } = this.state;
+        const formItemLayout = {
+            labelCol: {
+                xs: { span: 6 },
+                sm: { span: 6 },
+            },
+            wrapperCol: {
+                xs: { span: 24 },
+                sm: { span: 14 },
+            },
+        };
+        const tailFormItemLayout = {
+            wrapperCol: {
+                xs: {
+                    span: 24,
+                    offset: 0,
+                },
+                sm: {
+                    span: 14,
+                    offset: 6,
+                },
+            },
+        };
+        return <div>
+            <Card title="礼包管理">
+                <Form onSubmit={this.handleSubmit} id="add">
+                    <Row>
+                        <Col className="gutter-row" md={12}>
+                            {/* <FormItem {...formItemLayout} label={"礼包类型"}>
+                                {getFieldDecorator('giftType', {
+                                    // rules: [{ required: true, message: 'Please input your giftType!' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼包类型" />
+                                    )}
+                            </FormItem> */}
+                            <FormItem {...formItemLayout} label="礼包类型" hasFeedback>
+                                {getFieldDecorator('giftType', {
+                                    rules: [
+                                        // { required: true, message: 'Please Select your giftType!' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择礼包类型">
+                                        <Option value="1">1</Option>
+                                        <Option value="2">2</Option>
+                                        <Option value="3">3</Option>
+                                    </Select>
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"服务器Id"} >
+                                {getFieldDecorator('serverId', {
+                                    rules: [{ required: true, message: '请输入服务器Id' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="服务器Id" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"目标用户名"} >
+                                {getFieldDecorator('playerName', {
+                                    // rules: [{ required: true, message: 'Please input your playerName!' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="目标用户名" />
+                                    )}
+                            </FormItem>
+                        </Col>
+                        <Col className="gutter-row" md={12}>
+                            <FormItem {...formItemLayout} label={"礼品内容"} >
+                                {getFieldDecorator('giftContent', {
+                                    // rules: [{ required: true, message: 'Please input your giftContent!' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼品内容" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"有效时间"} >
+                                {getFieldDecorator('duration', {
+                                    // rules: [{ required: true, message: 'Please input your duration!' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="有效时间" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"礼包的名称"} >
+                                {getFieldDecorator('title', {
+                                    // rules: [{ required: true, message: 'Please input your title!' }],
+                                })(
+                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼包的名称" />
+                                    )}
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="gutter-row" md={12} sm={12}>
+                            <FormItem {...tailFormItemLayout}>
+                                <Button type="primary" htmlType="button" onClick={this.getPackageItemList}>获取礼包信息列表</Button>
+                            </FormItem>
+                        </Col>
+                        <Col className="gutter-row" md={12} sm={12}>
+                            <FormItem {...tailFormItemLayout} >
+                                <Button type="primary" htmlType="submit">发送礼包</Button>
+                            </FormItem>
+                        </Col>
+                    </Row>
+                </Form>
+            </Card>
+            <Card>
+                <Table pagination={{ pageSize: 10 }} columns={this.columns} dataSource={giftPackageItemsData} size={'small'} />
+            </Card>
+        </div >;
+    }
 }
 
-export default GiftPackage;
+export default Form.create()(GiftPackage);

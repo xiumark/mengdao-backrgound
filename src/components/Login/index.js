@@ -7,6 +7,7 @@ import Logger from '../../utils/Logger';
 import {message} from 'antd';
 import './index.less';
 import {loginSuccessCreator} from '../../redux/Login.js';
+import { setTimeout } from 'timers';
 
 const logger = Logger.getLogger('Login');
 
@@ -40,52 +41,73 @@ class Login extends React.PureComponent {
     this.setState({password: e.target.value});
   };
 
+  hide = () => {
+    setTimeout(message.destroy(),3000);
+  }
+
+  // 登陆请求回调处理
+  handleAfterLogin = (json, param) => {
+    console.log("handleAfterLogin", json);
+    let {login} = this.props;
+    let state = json.state;
+    let requesting = this.state.requesting;
+
+    if (state == "1") {
+      // 登陆成功
+      message.success('登录成功');
+      this.hide();
+      this.setState({requesting: false, login: true },()=>{
+      console.log("login:", this.state.login);
+    });
+
+      console.log("千呼万唤的cookie:", document.cookie);
+
+      this.props.handleLoginSuccess(param.userName, json); //传入redux 的值有；userName,responseJson
+    } else {
+      // 登陆失败
+      message.error(`登录失败: ${json.msg}, 请联系管理员`);
+      this.hide();
+      this.setState({requesting: false});
+    }
+  }
+
+  // 登陆请求出错处理
+  handleAfterLoginFail = (param) => {
+    console.log("handleAfterLoginFail", param);
+    message.error("登陆出错");
+    logger.error('login error');
+    this.hide();
+      this.setState({requesting: false});
+  }
+
   /**
    * 处理表单的submit事件
    *
    * @param e
    */
-  handleSubmit = async(e) => {  // async可以配合箭头函数
+  handleSubmit = (e) => {  // async可以配合箭头函数
     e.preventDefault();  // 这个很重要, 防止跳转
     this.setState({requesting: true});
-    const hide = message.loading('正在验证...', 0);
 
+    // 显示正在验证文字,且在请求回来之前,一直显示
+    message.loading('正在验证...', 0);
     const userName = this.state.userName;
     const password = this.state.password;
     const command = this.state.command;
-
-    console.log("inhandllesubmit");
-    console.log("userName:", userName);
-    console.log("password:", password);
-    console.log("command:", command);
-    // logger.debug('userName = %s, password = %s', userName, password);
     logger.debug('userName = %s, password = %s, command = %s', userName, password, command);
 
     try {
-      console.log("尝试登录")
-      
-      // 服务端验证
-      const res = await ajax.login(userName, password, command);
-      // const res = await ajax.login(userName, password, command);
-      console.log("尝试登录2")
-      console.log("res",res)
-      let state = JSON.parse(res.text).state
-      hide();
-      logger.debug('login validate return: result %o', res);
-
-      if (state=="1") {
-        message.success('登录成功');
-        // 如果登录成功, 触发一个loginSuccess的action, payload就是登录后的用户名
-        console.log("res.data",res.data)
-        this.props.handleLoginSuccess(res.data);
-      } else {
-        message.error(`登录失败: ${res.message}, 请联系管理员`);
-        this.setState({requesting: false});
-      }
+      // 尝试登陆
+      let param = {
+        userName : userName, 
+        password : password, 
+        command : command
+      };
+      ajax.login(userName, password, command, this.handleAfterLogin, param, this.handleAfterLoginFail, param);
     } catch (exception) {
-      hide();
       message.error(`网络请求出错: ${exception.message}`);
       logger.error('login error, %o', exception);
+      this.hide();
       this.setState({requesting: false});
     }
   };
@@ -121,7 +143,13 @@ class Login extends React.PureComponent {
       </div>
     );
   }
+}
 
+const mapStateToProps = (state) => {
+  return {
+    login: state.Login.login,
+    userName: state.Login.login
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -131,4 +159,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 // 不需要从state中获取什么, 所以传一个null
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

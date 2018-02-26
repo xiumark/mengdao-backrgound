@@ -1,5 +1,8 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button } from 'antd';
+import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+const FormItem = Form.Item;
+import { Table } from 'antd';
+
 import './index.less';
 //单选框
 import { Radio } from 'antd';
@@ -18,143 +21,186 @@ const TreeNode = Tree.TreeNode;
  */
 class AddUser extends React.Component {
     state = {
-        value1: 1,
-        value2: 1,
-        
-      }
-      onChange = (e) => {
-        console.log('radio checked', e.target.value);
-        this.setState({
-          value1: e.target.value,
-        }, ()=>{console.log("value1:", this.state.value1)});
-      }
-      onChange2 = (e) =>{
-        this.setState({
-            value2: e.target.value,
-          }, ()=>{console.log("value1:", this.state.value2)});
-      }
+        authListData: [
+            { key: 6, authId: 6, authName: "禁言" },
+            { key: 5, authId: 5, authName: "玩家信息查询" },
+            { key: 7, authId: 7, authName: "补单" },
+            { key: 8, authId: 8, authName: "发送系统公告" },
+            { key: 2, authId: 2, authName: "删除账号" },
+            { key: 9, authId: 9, authName: "封禁玩家" },
+        ]
 
-      onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
-      }
-      onCheck = (checkedKeys, info) => {
-        console.log('onCheck', checkedKeys, info);
-      }
-      submit = () =>{
-        //   this.setState({})
-      }
-      handleButtonClick=(e)=> {
-        // message.info('Click on left button.');
-        console.log('click left button', e);
-      }
-      handleMenuClick=(e)=> {
-        // message.info('Click on menu item.');
-        console.log('click', e);
-      }
+    }
+
+    columns = [
+        {
+            title: '权限id',
+            dataIndex: 'authId',
+            key: 'authId',
+        },
+        {
+            title: '权限名称',
+            dataIndex: 'authName',
+            key: 'authName',
+        },
+    ]
+
+    handleButtonClick = (e) => { //获取权限列表
+        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+        fetch(`/root/getAuthList.action`, {
+            credentials: 'include', //发送本地缓存数据
+            method: 'POST',
+            headers: {
+                headers
+            },
+            // body:querystring
+        }).then(res => {
+            if (res.status !== 200) {
+                throw new Error('请求权限数据成败')
+            }
+            return res;
+        }).then(res => res.json())
+            .then(res => {
+                if (res.state === 1) {
+                    message.info('请求用户权限成功')
+                }
+                let { authListData } = this.state;
+                let dataList = res.data.authList; //获取的权限列表数据
+                let authListDataItems = []; //待存放的容器
+                for (let i = 0; i < dataList.length; i++) {
+                    let data = dataList[i];
+                    let tableItem = {};
+                    tableItem.key = data.authId;
+                    tableItem.authId = data.authId;
+                    tableItem.authName = data.authName;
+                    authListDataItems.push(tableItem);
+                }
+                this.setState({ authListData: authListDataItems })
+            }).catch(err => {
+                message.info('请求权限数据成败')
+            })
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let { userName, password, email, auths } = values;
+                const querystring = `userName=${userName}&password=a384b6463fc216a5f8ecb6670f86456a&email=${email}&auths=${auths}`
+                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                fetch(`/root/createUser.action`, {
+                    credentials: 'include', //发送本地缓存数据
+                    method: 'POST',
+                    headers: {
+                        headers
+                    },
+                    body: querystring
+                }).then(res => {
+                    if (res.status !== 200) {
+                        throw new Error('用户创建失败')
+                    }
+                    return res;
+                })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.state === 1) {
+                            message.info('用户创建成功')
+                        }
+                    })
+                    .catch(err => {
+                        throw new Error('用户创建失败')
+                    })
+            }
+        });
+    }
     render() {
-        const menu = (
-            <Menu onClick={this.handleMenuClick}>
-              <Menu.Item key="1">账号1</Menu.Item>
-              <Menu.Item key="2">账号2</Menu.Item>
-              <Menu.Item key="3">账号3</Menu.Item>
-            </Menu>
-          );
+        const { getFieldDecorator } = this.props.form;
+        const { authListData } = this.state;
+        const formItemLayout = {
+            labelCol: {
+                xs: { span: 6 },
+                sm: { span: 6 },
+            },
+            wrapperCol: {
+                xs: { span: 6 },
+                sm: { span: 14 },
+            },
+        };
+        const tailFormItemLayout = {
+            wrapperCol: {
+                xs: {
+                    span: 24,
+                    offset: 0,
+                },
+                sm: {
+                    span: 14,
+                    offset: 6,
+                },
+            },
+        };
         return <div>
-                <Card title="操作">
-                    <Row>
-                        <Col className="gutter-row" md={3}>
-                        <span>创建用户名：</span>
-                        </Col>
-                        <Col className="gutter-row" md={4}>
-                        <Input placeholder="userName" />
-                        </Col>
-                    </Row>
-                </Card>
-                <Card title="平台">
-                    <span>是否绑定平台：</span>
-                    <RadioGroup onChange={this.onChange} value={this.state.value1}>
-                        <Radio value={1}>是</Radio>
-                        <Radio value={2}>否</Radio>
-                    </RadioGroup>
-                    <span>绑定平台用户：</span>
-                    <Dropdown.Button onClick={this.handleButtonClick} overlay={menu}>
-                    请选择账号
-                    </Dropdown.Button>
-                </Card>
-                <Card title="服务器">
-                    <span>所有服务器权限：</span>
-                    <RadioGroup onChange={this.onChange2} value={this.state.value2}>
-                        <Radio value={1}>是</Radio>
-                        <Radio value={2}>否</Radio>
-                    </RadioGroup>
-                    <Row>
-                        <Col className="gutter-row" md={2}>
-                        <span>描述：</span>
-                        </Col>
-                        <Col className="gutter-row" md={22}>
-                        <Input placeholder="Basic usage" />
-                        </Col>
-                    </Row>
-                </Card>
-                <Row gutter={16}>
-                    <Col className="gutter-row" md={12}>
-                        <div className="gutter-box">
-                            <Card title="选择功能权限" bordered={true}>
-                                <Tree
-                                    checkable
-                                    defaultExpandedKeys={['0-0', '0-1', '0-2']}
-                                    defaultSelectedKeys={['0-0-0', '0-0-1']}
-                                    defaultCheckedKeys={['0-0', '0-2']}
-                                    onSelect={this.onSelect}
-                                    onCheck={this.onCheck}
-                                >
-                                    <TreeNode title="用户管理" key="0-0">
-                                        <TreeNode title="用户管理" key="0-0-0"/>
-                                    </TreeNode>    
-                                    <TreeNode title="运维管理" key="0-1">
-                                        <TreeNode title="服务器管理" key="0-1-0" />
-                                        <TreeNode title="运营商管理" key="0-1-1" />
-                                    </TreeNode>
-                                    <TreeNode title="运营管理" key="0-2">
-                                        <TreeNode title="报表" key="0-2-0" />
-                                        <TreeNode title="月度结算" key="0-2-1" />
-                                        <TreeNode title="游戏管理" key="0-2-2" />
-                                        <TreeNode title="礼品管理" key="0-2-3" />
-                                    </TreeNode>
-                                </Tree>
-                            </Card>
-                        </div>
+            <Card title="新增用户">
+                <Row>
+                    <Col className="gutter-row" md={11} sm={11}>
+                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
+                        <Form onSubmit={this.handleSubmit} id="add">
+                            <FormItem {...formItemLayout} label={"用户名"}>
+                                {getFieldDecorator('userName', {
+                                    rules: [{ required: true, message: '请输入用户名' }],
+                                })(
+                                    <Input placeholder="请输入用户名" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"用户密码"} >
+                                {getFieldDecorator('password', {
+                                    rules: [{ required: true, message: '请输入用户密码' }],
+                                })(
+                                    <Input type="password" placeholder="请输入用户密码" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"用户邮箱"} >
+                                {getFieldDecorator('email', {
+                                    rules: [{ required: true, message: '请输入用户邮箱' }],
+                                })(
+                                    <Input placeholder="请输入用户邮箱" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"用户权限"} >
+                                {getFieldDecorator('auths', {
+                                    rules: [{ required: true, message: '请输入用户权限Id' }],
+                                })(
+                                    <Input placeholder="用户权限Id（用冒号隔开）" />
+                                    )}
+                            </FormItem>
+                            <FormItem {...tailFormItemLayout} >
+                                <Button type="primary" htmlType="submit">创建用户</Button>
+                            </FormItem>
+                        </Form>
                     </Col>
-                    <Col className="gutter-row" md={12}>
-                        <div className="gutter-box">
-                            <Card title="选择运营商权限" bordered={true}>
-                                <Tree
-                                    checkable
-                                    defaultExpandedKeys={['0-0', '0-1', '0-2']}
-                                    defaultSelectedKeys={['0-0-0', '0-0-1']}
-                                    defaultCheckedKeys={['0-0', '0-2']}
-                                    onSelect={this.onSelect}
-                                    onCheck={this.onCheck}
-                                >
-                                    <TreeNode title="运营商名称" key="0-0" >
-                                        <TreeNode title="傲世堂" key="0-0-0" />
-                                        <TreeNode title="37" key="0-0-1" />
-                                        <TreeNode title="5599" key="0-0-2" />
-                                        <TreeNode title="602游戏" key="0-0-3" />
-                                        <TreeNode title="起点" key="0-0-4" />
-                                        <TreeNode title="贪玩游戏" key="0-0-5" />
-                                        <TreeNode title="酷我" key="0-0-6" />
-                                        <TreeNode title="酷狗" key="0-0-7" />
-                                        <TreeNode title="好豆游戏" key="0-0-8" />
-                                    </TreeNode>
-                                </Tree>
-                            </Card>
-                        </div>
+
+                    {/* <Col className="gutter-row" md={2}> */}
+                    {/* <span>创建用户名：</span> */}
+                    {/* </Col> */}
+                    <Col className="gutter-row" md={13} sm={13}>
+                        <Form onSubmit={this.handleButtonClick} id="list">
+                            {/* <FormItem {...formItemLayout} >
+                                {getFieldDecorator('authList', {
+                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                })(
+                                    <textarea style={{ width: "140%", height: 190 }} placeholder="获取权限列表" />
+                                    )}
+                            </FormItem> */}
+                            {/* <textarea name="a" style={{ width: 400 ,height:180 }} placeholder="在这里输入待更新公告内容"></textarea> */}
+                            <Table pagination={{ pageSize: 12 }} columns={this.columns} dataSource={authListData} size={'small'} />
+                            <FormItem {...tailFormItemLayout}>
+                                <Button type="primary" htmlType="submit">获取权限列表</Button>
+                            </FormItem>
+                        </Form>
                     </Col>
                 </Row>
-                <Button type="primary" onClick = {this.submit} style={{ float: "right",marginRight:'0px',marginTop:'10px' }}>提交</Button>
-        </div>;
+            </Card>
+        </div >;
     }
 }
 
-export default AddUser;
+export default Form.create()(AddUser);

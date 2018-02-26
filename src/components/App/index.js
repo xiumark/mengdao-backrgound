@@ -80,31 +80,43 @@ class App extends React.Component {
    */
   //暂时不执行这一步，以后优化
   async componentDidMount() {
+    let hide = null;
     if (!this.props.login) {
-      const hide = message.loading('正在获取用户信息...', 0);
+      hide = message.loading('正在获取用户信息...', 0);
 
       try {
-        // 先去服务端验证下, 说不定已经登录了
-        console.log('hahahahaha111')
-        
-        const res = await ajax.getCurrentUser();
-        // const res = ajax.getCurrentUser();
-        console.log('res:', res)
-        console.log('hahahahaha')
         hide();
-        let loginState = JSON.parse(res.text).state;
+        // 先从本地cookie里获取sessionId,若能获取到,且没有过期
+        // if (cookie.get("DREAM_ID") != "" && cookie.get("expire_time") > 当前时间) then
+        //      当前已经是登陆状态 ==> 直接定位到登陆后的首页
+        // else
+        //      还没有登陆 ==> 停留在登陆页面
+ 
+        // loginSuccess后要做的操作:
+        // (1) 假设跟服务端约定好session过期时间是1小时,那么set_cookie("expire_time", 当前时间+2小时);
+        // (2) 定位到登陆后的首页s
+
+        // const res = await ajax.getCurrentUser();
+        // const res = ajax.getCurrentUser();
+        // hide();
+        // let responseJson = JSON.parse(res.text);
         // 注意这里, debug模式下每次刷新都必须重新登录
-        if (loginState=="1" && !globalConfig.debug) {//loginstate是获取的state参数
-          // 这里不需要setState了, 因为setState的目的是为了re-render, 而下一句会触发redux的状态变化, 也会re-render
-          // 所以直接修改状态, 就是感觉这么做有点奇怪...
-          this.state.tryingLogin = false;
-          // App组件也可能触发loginSuccess action
-          this.props.handleLoginSuccess(res.data);
-        } else {
-          this.handleLoginError('获取用户信息失败, 请重新登录');
-        }
+        // if (responseJson.state=="1" && !globalConfig.debug) {
+        //   // loginstate是获取的state参数
+        //   // 这里不需要setState了, 因为setState的目的是为了re-render, 而下一句会触发redux的状态变化, 也会re-render
+        //   // 所以直接修改状态, 就是感觉这么做有点奇怪...
+        //   this.state.tryingLogin = false;
+        //   // App组件也可能触发loginSuccess action
+        //   alert(responseJson.state);
+        //   this.props.handleLoginSuccess(res.data);
+        // } else {
+        //   this.handleLoginError('获取用户信息失败, 请重新登录');
+        // }
       } catch (e) {
         // 如果网络请求出错, 弹出一个错误提示
+        if (hide != null) {
+          hide();
+        }
         logger.error('getCurrentUser error, %o', e);
         this.handleLoginError(`网络请求出错: ${e.message}`);
       }
@@ -263,7 +275,9 @@ class App extends React.Component {
     // 因为在编译的时候, globalConfig.tabMode.enable的值已经是确定的了, 下面的if-else其实是可以优化的
     // 如果是jsx表达式那种写法, 感觉不太可能优化
 
-    // tab模式下, 不显示面包屑
+    // alert("renderBody(),cookie=" + document.cookie);
+
+    // tab模式下, 不显示面包屑？？？？？这里的tab模式一直没搞清是干什么的
     if (globalConfig.tabMode.enable === true) {
       // 如果没有tab可以显示, 就显示欢迎界面
       if (this.state.tabPanes.length === 0) {
@@ -295,8 +309,21 @@ class App extends React.Component {
       return <div className="center-div"><Spin spinning={true} size="large"/></div>;
     }
 
-    // 跳转到登录界面
-    if (!this.props.login) {
+    // 如果没有登陆，跳转到登录界面，如果通过cookie判断已经登陆，跳过这里直接登陆
+    // let cookieArray = document.cookie.split(";")[2].split("=")[1];
+    let cookieArray = document.cookie.split(";");
+    console.log("cookieArray:", cookieArray)
+    let loginState = false;
+    for (let i=0;i<cookieArray.length;i++){
+      if (cookieArray[i].split("=")[0]=="loginState"){
+        if (cookieArray[i].split("=")[1]=="1"){
+          loginState = true;
+        }
+      }
+    }
+    console.log("loginState:", loginState)
+    
+    if (!this.props.login && (!loginState) ) {
       return <Login />;
     }
 

@@ -19,11 +19,17 @@ import EditUser from './components/User/EditUser';
 import PasswordReset from './components/User/PasswordReset';
 import ThawAccount from './components/User/ThawAccount';
 import DeleteUser from './components/User/DeleteUser';
-import PlayerManagement from './components/Player/PlayerManagement';
+// import PlayerManagement from './components/Player/PlayerManagement';
+import PlayerQuery from './components/Player/PlayerQuery'
+import WordsBlock from './components/Player/WordsBlock';
+import BanAndLift from './components/Player/BanAndLift';
+import Recharge from './components/Player/Recharge';
 import GiftPackage from './components/Gift/GiftPackage';
 import GiftCode from './components/Gift/GiftCode';
-import Announcements from './components/Announcements';
+import SendEmail from './components/Player/SendEmail';
+import Announcements from './components/AnnouncementManagement/Announcements';
 //import DBTable from './components/DBTable';
+import Login from '../src/components/Login';
 
 // 将DBTable组件做成动态路由, 减小bundle size
 // 注意不要再import DBTable了, 不然就没意义了
@@ -44,21 +50,17 @@ const RoleContainer = (location, cb) => {
 const routes = (
   <Provider store={store}>
     <Router history={hashHistory}>
+      {/* <Route path="/logout" component={App}/> */}
       <Route path="/" component={App}>
-        <IndexRoute component={Welcome}/>
-
+        {/* <IndexRoute component={Hello}></IndexRoute> */}
         <Route path="userManagement">
           <Route path="addUser" component={AddUser}/>
           <Route path="editUser" component={EditUser}/>
           <Route path="passwordReset" component={PasswordReset}/>
           <Route path="thawAccount" component={ThawAccount}/>
           <Route path="deleteUser" component={DeleteUser}/>
-          {/* <Route path="passwordReset" tableName="testAction" getComponent={DBTableContainer}/>
-          <Route path="unfreeze" tableName="testAction" getComponent={DBTableContainer}/>
-          <Route path="deleteUser" tableName="testAction" getComponent={DBTableContainer}/> */}
         </Route>
-
-        <Route path="operationManagement">
+        {/* <Route path="operationManagement">
           <Route path="operator">
             <Route path="addOperator" component={Hello}/>
             <Route path="editOperator" component={Hello}/>
@@ -67,48 +69,31 @@ const routes = (
             <Route path="addServer" component={Hello}/>
             <Route path="editServer" component={Hello}/>
           </Route>
-        </Route>
-
-        <Route path="businessManagement">
-          <Route path="gameManagement">
-            {/* <Route path="playerManagement" component={PlayerManagement}/> */}
-            {/* <Route path="playerManagement" getComponent={DBTableContainer}/> */}
-            <Route path="roleQuery" tableName="testAction" getComponent={RoleContainer}/>
-            <Route path="announcementManagement" component={Announcements}/>
-            <Route path="recharge" component={Hello}/>
+        </Route> */}
+        {/* <Route path="businessManagement"> */}
+          <Route path="playerManagement">
+            {/* <Route path="playerQuery" tableName="testAction" getComponent={RoleContainer}/> */}
+            <Route path="playerQuery" component={PlayerQuery}/>
+            <Route path="wordsBlock" component={WordsBlock}/>
+            <Route path="banAndLift" component={BanAndLift}/>
+            <Route path="recharge" component={Recharge}/>
+            <Route path="email" component={SendEmail}/>
           </Route>
-          {/* <Route path="playerManagement000" component={}></Route> */}
-          <Route path="giftManagement">
+          <Route path="gameManagement">
+            <Route path="announcementManagement" component={Announcements}/>
             <Route path="gift" component={GiftPackage}/>
             <Route path="giftCode" component={GiftCode}/>
           </Route>
-        </Route>
+        {/* </Route> */}
 
-        {/* 账户管理 */}
-        <Route path="userMenu">
+        {/* <Route path="userMenu">
           <Route path="createUser" component={Hello}/>
           <Route path="modifyUser" component={Hello}/>
-        </Route>
-
-        {/* <Route path="headerMenu5">
-          <Route path="headerMenu5000000" component={Hello}/>
-          <Route path="headerMenu51111">
-            <Route path="headerMenu51111aa" component={Hello}/>
-            <Route path="headerMenu51111bb" component={Hello}/>
-          </Route>
-          <Route path="headerMenu52222">
-            <Route path="headerMenu52222aa" component={Hello}/>
-            <Route path="headerMenu52222bb" component={Hello}/>
-          </Route>
-        </Route>
-
-        <Route path="headerMenu4" component={Hello}/>
-        <Route path="alone" component={Hello}/>
-        <Route path="alone2" component={Hello}/> */}
-
+        </Route> */}
         <Route path="*" component={Error}/>
-
       </Route>
+      <Route path="logout" component={Hello}/>
+      
     </Router>
   </Provider>
 );

@@ -37,7 +37,15 @@ class Header extends React.PureComponent {
     // 这一项菜单是必须有的, 不需要在配置文件里配置
     const logoutMenuItem = <MenuItem key="logout">
       <Icon type="logout"/>
-      <a href={`${globalConfig.getAPIPath()}${globalConfig.login.logout}`}>注销</a>
+      {/* <Link to={`/${globalConfig.getAPIPath()}${globalConfig.login.logout}`} onClick={()=>{window.location.reload();console.log(`${globalConfig.getAPIPath()}${globalConfig.login.logout}`)}}>
+        注销</Link> */}
+      {/* <a href={`#${globalConfig.getAPIPath()}${globalConfig.login.logout}`}>注销</a> */}
+      {/* <a href='/' onClick={()=>{console.log("path:",`${globalConfig.getAPIPath()}${globalConfig.login.logout}`)}}>注销</a> */}
+      <Link to='' onClick={()=>{
+        document.cookie="loginState=0";
+        window.location.reload()
+        //  ()=>{render() {return <Login /> }}
+      }}>注销</Link>
     </MenuItem>;
 
     // header右侧必须是用户菜单

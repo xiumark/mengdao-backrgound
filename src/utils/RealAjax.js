@@ -17,90 +17,84 @@ class Ajax {
   tableCache = new Map();
 
   /**
+   * 生成POST字符串
+   */
+  generatePostParam(data) {
+    let rtn = "";
+    for (var key in data) {
+      if (rtn != "") {
+        rtn = rtn + "&";
+      }
+      rtn = rtn + key + "=" + data[key];
+    }
+    return rtn;
+  }
+
+  /**
    * 内部方法, 在superagent api的基础上, 包装一些全局的设置
    *
    * @param method 要请求的方法
    * @param url 要请求的url
-   * @param params url上的额外参数
-   * @param data 要发送的数据
+   * @param params GET参数
+   * @param data POST参数
    * @param headers 额外设置的http header
+   * @param responseCall 响应回调函数
+   * @param responseParam 响应回调参数
+   * @param errorCall 错误回调函数
+   * @param errorParam 错误回调参数
    * @returns {Promise}
    */
-  requestWrapper(method, url, {params, data, headers} = {}) {
-    console.log("inrequesstWrapper")
-    console.log("method:", method)
-    console.log("url:", url)
-    console.log("params:", params)
-    console.log("data:", data)
-    console.log("headers:", headers)
+  requestWrapper(method, url, {params, data, headers} = {}, responseCall, responseParam, errorCall, errorParam) {
+    // 记录请求日志
     logger.debug('method=%s, url=%s, params=%o, data=%o, headers=%o', method, url, params, data, headers);
-    let promise =  new Promise((resolve, reject) => {
-      const tmp = superagent(method, url);
-      // 是否是跨域请求
-      if (globalConfig.isCrossDomain()) {
-      console.log("是跨域请求")
-      tmp.withCredentials();
-      }
-      // 设置全局的超时时间
-      if (globalConfig.api.timeout && !isNaN(globalConfig.api.timeout)) {
-        tmp.timeout(globalConfig.api.timeout);
-      }
-      // 默认的Content-Type和Accept
-      tmp.set('Content-Type', 'application/json').set('Accept', 'application/json');
-      // 如果有自定义的header
-      if (headers) {
-        tmp.set(headers);
-      }
-      // url中是否有附加的参数?
-      if (params) {
-        tmp.query(params);
-      }
-      // body中发送的数据
-      if (data) {
-        tmp.send(data);
-      }
-      // 包装成promise
-      tmp.end((err, res) => {
-        console.log("err:", err)
-        console.log("res:", res)
-        console.log("res.body:", res.body)
-        logger.debug('err=%o, res=%o', err, res);
-        // 我本来在想, 要不要在这里把错误包装下, 即使请求失败也调用resolve, 这样上层就不用区分"网络请求成功但查询数据失败"和"网络失败"两种情况了
-        // 但后来觉得这个ajax方法是很底层的, 在这里包装不合适, 应该让上层业务去包装
-
-        // if (res && res.body) {
-          if (res) {
-          console.log("获取用户信息成功:")
-          // resolve(res.body);
-          // resolve(res);
-          resolve(res);
-        } else {
-          console.log("获取用户信息失败:")
-          reject(err || res);
-          // return false;
-        }
-      });
-      // console.log("tmp:", tmp)
-      // return tmp;
+    
+    // 请求属性
+    headers = Object.assign({}, headers, {'Content-Type' : 'application/json', 'Accept' : 'application/json'});
+    let option = {
+      credentials: 'include',
+      headers: headers, // 请求头
+      method: method,   // 请求方式
+    };
+    if (method == "POST" || method == "post") {
+      // POST请求时,填充body(POST参数)
+      option = Object.assign({}, option, {body: this.generatePostParam(data)}); // 请求POST参数
+    }
+    
+    // 进行请求
+    let promise = new Promise((resolve, reject)=>{
+        fetch(url, option)
+        .then((response) => {
+          if (response.status >= 200 && response.status < 300) {
+            // 正常返回 200 OK
+            console.log("response:", response);
+            return response.json();
+          } else if (response.status >= 500 && response.status < 600) {
+            // 其他状态码
+            return null;
+          }
+        })
+        .then((json) => {
+          if (json != null) {
+            // 获取到了json数据
+            console.log("返回的json:", json, ",responseParam:", responseParam);
+            responseCall && responseCall.apply(null, [json, responseParam]);
+          } else {
+            // 错误处理
+            errorCall && errorCall.apply(null, [errorParam]);
+          }
+        });
     });
-
-    console.log("promise:", promise)
     return promise;
   }
 
-  // 基础的get/post方法
-
-  get(url, opts = {}) {
-    console.log("inrealGet:")
-    return this.requestWrapper('GET', url, {...opts});
-    console.log("get执行完成")
+  // 发送get请求
+  get(url, opts = {}, responseCall, responseParam, errorCall, errorParam) {
+    return this.requestWrapper('GET', url, {...opts}, responseCall, responseParam, errorCall, errorParam);
   }
 
-  post(url, data, opts = {}) {
-    console.log("inrealPost:")
-    console.log("url:", url)
-    console.log("data:", data)
-    return this.requestWrapper('POST', url, {...opts, data});
+  // 发送post请求
+  post(url, data, opts = {}, responseCall, responseParam, errorCall, errorParam) {
+    return this.requestWrapper('POST', url, {...opts, data}, responseCall, responseParam, errorCall, errorParam);
   }
 
   // 业务方法
@@ -119,16 +113,24 @@ class Ajax {
    *
    * @param userName
    * @param password
+   * @param command
+   * @param callback
+   * @param param
+   * @param errorCall
+   * @param errorParam
    */
   // login(userName, password) {
-  login(userName, password, command) {
-    console.log("inreallogin:")
-    console.log("userNamepasswordcommand:", userName, password, command);
-    console.log("tmpApiPath:",globalConfig.getAPIPath());
-    const headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    let loginstate = this.post(`${globalConfig.getAPIPath()}${globalConfig.login.validate}?command=${command}&userName=${userName}&password=${password}`, {command, userName, password}, {headers});
-    console.log("loginstate:", loginstate);
-    return loginstate;
+  login(userName, password, command, callback, param, errorCall, errorParam) {
+    let headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    this.post(`${globalConfig.getAPIPath()}` + 
+                                `${globalConfig.login.validate}` +
+                                `?command=${command}&userName=${userName}&password=${password}`,
+                              {command : command, userName : userName, password : password}, 
+                              {headers},
+                              callback,
+                              param,
+                              errorCall,
+                              errorParam);
   }
 
   /**

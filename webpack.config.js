@@ -1,4 +1,4 @@
-const path=require('path');
+const path = require('path');
 const webpack = require('webpack');
 const globalConfig = require('./src/config.js');
 
@@ -7,7 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 将babel-loader的配置独立出来, 因为webpack的限制: http://stackoverflow.com/questions/33117136/how-to-add-a-query-to-a-webpack-loader-with-multiple-loaders
 const babelLoaderConfig = {
   presets: ['latest', 'stage-0', 'react'],  // 开启ES6、部分ES7、react特性, preset相当于预置的插件集合
-  plugins: [['import', {libraryName: 'antd', style: true}]],  // antd模块化加载, https://github.com/ant-design/babel-plugin-import
+  plugins: [['import', { libraryName: 'antd', style: true }]],  // antd模块化加载, https://github.com/ant-design/babel-plugin-import
   cacheDirectory: true,
 };
 
@@ -26,8 +26,8 @@ module.exports = {
     port: 8000,
     proxy: {
       '/root': {
-          changeOrigin: true,
-          target: 'http://116.62.233.28:5011/',
+        changeOrigin: true,
+        target: 'http://116.62.233.28:5011/',
       }
 
     }
@@ -87,7 +87,7 @@ module.exports = {
       // favIcon: globalConfig.favicon,
       // 这个属性也是我自己定义的, dev模式下要加载一些额外的js
       devMode: true,
-      favaicon:path.resolve(__dirname,'src/favicon.ico')
+      favaicon:path.resolve(__dirname, 'src/favicon.ico')
     }),
 
   ],

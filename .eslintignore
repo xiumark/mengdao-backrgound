@@ -1,0 +1,6 @@
+node_modules
+server
+dist
+src
+webpack.config.js
+webpack.config.prod.js
