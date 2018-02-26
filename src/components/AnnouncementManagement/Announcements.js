@@ -118,19 +118,11 @@ class Announcements extends React.Component {
                 <Row>
 
                     <Col className="gutter-row" md={11}>
-                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
                         <Form onSubmit={this.handleSubmit}>
-                            {/* <FormItem {...formItemLayout} label={"公告类型"} >
-                                {getFieldDecorator('noticeType', {
-                                    // rules: [{ required: true, message: '请输入公告类型（默认为1）' }],
-                                })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="公告类型" />
-                                    )}
-                            </FormItem> */}
-                            <FormItem {...formItemLayout} label="公告类型" hasFeedback>
+                            <FormItem {...formItemLayout} label="公告类型">
                                 {getFieldDecorator('noticeType', {
                                     rules: [
-                                        // { required: true, message: 'Please Select your giftType!' },
+                                        { required: true, message: '请选择公告类型!' },
                                     ],
                                 })(
                                     <Select placeholder="请选择公告类型">
@@ -147,14 +139,14 @@ class Announcements extends React.Component {
                             </FormItem>
                             <FormItem {...formItemLayout} label={"公告持续时间"}>
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
+                                    rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
                                 })(
-                                    <Input placeholder="公告持续时间" />
+                                    <Input placeholder="公告持续时间（分钟）" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"滚动次数"}>
                                 {getFieldDecorator('times', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                    rules: [{ required: true, message: '请输入滚动次数' }],
                                 })(
                                     <Input placeholder="滚动次数" />
                                     )}
@@ -172,7 +164,7 @@ class Announcements extends React.Component {
                     <Col className="gutter-row" md={12}>
                         <FormItem {...formItemLayout} >
                             {getFieldDecorator('content', {
-                                // rules: [{ required: true, message: '请输入滚动次数' }],
+                                rules: [{ required: true, message: '请输入公告内容' }],
                             })(
                                 <textarea style={{ width: "140%", height: 190 }} placeholder="更新公告内容" />
                                 )}

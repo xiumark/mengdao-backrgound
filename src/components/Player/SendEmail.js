@@ -87,13 +87,6 @@ class SendEmail extends React.Component {
                 <Form onSubmit={this.handleSubmit} id="email">
                     <Row>
                         <Col sm={12} md={12} xs={24}>
-                            {/* <FormItem {...formItemLayout} label={"邮件类型"}>
-                                {getFieldDecorator('mailType', {
-                                    // rules: [{ required: true, message: 'Please input your username!' }],
-                                })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="邮件类型" />
-                                    )}
-                            </FormItem> */}
                             <FormItem {...formItemLayout} label="邮件类型" >
                                 {getFieldDecorator('mailType', {
                                     rules: [
@@ -110,37 +103,37 @@ class SendEmail extends React.Component {
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入服务器Id" />
+                                    <Input placeholder="请输入服务器Id" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
-                                    rules: [{ required: true, message: '请输入目标用户名' }],
+                                    // rules: [{ required: true, message: '请输入目标用户名' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入目标用户名" />
+                                    <Input placeholder="请输入目标用户名（单服邮件可不填）" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"附件内容"} >
                                 {getFieldDecorator('attachmenet', {
                                     rules: [{ required: true, message: '请输入附件内容' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入附件内容" />
+                                    <Input placeholder="请输入附件内容" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"有效时间"} >
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: 'Please input your auth!' }],
+                                    rules: [{ required: true, message: '请输入有效时间!' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入有效时间（分钟）" />
+                                    <Input placeholder="请输入有效时间（分钟）" />
                                     )}
                             </FormItem>
                         </Col>
                         <Col sm={12} md={12} xs={24}>
                             <FormItem {...formItemLayout} label={"邮件名称"} >
                                 {getFieldDecorator('title', {
-                                    // rules: [{ required: true, message: 'Please input your auth!' }],
+                                    rules: [{ required: true, message: '请输入邮件名称!' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入邮件名称" />
+                                    <Input placeholder="请输入邮件名称" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"邮件正文"} >

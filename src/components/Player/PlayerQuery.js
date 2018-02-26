@@ -62,32 +62,32 @@ class PlayerQuery extends React.Component {
 
     columns = [
         {
-            title: 'playerId',
+            title: 'ID',
             dataIndex: 'playerId',
             key: 'playerId',
         },
         {
-            title: 'playerName',
+            title: '角色名',
             dataIndex: 'playerName',
             key: 'playerName',
         },
         {
-            title: 'cityName',
+            title: '所属的州',
             dataIndex: 'cityName',
             key: 'cityName',
         },
         {
-            title: 'forceId',
+            title: '所属的势力',
             dataIndex: 'forceId',
             key: 'forceId',
         },
         {
-            title: 'playerLv',
+            title: '角色等级',
             dataIndex: 'playerLv',
             key: 'playerLv',
         },
         {
-            title: 'vipLv',
+            title: 'VIP等级',
             dataIndex: 'vipLv',
             key: 'vipLv',
         }];

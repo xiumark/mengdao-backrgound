@@ -133,14 +133,14 @@ class WordsBlock extends React.Component {
                         <Form onSubmit={this.handleSubmit}>
                             <FormItem {...formItemLayout} label={"用户名"} >
                                 {getFieldDecorator('playerName', {
-                                    // rules: [{ required: true, message: '请输入公告类型（默认为1）' }],
+                                    rules: [{ required: true, message: '请输入用户名' }],
                                 })(
                                     <Input placeholder="请输入用户名" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"服务器Id"}>
                                 {getFieldDecorator('serverId', {
-                                    // rules: [{ required: true, message: '请输入服务器Id' }],
+                                    rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
                                     <Input placeholder="请输入服务器Id" />
                                     )}
@@ -159,14 +159,14 @@ class WordsBlock extends React.Component {
                             {getFieldDecorator('reason', {
                                 // rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
                             })(
-                                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入封禁原因" />
+                                <Input placeholder="请输入封禁原因" />
                                 )}
                         </FormItem>
                         <FormItem {...formItemLayout} label={"封禁时间"}>
                             {getFieldDecorator('duration', {
                                 // rules: [{ required: true, message: '请输入滚动次数' }],
                             })(
-                                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="请输入封禁时间（分钟）" />
+                                <Input placeholder="请输入封禁时间（分钟）" />
                                 )}
                         </FormItem>
                         <FormItem {...tailFormItemLayout}>

@@ -154,23 +154,15 @@ class GiftPackage extends React.Component {
                 <Form onSubmit={this.handleSubmit} id="add">
                     <Row>
                         <Col className="gutter-row" md={12}>
-                            {/* <FormItem {...formItemLayout} label={"礼包类型"}>
-                                {getFieldDecorator('giftType', {
-                                    // rules: [{ required: true, message: 'Please input your giftType!' }],
-                                })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼包类型" />
-                                    )}
-                            </FormItem> */}
-                            <FormItem {...formItemLayout} label="礼包类型" hasFeedback>
+                            <FormItem {...formItemLayout} label="礼包类型" >
                                 {getFieldDecorator('giftType', {
                                     rules: [
-                                        // { required: true, message: 'Please Select your giftType!' },
+                                        // { required: true, message: '请选择礼包类型!' },
                                     ],
                                 })(
                                     <Select placeholder="请选择礼包类型">
-                                        <Option value="1">1</Option>
-                                        <Option value="2">2</Option>
-                                        <Option value="3">3</Option>
+                                        <Option value="1">1 个人礼包</Option>
+                                        <Option value="2">2 单服礼包</Option>
                                     </Select>
                                     )}
                             </FormItem>
@@ -178,37 +170,37 @@ class GiftPackage extends React.Component {
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="服务器Id" />
+                                    <Input placeholder="服务器Id" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
-                                    // rules: [{ required: true, message: 'Please input your playerName!' }],
+                                    // rules: [{ required: true, message: '目标用户名!' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="目标用户名" />
+                                    <Input placeholder="目标用户名" />
                                     )}
                             </FormItem>
                         </Col>
                         <Col className="gutter-row" md={12}>
                             <FormItem {...formItemLayout} label={"礼品内容"} >
                                 {getFieldDecorator('giftContent', {
-                                    // rules: [{ required: true, message: 'Please input your giftContent!' }],
+                                    // rules: [{ required: true, message: '礼品内容!' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼品内容" />
+                                    <Input placeholder="礼品内容" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"有效时间"} >
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: 'Please input your duration!' }],
+                                    // rules: [{ required: true, message: '有效时间!' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="有效时间" />
+                                    <Input placeholder="有效时间" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"礼包的名称"} >
                                 {getFieldDecorator('title', {
-                                    // rules: [{ required: true, message: 'Please input your title!' }],
+                                    // rules: [{ required: true, message: '礼包的名称!' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼包的名称" />
+                                    <Input placeholder="礼包的名称" />
                                     )}
                             </FormItem>
                         </Col>

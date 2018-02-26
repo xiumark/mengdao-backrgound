@@ -104,60 +104,53 @@ class GiftCode extends React.Component {
             <Card title="获取礼品码">
                 <Row>
                     <Col className="gutter-row" md={12} sm={24}>
-                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
                         <Form onSubmit={this.handleSubmit}>
-                            {/* <FormItem {...formItemLayout} label={"礼品码类型"} >
-                                {getFieldDecorator('giftCodeType', {
-                                    // rules: [{ required: true, message: '请输入公告类型（默认为1）' }],
-                                })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼品码类型" />
-                                    )}
-                            </FormItem> */}
+
                             <FormItem {...formItemLayout} label="礼品码类型" >
                                 {getFieldDecorator('giftCodeType', {
                                     rules: [
-                                        // { required: true, message: 'Please Select your giftType!' },
+                                        { required: true, message: '请选择礼品码类型!' },
                                     ],
                                 })(
                                     <Select placeholder="请选择礼品码类型">
-                                        <Option value="1">1（新手礼品码）</Option>
-                                        <Option value="2">2（个人礼品码）</Option>
+                                        <Option value="1">1 新手礼品码 </Option>
+                                        <Option value="2">2 个人礼品码 </Option>
                                     </Select>
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"服务器Id"}>
                                 {getFieldDecorator('serverId', {
-                                    // rules: [{ required: true, message: '请输入服务器Id' }],
+                                    rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="服务器Id" />
+                                    <Input placeholder="服务器Id" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"联运商"}>
                                 {getFieldDecorator('yx', {
-                                    // rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
+                                    rules: [{ required: true, message: '请输入联运商名称' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="联运商" />
+                                    <Input placeholder="联运商" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"申请礼品码数量"}>
                                 {getFieldDecorator('num', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                    rules: [{ required: true, message: '请输入申请的礼品码数量' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼品码数量" />
+                                    <Input placeholder="礼品码数量（最多50个）" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"礼品内容"}>
                                 {getFieldDecorator('giftContent', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                    rules: [{ required: true, message: '请输入申请的礼品内容' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="礼品内容" />
+                                    <Input placeholder="礼品内容" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"有效时间"}>
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                    rules: [{ required: true, message: '请输入有效时间' }],
                                 })(
-                                    <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="有效时间（分钟）" />
+                                    <Input placeholder="有效时间（分钟）" />
                                     )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
