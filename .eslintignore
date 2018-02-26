@@ -4,3 +4,4 @@ dist
 src
 webpack.config.js
 webpack.config.prod.js
+public

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
 const FormItem = Form.Item;
 import { Table } from 'antd';
-
+import { hex_md5 } from '../../../public/md5'
 import './index.less';
 //单选框
 import { Radio } from 'antd';
@@ -86,7 +86,14 @@ class AddUser extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { userName, password, email, auths } = values;
-                const querystring = `userName=${userName}&password=a384b6463fc216a5f8ecb6670f86456a&email=${email}&auths=${auths}`
+                // let md5password = hex_md5(`${password}`);
+                // console.log("hex_md5:");
+                // console.log("hex_md5:", hex_md5);
+                // let md5password = window.hex_md5(password);
+                let md5password = hex_md5(password);
+                console.log(md5password)
+                let password0 = 'a384b6463fc216a5f8ecb6670f86456a';//密钥
+                const querystring = `userName=${userName}&password=${md5password}&email=${email}&auths=${auths}`
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/createUser.action`, {
                     credentials: 'include', //发送本地缓存数据

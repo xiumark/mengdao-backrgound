@@ -21,8 +21,8 @@ const lessLoaderVars = {
 module.exports = {
   devtool: 'eval-source-map',
   devServer: {
-    historyApiFallback:true,
-    inline:true,
+    historyApiFallback: true,
+    inline: true,
     port: 8000,
     proxy: {
       '/root': {
@@ -87,7 +87,7 @@ module.exports = {
       // favIcon: globalConfig.favicon,
       // 这个属性也是我自己定义的, dev模式下要加载一些额外的js
       devMode: true,
-      favaicon:path.resolve(__dirname, 'src/favicon.ico')
+      favaicon: path.resolve(__dirname, 'src/favicon.ico')
     }),
 
   ],

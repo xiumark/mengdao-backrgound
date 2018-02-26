@@ -4,11 +4,12 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from 'react-redux'
-import {Router, Route, IndexRoute, browserHistory,hashHistory} from 'react-router';
+import { Provider } from 'react-redux'
+import { Router, Route, IndexRoute, browserHistory, hashHistory } from 'react-router';
 import './utils/index.js';  // 引入各种prototype辅助方法
 import store from 'redux/store.js';  // redux store
 
+// import '../public/md5'   //引入root中未能引入的文件的第二种解决方案，js程序的入口引入
 // 开始引入各种自定义的组件
 import App from './components/App';
 import Welcome from './components/Welcome';
@@ -20,7 +21,7 @@ import PasswordReset from './components/User/PasswordReset';
 import ThawAccount from './components/User/ThawAccount';
 import DeleteUser from './components/User/DeleteUser';
 // import PlayerManagement from './components/Player/PlayerManagement';
-import PlayerQuery from './components/Player/PlayerQuery'
+import PlayerQuery from './components/Player/PlayerQuery';
 import WordsBlock from './components/Player/WordsBlock';
 import BanAndLift from './components/Player/BanAndLift';
 import Recharge from './components/Player/Recharge';
@@ -54,11 +55,11 @@ const routes = (
       <Route path="/" component={App}>
         {/* <IndexRoute component={Hello}></IndexRoute> */}
         <Route path="userManagement">
-          <Route path="addUser" component={AddUser}/>
-          <Route path="editUser" component={EditUser}/>
-          <Route path="passwordReset" component={PasswordReset}/>
-          <Route path="thawAccount" component={ThawAccount}/>
-          <Route path="deleteUser" component={DeleteUser}/>
+          <Route path="addUser" component={AddUser} />
+          <Route path="editUser" component={EditUser} />
+          <Route path="passwordReset" component={PasswordReset} />
+          <Route path="thawAccount" component={ThawAccount} />
+          <Route path="deleteUser" component={DeleteUser} />
         </Route>
         {/* <Route path="operationManagement">
           <Route path="operator">
@@ -71,29 +72,29 @@ const routes = (
           </Route>
         </Route> */}
         {/* <Route path="businessManagement"> */}
-          <Route path="playerManagement">
-            {/* <Route path="playerQuery" tableName="testAction" getComponent={RoleContainer}/> */}
-            <Route path="playerQuery" component={PlayerQuery}/>
-            <Route path="wordsBlock" component={WordsBlock}/>
-            <Route path="banAndLift" component={BanAndLift}/>
-            <Route path="recharge" component={Recharge}/>
-            <Route path="email" component={SendEmail}/>
-          </Route>
-          <Route path="gameManagement">
-            <Route path="announcementManagement" component={Announcements}/>
-            <Route path="gift" component={GiftPackage}/>
-            <Route path="giftCode" component={GiftCode}/>
-          </Route>
+        <Route path="playerManagement">
+          {/* <Route path="playerQuery" tableName="testAction" getComponent={RoleContainer}/> */}
+          <Route path="playerQuery" component={PlayerQuery} />
+          <Route path="wordsBlock" component={WordsBlock} />
+          <Route path="banAndLift" component={BanAndLift} />
+          <Route path="recharge" component={Recharge} />
+          <Route path="email" component={SendEmail} />
+        </Route>
+        <Route path="gameManagement">
+          <Route path="announcementManagement" component={Announcements} />
+          <Route path="gift" component={GiftPackage} />
+          <Route path="giftCode" component={GiftCode} />
+        </Route>
         {/* </Route> */}
 
         {/* <Route path="userMenu">
           <Route path="createUser" component={Hello}/>
           <Route path="modifyUser" component={Hello}/>
         </Route> */}
-        <Route path="*" component={Error}/>
+        <Route path="*" component={Error} />
       </Route>
-      <Route path="logout" component={Hello}/>
-      
+      <Route path="logout" component={Hello} />
+
     </Router>
   </Provider>
 );
