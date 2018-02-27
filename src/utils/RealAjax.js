@@ -1,7 +1,7 @@
 import Logger from './Logger';
 import superagent from 'superagent';
 import globalConfig from '../config';
-
+import { hex_md5 } from '../../public/md5'
 const logger = new Logger('Ajax');
 
 /**
@@ -44,12 +44,12 @@ class Ajax {
    * @param errorParam 错误回调参数
    * @returns {Promise}
    */
-  requestWrapper(method, url, {params, data, headers} = {}, responseCall, responseParam, errorCall, errorParam) {
+  requestWrapper(method, url, { params, data, headers } = {}, responseCall, responseParam, errorCall, errorParam) {
     // 记录请求日志
     logger.debug('method=%s, url=%s, params=%o, data=%o, headers=%o', method, url, params, data, headers);
-    
+
     // 请求属性
-    headers = Object.assign({}, headers, {'Content-Type' : 'application/json', 'Accept' : 'application/json'});
+    headers = Object.assign({}, headers, { 'Content-Type': 'application/json', 'Accept': 'application/json' });
     let option = {
       credentials: 'include',
       headers: headers, // 请求头
@@ -57,12 +57,12 @@ class Ajax {
     };
     if (method == "POST" || method == "post") {
       // POST请求时,填充body(POST参数)
-      option = Object.assign({}, option, {body: this.generatePostParam(data)}); // 请求POST参数
+      option = Object.assign({}, option, { body: this.generatePostParam(data) }); // 请求POST参数
     }
-    
+
     // 进行请求
-    let promise = new Promise((resolve, reject)=>{
-        fetch(url, option)
+    let promise = new Promise((resolve, reject) => {
+      fetch(url, option)
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
             // 正常返回 200 OK
@@ -89,12 +89,12 @@ class Ajax {
 
   // 发送get请求
   get(url, opts = {}, responseCall, responseParam, errorCall, errorParam) {
-    return this.requestWrapper('GET', url, {...opts}, responseCall, responseParam, errorCall, errorParam);
+    return this.requestWrapper('GET', url, { ...opts }, responseCall, responseParam, errorCall, errorParam);
   }
 
   // 发送post请求
   post(url, data, opts = {}, responseCall, responseParam, errorCall, errorParam) {
-    return this.requestWrapper('POST', url, {...opts, data}, responseCall, responseParam, errorCall, errorParam);
+    return this.requestWrapper('POST', url, { ...opts, data }, responseCall, responseParam, errorCall, errorParam);
   }
 
   // 业务方法
@@ -121,16 +121,17 @@ class Ajax {
    */
   // login(userName, password) {
   login(userName, password, command, callback, param, errorCall, errorParam) {
-    let headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    this.post(`${globalConfig.getAPIPath()}` + 
-                                `${globalConfig.login.validate}` +
-                                `?command=${command}&userName=${userName}&password=${password}`,
-                              {command : command, userName : userName, password : password}, 
-                              {headers},
-                              callback,
-                              param,
-                              errorCall,
-                              errorParam);
+    let md5password = hex_md5(password);
+    let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+    this.post(`${globalConfig.getAPIPath()}` +
+      `${globalConfig.login.validate}` +
+      `?command=${command}&userName=${userName}&password=${md5password}`,
+      { command: command, userName: userName, password: md5password },
+      { headers },
+      callback,
+      param,
+      errorCall,
+      errorParam);
   }
 
   /**
@@ -188,7 +189,7 @@ class CRUDUtil {
    */
   update(keys = [], dataObj) {
     const tmp = keys.join(',');
-    return this.ajax.post(`${globalConfig.getAPIPath()}/${this.tableName}/update`, dataObj, {params: {keys: tmp}});
+    return this.ajax.post(`${globalConfig.getAPIPath()}/${this.tableName}/update`, dataObj, { params: { keys: tmp } });
   }
 
   /**
@@ -199,7 +200,7 @@ class CRUDUtil {
    */
   delete(keys = []) {
     const tmp = keys.join(',');
-    return this.ajax.get(`${globalConfig.getAPIPath()}/${this.tableName}/delete`, {params: {keys: tmp}});
+    return this.ajax.get(`${globalConfig.getAPIPath()}/${this.tableName}/delete`, { params: { keys: tmp } });
   }
 
   /**
