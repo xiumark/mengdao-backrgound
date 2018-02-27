@@ -21,7 +21,9 @@ var chrsz = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
  * They take string arguments and return either hex or base-64 encoded strings
  */
 // window.hex_md5 = function hex_md5(s) { return binl2hex(core_md5(str2binl(s), s.length * chrsz)); }
+// window.hex_md5 = function hex_md5(s) { return binl2hex(core_md5(str2binl(s), s.length * chrsz)); }
 export function hex_md5(s) { return binl2hex(core_md5(str2binl(s), s.length * chrsz)); }
+
 function b64_md5(s) { return binl2b64(core_md5(str2binl(s), s.length * chrsz)); }
 function str_md5(s) { return binl2str(core_md5(str2binl(s), s.length * chrsz)); }
 function hex_hmac_md5(key, data) { return binl2hex(core_hmac_md5(key, data)); }
