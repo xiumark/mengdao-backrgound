@@ -23,13 +23,13 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     inline: true,
+    host: '0.0.0.0', //保证通过IP可以访问
     port: 8000,
     proxy: {
       '/root': {
         changeOrigin: true,
         target: 'http://116.62.233.28:5011/',
       }
-
     }
   },
 
