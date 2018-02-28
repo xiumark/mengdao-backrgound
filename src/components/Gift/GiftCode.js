@@ -1,21 +1,9 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
-
 import './index.less';
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
@@ -32,35 +20,17 @@ class GiftCode extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('从表单中获取的数据是: ', values);
                 let { giftCodeType, serverId, yx, num, giftContent, duration } = values;
                 //serverId可不填
-                const querystring = `giftCodeType=${giftCodeType}&serverId=${serverId}&yx=${yx}&num=${num}&giftContent=${giftContent}&duration=${duration}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/getGiftCode.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    // console.log('获取的礼品码是:', res.json())
-                    if (res.status !== 200) {
-                        throw new Error('添加失败')
-                    }
-                    return res;
+                let querystring = `giftCodeType=${giftCodeType}&serverId=${serverId}&yx=${yx}&num=${num}&giftContent=${giftContent}&duration=${duration}`
+                let url = "/root/getGiftCode.action"
+                let method = 'POST'
+                let successmsg = '礼品码获取成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+                    let { giftCode } = this.state;
+                    giftCode = res.data.giftCode.split(";");
+                    this.setState({ giftCode: giftCode })
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        let { giftCode } = this.state;
-                        giftCode = res.data.giftCode.split(";");
-                        this.setState({ giftCode: giftCode })
-                    })
-                    .catch(err => {
-                        //console.log(err)
-                        message.info('添加失败')
-                    })
             }
         });
     }

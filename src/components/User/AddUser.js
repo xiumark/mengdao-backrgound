@@ -1,35 +1,23 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
-import { Table } from 'antd';
-import { hex_md5 } from '../../../public/md5'
+const Option = Select.Option;
 import './index.less';
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
+import { hex_md5 } from '../../../public/md5'
 /**
  * 测试用
  */
 class AddUser extends React.Component {
     state = {
         authListData: [
-            { key: 6, authId: 6, authName: "禁言" },
-            { key: 5, authId: 5, authName: "玩家信息查询" },
-            { key: 7, authId: 7, authName: "补单" },
-            { key: 8, authId: 8, authName: "发送系统公告" },
-            { key: 2, authId: 2, authName: "删除账号" },
-            { key: 9, authId: 9, authName: "封禁玩家" },
+            // { key: 6, authId: 6, authName: "禁言" },
+            // { key: 5, authId: 5, authName: "玩家信息查询" },
+            // { key: 7, authId: 7, authName: "补单" },
+            // { key: 8, authId: 8, authName: "发送系统公告" },
+            // { key: 2, authId: 2, authName: "删除账号" },
+            // { key: 9, authId: 9, authName: "封禁玩家" },
         ]
-
     }
 
     columns = [
@@ -46,24 +34,13 @@ class AddUser extends React.Component {
     ]
 
     handleButtonClick = (e) => { //获取权限列表
-        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        fetch(`/root/getAuthList.action`, {
-            credentials: 'include', //发送本地缓存数据
-            method: 'POST',
-            headers: {
-                headers
-            },
-            // body:querystring
-        }).then(res => {
-            if (res.status !== 200) {
-                throw new Error('请求权限数据成败')
-            }
-            return res;
-        }).then(res => res.json())
-            .then(res => {
-                if (res.state === 1) {
-                    message.info('请求用户权限成功')
-                }
+        let querystring = ''
+        let url = "/root/getAuthList.action"
+        let method = 'POST'
+        let successmsg = '请求用户权限成功'
+        apiFetch(url, method, querystring, successmsg,
+            (res) => {
+                // console.log('请求用户权限成功成功后执行的回调函数')
                 let { authListData } = this.state;
                 let dataList = res.data.authList; //获取的权限列表数据
                 let authListDataItems = []; //待存放的容器
@@ -76,8 +53,6 @@ class AddUser extends React.Component {
                     authListDataItems.push(tableItem);
                 }
                 this.setState({ authListData: authListDataItems })
-            }).catch(err => {
-                message.info('请求权限数据成败')
             })
     }
 
@@ -86,37 +61,14 @@ class AddUser extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { userName, password, email, auths } = values;
-                // let md5password = hex_md5(`${password}`);
-                // console.log("hex_md5:");
-                // console.log("hex_md5:", hex_md5);
-                // let md5password = window.hex_md5(password);
                 let md5password = hex_md5(password);
-                console.log(md5password)
-                let password0 = 'a384b6463fc216a5f8ecb6670f86456a';//密钥
-                const querystring = `userName=${userName}&password=${md5password}&email=${email}&auths=${auths}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/createUser.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw new Error('用户创建失败')
-                    }
-                    return res;
+                let querystring = `userName=${userName}&password=${md5password}&email=${email}&auths=${auths}`
+                let url = "/root/createUser.action"
+                let method = "POST"
+                let successmsg = '用户创建成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+                    // console.log('用户创建成功后执行的回调函数')
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.state === 1) {
-                            message.info('用户创建成功')
-                        }
-                    })
-                    .catch(err => {
-                        throw new Error('用户创建失败')
-                    })
             }
         });
     }

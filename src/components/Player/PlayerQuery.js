@@ -1,63 +1,35 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message, Table, Icon } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
+const Option = Select.Option;
 import './index.less';
-import { Row, Col } from 'antd';
-import { Input } from 'antd';
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
 class PlayerQuery extends React.Component {
     state = {
         key: 1,
-        playerData: [],
-        // playerData :[
-        //     {
-        //         key: '0',
-        //         cityName:'扬州',
-        //         forceId:'234',
-        //         playerId:1629,
-        //         playerLv:17,
-        //         playerName:'快',
-        //         vipLv:0,
-        //     }, 
-        //     {
-        //         key: '1',
-        //         cityName:'扬州',
-        //         forceId:'234',
-        //         playerId:1629,
-        //         playerLv:17,
-        //         playerName:'玩家2',
-        //         vipLv:0,
-        //     }, 
-        //     {
-        //         key: '8',
-        //         cityName:'益州',
-        //         forceId:'234',
-        //         playerId:1329,
-        //         playerLv:13,
-        //         playerName:'玩家3',
-        //         vipLv:0,
-        //     },
-        //     {
-        //         key: '9',
-        //         cityName:'益州',
-        //         forceId:'234',
-        //         playerId:1329,
-        //         playerLv:13,
-        //         playerName:'玩家3',
-        //         vipLv:0,
-        //     },
-        //     {
-        //         key: '10',
-        //         cityName:'益州',
-        //         forceId:'234',
-        //         playerId:1329,
-        //         playerLv:13,
-        //         playerName:'玩家3',
-        //         vipLv:0,
-        //     },
-        // ]
+        playerData: [
+            // {
+            //     key: '0',
+            //     cityName: '扬州',
+            //     forceId: '234',
+            //     playerId: 1629,
+            //     playerLv: 17,
+            //     playerName: '快',
+            //     vipLv: 0,
+            // },
+            // {
+            //     key: '10',
+            //     cityName: '益州',
+            //     forceId: '234',
+            //     playerId: 1329,
+            //     playerLv: 13,
+            //     playerName: '玩家3',
+            //     vipLv: 0,
+            // },
+        ]
     }
 
     columns = [
@@ -99,50 +71,27 @@ class PlayerQuery extends React.Component {
                 let { serverId, playerName } = values;
                 //serverId可不填
                 const querystring = `serverId=${serverId}&playerName=${playerName}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/playerInfo.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw new Error('查询失败')
-                    }
-                    return res;
+                let url = "/root/playerInfo.action"
+                let method = 'POST'
+                let successmsg = '获取玩家数据成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+                    let { playerData, key } = this.state;
+                    let resData = res.data;
+                    let playerDataItem = {};
+                    playerDataItem.cityName = resData.cityName;
+                    playerDataItem.forceId = resData.forceId;
+                    playerDataItem.playerId = resData.playerId;
+                    playerDataItem.playerLv = resData.playerLv;
+                    playerDataItem.playerName = resData.playerName;
+                    playerDataItem.vipLv = resData.vipLv;
+                    playerDataItem.key = key;
+                    playerData = [];   //清除自定义数据
+                    playerData.push(playerDataItem);
+                    this.setState({ playerData: playerData, key: key + 1 });
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        let { playerData, key } = this.state;
-                        let resData = res.data;
-                        let playerDataItem = {};
-                        playerDataItem.cityName = resData.cityName;
-                        playerDataItem.forceId = resData.forceId;
-                        playerDataItem.playerId = resData.playerId;
-                        playerDataItem.playerLv = resData.playerLv;
-                        playerDataItem.playerName = resData.playerName;
-                        playerDataItem.vipLv = resData.vipLv;
-                        playerDataItem.key = key;
-
-                        playerData = [];   //清除自定义数据
-                        playerData.push(playerDataItem);
-
-                        this.setState({ playerData: playerData, key: key + 1 },
-                            () => {
-                                message.info("用户数据已成功更新")
-                            });
-                    })
-                    .catch(err => {
-                        message.info('查询失败')
-                    })
             }
         });
     }
-
-
-
 
     render() {
         const { getFieldDecorator } = this.props.form;

@@ -1,19 +1,9 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
+const Option = Select.Option;
 import './index.less';
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
@@ -31,34 +21,14 @@ class WordsBlock extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName, reason, duration } = values;
-            let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
             let querystring = `serverId=${serverId}&playerName=${playerName}&reason=${reason}&duration=${duration}`
-            fetch(`/root/banChat.action`, {
-                credentials: 'include', //发送本地缓存数据
-                method: 'POST',
-                headers: {
-                    headers
-                },
-                body: querystring
-            }).then(res => {
-                if (res.status !== 200) {
-                    throw new Error("未知错误")
-                }
-                return res;
-            }).then(res => { return res.json() })
-                .then(res => {
-                    if (res.state === 1) {
-                        message.info("禁言成功")
-                    }
-                    if (res.state === 0) {
-                        throw new Error(res.data.msg)
-                    }
-                })
-                .catch(err => {
-                    message.error(err.message ? err.message : "未知错误")
-                })
-        })
+            let url = "/root/banChat.action"
+            let method = 'POST'
+            let successmsg = '禁言成功'
+            apiFetch(url, method, querystring, successmsg, (res) => {
 
+            })
+        })
     }
 
 
@@ -70,34 +40,13 @@ class WordsBlock extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { serverId, playerName, reason, duration } = values;
-                const querystring = `serverId=${serverId}&playerName=${playerName}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/unbanChat.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    console.log('res:', res)
-                    if (res.status !== 200) {
-                        throw new Error('未知错误')
-                    }
-                    return res;
+                let querystring = `serverId=${serverId}&playerName=${playerName}`
+                let url = "/root/unbanChat.action"
+                let method = 'POST'
+                let successmsg = '解除禁言成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.state === 1) {
-                            message.info("解除禁言成功")
-                        }
-                        if (res.state === 0) {
-                            throw new Error(res.data.msg)
-                        }
-                    })
-                    .catch(err => {
-                        message.error(err.message ? err.message : '未知错误')
-                    })
             }
         });
     }

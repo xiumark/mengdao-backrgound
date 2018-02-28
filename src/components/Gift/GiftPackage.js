@@ -1,19 +1,17 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message, Icon } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { Row, Col } from 'antd';
-import { Input } from 'antd';
-import { Table } from 'antd';
+import { apiFetch } from '../../api/api'
 
 class GiftPackage extends React.Component {
     state = {
         key: 1,
         giftPackageItemsData: [
-            { key: '0', type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
-            { key: '1', type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-            { key: '2', type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            // { key: '0', type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+            // { key: '1', type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
+            // { key: '2', type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
         ]
     }
     columns = [
@@ -33,22 +31,7 @@ class GiftPackage extends React.Component {
             key: 'wildCard',
         },
     ];
-    componentWillMount() {
-        this.getPackageItemList(
-            (res) => {
-                //获取数据，处理，并放入state中，以待显示
-                // console.log("获取的pckage数据为:", res)
-            }
-        );
-    }
-    // getPackageItem=()=>{
-    //     this.getPackageItemList(
-    //         (res)=>{
-    //             console.log("回调函数:", res)
-    //     })
-    // }
-    getPackageItemList = () => { //获取权限列表
-        message.info('从这里获取权限列表');
+    getPackageItemList = () => { //获取礼包信息列表
         let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -64,62 +47,46 @@ class GiftPackage extends React.Component {
                     body: querystring
                 }).then(res => {
                     if (res.status !== 200) {
-                        throw new Error('error')
+                        throw new Error('获取礼包信息失败')
                     }
                     return res.json()
                 })
                     .then(res => {
-                        console.log("获取的pckage数据为:", res)
                         let { giftPackageItemsData, key } = this.state;
                         giftPackageItemsData = [];
                         let items = res.items;
-                        console.log("获取的pckage数据为:", items);
+                        if (!items) {
+                            throw new Error('获取礼包信息失败')
+                        }
+                        message.info("成功获取礼包信息")
                         for (let i = 0; i < items.length; i++) {
                             let data = items[i]
                             let tableItem = Object.assign(data, { key: key });
                             giftPackageItemsData.push(tableItem);
                             key = key + 1;
                         }
-                        console.log("giftPackageItemsData:", giftPackageItemsData);
                         this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
-                            console.log("herere:")
                         })
                     }).catch(err => {
-                        console.log(err)
+                        message.error(err.message ? err.message : '未知错误')
+
                     })
             }
         })
     }
 
-    handleSubmit = (e) => {
-        console.log("e:", e.target.id)
+    handleSubmit = (e) => {//发送礼包
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
                 let { giftType, serverId, playerName, giftContent, duration, title } = values;
                 const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContent}&duration=${duration}&title=${title}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/sendGift.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    console.log('res:', res)
-                    if (res.status !== 200) {
-                        throw new Error('失败')
-                    }
-                    return res;
+                let url = "/root/sendGift.action"
+                let method = 'POST'
+                let successmsg = '成功发送礼包'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                    })
-                    .catch(err => {
-                        message.info('失败')
-                    })
             }
         });
     }
@@ -175,7 +142,7 @@ class GiftPackage extends React.Component {
                             </FormItem>
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
-                                    // rules: [{ required: true, message: '目标用户名!' }],
+                                    // rules: [{ required: true, message: '请输入目标用户名!' }],
                                 })(
                                     <Input placeholder="目标用户名" />
                                     )}
@@ -184,21 +151,21 @@ class GiftPackage extends React.Component {
                         <Col className="gutter-row" md={12}>
                             <FormItem {...formItemLayout} label={"礼品内容"} >
                                 {getFieldDecorator('giftContent', {
-                                    // rules: [{ required: true, message: '礼品内容!' }],
+                                    // rules: [{ required: true, message: '请输入礼品内容!' }],
                                 })(
                                     <Input placeholder="礼品内容" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"有效时间"} >
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: '有效时间!' }],
+                                    // rules: [{ required: true, message: '请输入有效时间!' }],
                                 })(
                                     <Input placeholder="有效时间" />
                                     )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"礼包的名称"} >
                                 {getFieldDecorator('title', {
-                                    // rules: [{ required: true, message: '礼包的名称!' }],
+                                    // rules: [{ required: true, message: '请输入礼包的名称!' }],
                                 })(
                                     <Input placeholder="礼包的名称" />
                                     )}

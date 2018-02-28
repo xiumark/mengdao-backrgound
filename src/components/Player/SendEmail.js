@@ -1,22 +1,9 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-import { resolve } from 'path';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
@@ -31,28 +18,13 @@ class SendEmail extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { mailType, serverId, playerName, attachmenet, mailContent, duration, title } = values;
-                const querystring = `mailType=${mailType}&serverId=${serverId}&playerName=${playerName}&attachmenet=${attachmenet}&mailContent=${mailContent}&duration=${duration}&title=${title}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/sendMail.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw new Error('请求失败')
-                    }
-                    return res;
+                let querystring = `mailType=${mailType}&serverId=${serverId}&playerName=${playerName}&attachmenet=${attachmenet}&mailContent=${mailContent}&duration=${duration}&title=${title}`
+                let url = "/root/sendMail.action"
+                let method = 'POST'
+                let successmsg = '发送邮件成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        message.info('发送邮件成功')
-                    })
-                    .catch(err => {
-                        message.info('发送邮件失败')
-                    })
             }
         });
     }

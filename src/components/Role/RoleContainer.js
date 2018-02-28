@@ -1,19 +1,9 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button,message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
+const Option = Select.Option;
 import './index.less';
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
@@ -55,9 +45,9 @@ class RoleContainer extends React.Component {
                 console.log('从表单中获取的数据是: ', values);
                 let { noticeType, serverId, duration, times } = values;
                 //serverId可不填
-                const querystring =`noticeType=${noticeType}&serverId=${serverId}&duration=${duration}&times=${times}`
-                let headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-                fetch(`/root/sendNotice.action?${querystring}`,{
+                const querystring = `noticeType=${noticeType}&serverId=${serverId}&duration=${duration}&times=${times}`
+                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                fetch(`/root/sendNotice.action?${querystring}`, {
                     credentials: 'include', //发送本地缓存数据
                     method: 'POST',
                     headers: {
@@ -65,17 +55,17 @@ class RoleContainer extends React.Component {
                     },
                     // body
                 }).then(res => {
-                        console.log('res:', res)
-                        if (res.status !== 200) {
-                            throw new Error('添加失败')
-                        }
-                        return res;
-                    })
-                    .then(res =>res.json())
-                    .then(res=>{
+                    console.log('res:', res)
+                    if (res.status !== 200) {
+                        throw new Error('添加失败')
+                    }
+                    return res;
+                })
+                    .then(res => res.json())
+                    .then(res => {
                         //console.log(res)
                     })
-                    .catch(err=>{
+                    .catch(err => {
                         //console.log(err)
                         message.info('添加失败')
                     })
@@ -86,32 +76,32 @@ class RoleContainer extends React.Component {
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
             labelCol: {
-              xs: { span: 24 },
-              sm: { span: 6 },
+                xs: { span: 24 },
+                sm: { span: 6 },
             },
             wrapperCol: {
-              xs: { span: 24 },
-              sm: { span: 14 },
+                xs: { span: 24 },
+                sm: { span: 14 },
             },
-          };
+        };
         const tailFormItemLayout = {
             wrapperCol: {
-              xs: {
-                span: 24,
-                offset: 0,
-              },
-              sm: {
-                span: 14,
-                offset: 6,
-              },
+                xs: {
+                    span: 24,
+                    offset: 0,
+                },
+                sm: {
+                    span: 14,
+                    offset: 6,
+                },
             },
-          };
+        };
         return <div>
             <Card title="获取玩家信息">
                 <Row>
                     <Col className="gutter-row" md={12}>
                         {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
-                        <Form  onSubmit={this.handleSubmit}>
+                        <Form onSubmit={this.handleSubmit}>
                             <FormItem {...formItemLayout} label={"服务器Id"} >
                                 {getFieldDecorator('serverId', {
                                     // rules: [{ required: true, message: '请输入公告类型（默认为1）' }],
@@ -135,9 +125,9 @@ class RoleContainer extends React.Component {
                         {/* <span>创建用户名：</span> */}
                     </Col>
                     <Col className="gutter-row" md={10}>
-                      <Card title="获取的玩家信息内容">
-                        <textarea style={{ width: "100%" ,height:190 }} placeholder="获取的玩家信息内容" />
-                      </Card>
+                        <Card title="获取的玩家信息内容">
+                            <textarea style={{ width: "100%", height: 190 }} placeholder="获取的玩家信息内容" />
+                        </Card>
                     </Col>
                 </Row>
             </Card>

@@ -89,6 +89,5 @@ module.exports = {
       devMode: true,
       favaicon: path.resolve(__dirname, 'src/favicon.ico')
     }),
-
   ],
 };

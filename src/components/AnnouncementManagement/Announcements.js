@@ -1,20 +1,9 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
@@ -22,70 +11,35 @@ class Announcements extends React.Component {
     state = {
         value1: 1,
         value2: 1,
-
     }
 
-    handleButtonClick = (e) => { //获取权限列表
+    handleButtonClick = (e) => { //更新公告内容
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { content } = values;
-            console.log("content:", content)
         })
-        console.log("e:", e)
-        message.info('更新公告内容');
         let querystring = `content=${content.value}`
-        console.log("queryString:", content.value)
-        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        fetch(`/root/setUpdateNotice.action`, {
-            credentials: 'include', //发送本地缓存数据
-            method: 'POST',
-            headers: {
-                headers
-            },
-            body: querystring
-        }).then(res => {
-            console.log("更新content后的res:", res)
+        let url = "/root/setUpdateNotice.action"
+        let method = 'POST'
+        let successmsg = '更新公告内容成功'
+        apiFetch(url, method, querystring, successmsg, (res) => {
 
         })
     }
 
-    handleMenuClick = (e) => {
-        // message.info('Click on menu item.');
-    }
-
-    handleSubmit = (e) => {
+    handleSubmit = (e) => {//发布公告
         e.preventDefault();
-        message.info('发送系统公告');
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('从表单中获取的数据是: ', values);
                 let { noticeType, serverId, content, duration, times } = values;
                 //serverId可不填
+                let querystring = `noticeType=${noticeType}&serverId=${serverId}&content=${content}&duration=${duration}&times=${times}`
+                let url = "/root/sendNotice.action"
+                let method = 'POST'
+                let successmsg = '发送公告成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
 
-                const querystring = `noticeType=${noticeType}&serverId=${serverId}&content=${content}&duration=${duration}&times=${times}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/sendNotice.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    console.log('res:', res)
-                    if (res.status !== 200) {
-                        throw new Error('添加失败')
-                    }
-                    return res;
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        //console.log(res)
-                    })
-                    .catch(err => {
-                        //console.log(err)
-                        message.info('添加失败')
-                    })
             }
         });
     }

@@ -1,8 +1,8 @@
 import React from 'react';
-import {connect} from 'react-redux'
-import {Link} from 'react-router';
-import {bindActionCreators} from 'redux'
-import {Spin, message, Tabs, Icon} from 'antd';
+import { connect } from 'react-redux'
+import { Link } from 'react-router';
+import { bindActionCreators } from 'redux'
+import { Spin, message, Tabs, Icon } from 'antd';
 import Header from '../Header';
 import Footer from '../Footer';
 import Sidebar from '../Sidebar';
@@ -13,8 +13,8 @@ import './index.less';
 import globalConfig from 'config.js';
 import ajax from '../../utils/ajax';
 import Logger from '../../utils/Logger';
-import sidebarMenu, {headerMenu} from '../../menu.js';
-import {loginSuccessCreator} from '../../redux/Login.js';
+import sidebarMenu, { headerMenu } from '../../menu.js';
+import { loginSuccessCreator } from '../../redux/Login.js';
 
 const TabPane = Tabs.TabPane;
 const logger = Logger.getLogger('App');
@@ -91,7 +91,7 @@ class App extends React.Component {
         //      当前已经是登陆状态 ==> 直接定位到登陆后的首页
         // else
         //      还没有登陆 ==> 停留在登陆页面
- 
+
         // loginSuccess后要做的操作:
         // (1) 假设跟服务端约定好session过期时间是1小时,那么set_cookie("expire_time", 当前时间+2小时);
         // (2) 定位到登陆后的首页s
@@ -134,7 +134,7 @@ class App extends React.Component {
     } else {
       message.error(errorMsg);
       logger.debug('not login, redirect to Login component');
-      this.setState({tryingLogin: false});
+      this.setState({ tryingLogin: false });
     }
   }
 
@@ -155,7 +155,7 @@ class App extends React.Component {
         return;
       }
       if (item.icon) {
-        tabTitleMap.set(item.key, <span className="ant-layout-tab-text"><Icon type={item.icon}/>{item.name}</span>);
+        tabTitleMap.set(item.key, <span className="ant-layout-tab-text"><Icon type={item.icon} />{item.name}</span>);
       } else {
         tabTitleMap.set(item.key, <span className="ant-layout-tab-text">{item.name}</span>);
       }
@@ -173,7 +173,7 @@ class App extends React.Component {
     headerMenu.forEach(browseMenu);
 
     // 最后要手动增加一个key, 对应于404页面
-    tabTitleMap.set('*', <span className="ant-layout-tab-text"><Icon type="frown-o"/>Error</span>);
+    tabTitleMap.set('*', <span className="ant-layout-tab-text"><Icon type="frown-o" />Error</span>);
     return tabTitleMap;
   }
 
@@ -231,7 +231,7 @@ class App extends React.Component {
    * 改变tab时的回调
    */
   onTabChange = (activeKey) => {
-    this.setState({currentTabKey: activeKey});
+    this.setState({ currentTabKey: activeKey });
   };
 
   /**
@@ -263,7 +263,7 @@ class App extends React.Component {
 
     // 过滤panes
     const newTabPanes = this.state.tabPanes.filter(pane => pane.key !== targetKey);
-    this.setState({tabPanes: newTabPanes, currentTabKey: nextTabKey});
+    this.setState({ tabPanes: newTabPanes, currentTabKey: nextTabKey });
   };
 
   /**
@@ -284,17 +284,17 @@ class App extends React.Component {
         return <div className="ant-layout-container"><Welcome /></div>;
       } else {
         return <Tabs activeKey={this.state.currentTabKey} type="editable-card"
-                     onEdit={this.onTabRemove} onChange={this.onTabChange}
-                     hideAdd className="ant-layout-tab">
+          onEdit={this.onTabRemove} onChange={this.onTabChange}
+          hideAdd className="ant-layout-tab">
           {this.state.tabPanes.map(pane => <TabPane tab={pane.title} key={pane.key}
-                                                    closable={true}>{pane.content}</TabPane>)}
+            closable={true}>{pane.content}</TabPane>)}
         </Tabs>;
       }
     }
     // 非tab模式, 显示面包屑和对应的组件
     else {
       return <div>
-        <Breadcrumb routes={this.props.routes}/>
+        <Breadcrumb routes={this.props.routes} />
         <div className="ant-layout-container">
           {this.props.children}
         </div>
@@ -306,24 +306,24 @@ class App extends React.Component {
   render() {
     // 显示一个加载中
     if (this.state.tryingLogin) {
-      return <div className="center-div"><Spin spinning={true} size="large"/></div>;
+      return <div className="center-div"><Spin spinning={true} size="large" /></div>;
     }
 
     // 如果没有登陆，跳转到登录界面，如果通过cookie判断已经登陆，跳过这里直接登陆
     // let cookieArray = document.cookie.split(";")[2].split("=")[1];
     let cookieArray = document.cookie.split(";");
-    console.log("cookieArray:", cookieArray)
+    // console.log("cookieArray:", cookieArray)
     let loginState = false;
-    for (let i=0;i<cookieArray.length;i++){
-      if (cookieArray[i].split("=")[0]=="loginState"){
-        if (cookieArray[i].split("=")[1]=="1"){
+    for (let i = 0; i < cookieArray.length; i++) {
+      if (cookieArray[i].split("=")[0] == "loginState") {
+        if (cookieArray[i].split("=")[1] == "1") {
           loginState = true;
         }
       }
     }
-    console.log("loginState:", loginState)
-    
-    if (!this.props.login && (!loginState) ) {
+    // console.log("loginState:", loginState)
+
+    if (!this.props.login && (!loginState)) {
       return <Login />;
     }
 
@@ -334,7 +334,7 @@ class App extends React.Component {
         <Sidebar />
 
         <div id="main-content-div" className={this.props.collapse ? 'ant-layout-main-collapse' : 'ant-layout-main'}>
-          <Header userName={this.props.userName}/>
+          <Header userName={this.props.userName} />
           {this.renderBody()}
           <Footer />
         </div>

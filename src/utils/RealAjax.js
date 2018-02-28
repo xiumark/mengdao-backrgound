@@ -66,7 +66,7 @@ class Ajax {
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
             // 正常返回 200 OK
-            console.log("response:", response);
+            // console.log("response:", response);
             return response.json();
           } else if (response.status >= 500 && response.status < 600) {
             // 其他状态码
@@ -76,7 +76,7 @@ class Ajax {
         .then((json) => {
           if (json != null) {
             // 获取到了json数据
-            console.log("返回的json:", json, ",responseParam:", responseParam);
+            // console.log("返回的json:", json, ",responseParam:", responseParam);
             responseCall && responseCall.apply(null, [json, responseParam]);
           } else {
             // 错误处理

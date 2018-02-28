@@ -1,27 +1,15 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
+const Option = Select.Option;
 import './index.less';
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
 class Rrecharge extends React.Component {
     state = {
-
     }
-
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -30,29 +18,12 @@ class Rrecharge extends React.Component {
                 let { serverId, playerName, orderId } = values;
                 //serverId可不填
                 const querystring = `serverId=${serverId}&playerName=${playerName}&orderId=${orderId}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/repay.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    console.log('res:', res)
-                    if (res.status !== 200) {
-                        throw new Error('请求失败')
-                    }
-                    return res;
+                let url = "/root/repay.action"
+                let method = 'POST'
+                let successmsg = '补单成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        //console.log(res)
-                    })
-                    .catch(err => {
-                        //console.log(err)
-                        message.info('请求失败')
-                    })
             }
         });
     }

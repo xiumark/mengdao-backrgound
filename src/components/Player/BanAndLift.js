@@ -1,19 +1,9 @@
 import React from 'react';
-import { Card, Form, Tooltip, Cascader, Select, Checkbox, Button, message } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
+const Option = Select.Option;
 import './index.less';
-//单选框
-import { Radio } from 'antd';
-const RadioGroup = Radio.Group;
-//下拉菜单
-import { Menu, Dropdown, Icon } from 'antd';
-import { Row, Col } from 'antd';
-const SubMenu = Menu.SubMenu;
-
-import { Input } from 'antd';
-
-import { Tree } from 'antd';
-const TreeNode = Tree.TreeNode;
+import { apiFetch } from '../../api/api'
 /**
  * 测试用
  */
@@ -32,33 +22,13 @@ class BanAndLift extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { playerName, serverId, reason, duration } = values;
-            const querystring = `playerName=${playerName}&serverId=${serverId}&reason=${reason}&duration=${duration}`
-            let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-            fetch(`/root/banUser.action`, {
-                credentials: 'include', //发送本地缓存数据
-                method: 'POST',
-                headers: {
-                    headers
-                },
-                body: querystring
-            }).then(res => {
-                if (res.status !== 200) {
-                    throw new Error({ message: '封禁角色失败' })
-                }
-                return res;
+            let querystring = `playerName=${playerName}&serverId=${serverId}&reason=${reason}&duration=${duration}`
+            let url = "/root/banUser.action"
+            let method = 'POST'
+            let successmsg = '封禁角色成功'
+            apiFetch(url, method, querystring, successmsg, (res) => {
+
             })
-                .then(res => res.json())
-                .then(res => {
-                    if (res.state === 1) {
-                        message.info("封禁角色成功")
-                    }
-                    if (res.state === 0) {
-                        throw new Error(res.data.msg)
-                    }
-                })
-                .catch(err => {
-                    message.error(err.message ? err.message : "未知错误")
-                })
         })
     }
 
@@ -71,33 +41,13 @@ class BanAndLift extends React.Component {
             if (!err) {
                 let { playerName, serverId } = values;
                 //serverId可不填
-                const querystring = `playerName=${playerName}&serverId=${serverId}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/unbanUser.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw new Error({ message: '解除封禁失败' })
-                    }
-                    return res;
+                let querystring = `playerName=${playerName}&serverId=${serverId}`
+                let url = "/root/unbanUser.action"
+                let method = 'POST'
+                let successmsg = '解除封禁成功'
+                apiFetch(url, method, querystring, successmsg, (res) => {
+
                 })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.state === 1) {
-                            message.info("解除封禁成功")
-                        }
-                        if (res.state === 0) {
-                            throw new Error(res.data.msg)
-                        }
-                    })
-                    .catch(err => {
-                        message.error(err.message ? err.message : '未知错误')
-                    })
             }
         });
     }
