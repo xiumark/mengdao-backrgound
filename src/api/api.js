@@ -10,14 +10,14 @@ export function apiFetch(url, method, querystring, successmsg, cb) {
         },
         body: querystring
     }).then(res => {
-        console.log("here")
+        // console.log("here")
         if (res.status !== 200) {
             throw new Error("未知错误")
         }
         return res;
     }).then(res => res.json())
         .then(res => {
-            console.log("res", res)
+            // console.log("res", res)
             if (res.state === 1) {
                 message.info(successmsg)
                 cb && cb(res)
