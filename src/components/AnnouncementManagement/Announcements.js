@@ -80,30 +80,30 @@ class Announcements extends React.Component {
                                     ],
                                 })(
                                     <Select placeholder="请选择公告类型">
-                                        <Option value="1">1</Option>
+                                        <Option value="1">公告类型1</Option>
                                     </Select>
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"服务器Id"}>
                                 {getFieldDecorator('serverId', {
                                     // rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
                                     <Input placeholder="服务器Id" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"公告持续时间"}>
                                 {getFieldDecorator('duration', {
                                     rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
                                 })(
                                     <Input placeholder="公告持续时间（分钟）" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"滚动次数"}>
                                 {getFieldDecorator('times', {
                                     rules: [{ required: true, message: '请输入滚动次数' }],
                                 })(
                                     <Input placeholder="滚动次数" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
                                 <Button type="primary" htmlType="submit">发送</Button>
@@ -121,7 +121,7 @@ class Announcements extends React.Component {
                                 rules: [{ required: true, message: '请输入公告内容' }],
                             })(
                                 <textarea style={{ width: "140%", height: 190 }} placeholder="更新公告内容" />
-                                )}
+                            )}
                         </FormItem>
                         {/* <textarea name="a" style={{ width: 400 ,height:180 }} placeholder="在这里输入待更新公告内容"></textarea> */}
                         <FormItem {...tailFormItemLayout}>
