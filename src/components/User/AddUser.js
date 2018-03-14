@@ -12,6 +12,7 @@ class AddUser extends React.Component {
     state = {
         authListData: [
             // { key: 6, authId: 6, authName: "禁言" },
+            // { key: 6, authId: 6, authName: "禁言" },
             // { key: 5, authId: 5, authName: "玩家信息查询" },
             // { key: 7, authId: 7, authName: "补单" },
             // { key: 8, authId: 8, authName: "发送系统公告" },
@@ -74,6 +75,7 @@ class AddUser extends React.Component {
     }
     render() {
         const { getFieldDecorator } = this.props.form;
+        // const { authListData } = this.state;
         const { authListData } = this.state;
         const formItemLayout = {
             labelCol: {
