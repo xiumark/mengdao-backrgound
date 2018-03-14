@@ -25,17 +25,15 @@ const logger = Logger.getLogger('App');
  */
 class App extends React.Component {
 
-  // App组件还是不要做成PureComponent了, 可能会有bug, 因为无法要求所有子组件都是pure的
 
-  // 要清楚登录逻辑:
+  // 登录逻辑:
   // 1. 初始化时, 先尝试获取已登录的用户, 因为可能还留着上次登录的cookie
   // 2. 如果当前没有登录, 就跳转到Login组件, 手动输入用户名密码重新登录
   // 3. Login组件中登录成功后, 会触发一个loginSuccess action, 修改redux中的状态, 进而触发App组件的re-render
 
   state = {
     // tryingLogin: true, // App组件要尝试登录, 在屏幕正中显示一个正加载的动画
-    tryingLogin: false, // App组件要尝试登录, 在屏幕正中显示一个正加载的动画
-
+    tryingLogin: false,
     // tab模式相关的状态
     currentTabKey: '',  // 当前激活的是哪个tab
     tabPanes: [],  // 当前总共有哪些tab
@@ -43,6 +41,7 @@ class App extends React.Component {
 
   /**
    * 组件挂载之前判断是否要更新tab
+   * tab模式是指添加以tab的显示方式
    */
   componentWillMount() {
     // 如果不是tab模式直接返回
@@ -270,28 +269,21 @@ class App extends React.Component {
    * 渲染界面右侧主要的操作区
    */
   renderBody() {
-    // 我本来是在jsx表达式中判断globalConfig.tabMode.enable的, 比如{globalConfig.tabMode.enable && XXX}
-    // 后来想会不会拿到外面去判断好些, webpack会不会把这个语句优化掉? 好像有一些类似的机制
-    // 因为在编译的时候, globalConfig.tabMode.enable的值已经是确定的了, 下面的if-else其实是可以优化的
-    // 如果是jsx表达式那种写法, 感觉不太可能优化
-
-    // alert("renderBody(),cookie=" + document.cookie);
-
-    // tab模式下, 不显示面包屑？？？？？这里的tab模式一直没搞清是干什么的
+    //tab模式
     if (globalConfig.tabMode.enable === true) {
       // 如果没有tab可以显示, 就显示欢迎界面
       if (this.state.tabPanes.length === 0) {
         return <div className="ant-layout-container"><Welcome /></div>;
       } else {
-        return <Tabs activeKey={this.state.currentTabKey} type="editable-card"
+        return <Tabs activeKey={this.state.currentTabKey} type="card"
           onEdit={this.onTabRemove} onChange={this.onTabChange}
           hideAdd className="ant-layout-tab">
           {this.state.tabPanes.map(pane => <TabPane tab={pane.title} key={pane.key}
-            closable={true}>{pane.content}</TabPane>)}
+          >{pane.content}</TabPane>)}
         </Tabs>;
       }
     }
-    // 非tab模式, 显示面包屑和对应的组件
+    //非tab模式, 显示面包屑和对应的组件
     else {
       return <div>
         <Breadcrumb routes={this.props.routes} />
@@ -310,9 +302,7 @@ class App extends React.Component {
     }
 
     // 如果没有登陆，跳转到登录界面，如果通过cookie判断已经登陆，跳过这里直接登陆
-    // let cookieArray = document.cookie.split(";")[2].split("=")[1];
     let cookieArray = document.cookie.split(";");
-    // console.log("cookieArray:", cookieArray)
     let loginState = false;
     for (let i = 0; i < cookieArray.length; i++) {
       if (cookieArray[i].split("=")[0] == "loginState") {
@@ -321,18 +311,15 @@ class App extends React.Component {
         }
       }
     }
-    // console.log("loginState:", loginState)
 
     if (!this.props.login && (!loginState)) {
       return <Login />;
     }
 
-    // 正常显示
+    // 登陆状态，正常显示
     return (
       <div className="ant-layout-base">
-        {/*整个页面被一个ant-layout-base的div包围, 分为sidebar/header/footer/content等几部分*/}
         <Sidebar />
-
         <div id="main-content-div" className={this.props.collapse ? 'ant-layout-main-collapse' : 'ant-layout-main'}>
           <Header userName={this.props.userName} />
           {this.renderBody()}

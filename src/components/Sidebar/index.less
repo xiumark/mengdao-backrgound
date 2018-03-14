@@ -18,6 +18,9 @@
     display: none;
   }
 }
+.ant-menu-submenu-inline > .ant-menu-submenu-title:after{
+  display: none;//去掉子菜单后面的方格
+}
 
 .ant-layout-sidebar-base {
   background: #404040;
@@ -68,6 +71,11 @@
 
 .ant-layout-sidebar > .ant-menu > .ant-menu-item > .anticon {
   transition: font-size .3s;
+}
+.anticon {
+  &.anticon-left{
+    display: none;
+  }
 }
 
 /* 定义侧边栏正常显示时的样式 - end */

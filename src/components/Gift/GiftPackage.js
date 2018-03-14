@@ -131,21 +131,21 @@ class GiftPackage extends React.Component {
                                         <Option value="1">1 个人礼包</Option>
                                         <Option value="2">2 单服礼包</Option>
                                     </Select>
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"服务器Id"} >
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
                                     <Input placeholder="服务器Id" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
                                     // rules: [{ required: true, message: '请输入目标用户名!' }],
                                 })(
                                     <Input placeholder="目标用户名" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                         <Col className="gutter-row" md={12}>
@@ -154,21 +154,21 @@ class GiftPackage extends React.Component {
                                     // rules: [{ required: true, message: '请输入礼品内容!' }],
                                 })(
                                     <Input placeholder="礼品内容" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"有效时间"} >
                                 {getFieldDecorator('duration', {
                                     // rules: [{ required: true, message: '请输入有效时间!' }],
                                 })(
                                     <Input placeholder="有效时间" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"礼包的名称"} >
                                 {getFieldDecorator('title', {
                                     // rules: [{ required: true, message: '请输入礼包的名称!' }],
                                 })(
                                     <Input placeholder="礼包的名称" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                     </Row>

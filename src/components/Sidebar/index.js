@@ -1,14 +1,14 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import {Menu, Icon} from 'antd';
+import { Link } from 'react-router';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { Menu, Icon } from 'antd';
 import Logo from '../Logo';
 import Logger from '../../utils/Logger';
 import items from 'menu.js';  // 由于webpack中的设置, 不用写完整路径
 import globalConfig from 'config.js';
 import './index.less';
-import {sidebarCollapseCreator} from '../../redux/Sidebar.js';
+import { sidebarCollapseCreator } from '../../redux/Sidebar.js';
 
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
@@ -20,18 +20,12 @@ const logger = Logger.getLogger('Sidebar');
  */
 class Sidebar extends React.PureComponent {
 
-  // 尝试把sidebar做成PureComponent, 注意可能的bug
-  // 注意PureComponent的子组件也应该是pure的
-
   state = {
     openKeys: [],  // 当前有哪些submenu被展开
   };
 
-  // 哪些状态组件自己维护, 哪些状态放到redux, 是需要权衡的
-
   /**
    * 将菜单项配置转换为对应的MenuItem组件
-   *
    * @param obj sidebar菜单配置项
    * @param paths 父级目录, array
    * @returns {XML}
@@ -40,14 +34,9 @@ class Sidebar extends React.PureComponent {
     const parentPath = paths.join('/');   // 将各级父目录组合成完整的路径
     logger.debug('transform %o to path %s', obj, parentPath);
 
-    // 这个表达式还是有点恶心的...
-    // JSX虽然方便, 但是很容易被滥用, ES6也是
-    // 注意这里的样式, 用chrome一点点调出来的...
-    // 我的css都是野路子, 头痛医头脚痛医脚, 哪里显示有问题就去调一下, 各种inline style
-    // 估计事后去看的话, 我都忘了为什么要加这些样式...
     return (
       <MenuItem key={obj.key} style={{ margin: '0px' }}>
-        {obj.icon && <Icon type={obj.icon}/>}
+        {obj.icon && <Icon type={obj.icon} />}
         {/*对于level1的菜单项, 如果没有图标, 取第一个字用于折叠时显示*/}
         {isLevel1 && !obj.icon && <span className="invisible-nav-text">{obj.name[0]}</span>}
         <Link to={`/${parentPath}`} style={{ display: 'inline' }}><span className="nav-text">{obj.name}</span></Link>
@@ -64,13 +53,12 @@ class Sidebar extends React.PureComponent {
 
     // 菜单项是从配置中读取的, parse过程还是有点复杂的
     // map函数很好用
-    const menu = items.map(level1=> {
+    const menu = items.map(level1 => {
       // parse一级菜单
       paths.push(level1.key);
       level1KeySet.add(level1.key);
       if (this.state.openKeys.length === 0) {
-        // this.state.openKeys.push(level1.key);  // 默认展开第一个菜单, 直接修改state, 没必要setState
-        this.setState({openKeys:[...this.state.openKeys,level1.key]})
+        this.setState({ openKeys: [...this.state.openKeys, level1.key] })
       }
 
       // 是否有子菜单?
@@ -93,7 +81,7 @@ class Sidebar extends React.PureComponent {
 
             return (
               <SubMenu key={level2.key}
-                       title={level2.icon ? <span><Icon type={level2.icon} />{level2.name}</span> : level2.name}>
+                title={level2.icon ? <span><Icon type={level2.icon} />{level2.name}</span> : level2.name}>
                 {level3menu}
               </SubMenu>
             );
@@ -110,7 +98,7 @@ class Sidebar extends React.PureComponent {
         let level1Title;
         // 同样, 如果没有图标的话取第一个字
         if (level1.icon) {
-          level1Title = <span><Icon type={level1.icon}/><span className="nav-text">{level1.name}</span></span>;
+          level1Title = <span><Icon type={level1.icon} /><span className="nav-text">{level1.name}</span></span>;
         } else {
           level1Title = <span><span className="invisible-nav-text">{level1.name[0]}</span><span
             className="nav-text">{level1.name}</span></span>;
@@ -151,7 +139,7 @@ class Sidebar extends React.PureComponent {
     }
 
     if (!globalConfig.sidebar.autoMenuSwitch) {  // 不开启这个功能
-      this.setState({openKeys});
+      this.setState({ openKeys });
       return;
     }
 
@@ -176,7 +164,7 @@ class Sidebar extends React.PureComponent {
     newOpenKeys.push(lastKey);
 
     logger.debug('new open keys: %o', newOpenKeys);
-    this.setState({openKeys: newOpenKeys});
+    this.setState({ openKeys: newOpenKeys });
   };
 
   /**
@@ -184,28 +172,28 @@ class Sidebar extends React.PureComponent {
    *
    * @param key
    */
-  handleSelect = ({key}) => {
+  handleSelect = ({ key }) => {
     if (this.props.collapse) {
       this.props.handleClickCollapse();
     }
     // 如果是level1级别的菜单触发了这个事件, 说明这个菜单没有子项, 需要把其他所有submenu折叠
     if (globalConfig.sidebar.autoMenuSwitch && this.level1KeySet.has(key) && this.state.openKeys.length > 0) {
-      this.setState({openKeys: []});
+      this.setState({ openKeys: [] });
     }
   };
 
   render() {
     return (
       <aside className={this.props.collapse ? "ant-layout-sidebar-collapse" : "ant-layout-sidebar"}>
-        <Logo collapse={this.props.collapse}/>
+        <Logo collapse={this.props.collapse} />
         <Menu theme="dark" mode="inline"
-              onOpenChange={this.handleOpenChange}
-              onSelect={this.handleSelect}
-              openKeys={this.props.collapse ? [] : this.state.openKeys}>
+          onOpenChange={this.handleOpenChange}
+          onSelect={this.handleSelect}
+          openKeys={this.props.collapse ? [] : this.state.openKeys}>
           {this.menu}
         </Menu>
         <div className="ant-layout-sidebar-trigger" onClick={this.props.handleClickCollapse}>
-          <Icon type={this.props.collapse ? "right" : "left"}/>
+          <Icon type={this.props.collapse ? "right" : "left"} />
         </div>
       </aside>
     );

@@ -54,7 +54,7 @@ module.exports = {
   },
 
   module: {
-    loaders: [  // 定义各种loader
+    loaders: [
       {
         test: /\.jsx?$/,
         loaders: ['react-hot', 'babel-loader?' + JSON.stringify(babelLoaderConfig)],  // react-hot-loader可以不用刷新页面, 如果用普通的dev-server的话会自动刷新页面
@@ -82,10 +82,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'index.tmpl.html',
       title: globalConfig.name,
-
-      // HtmlWebpackPlugin自己有一个favicon属性, 但用起来有点问题, 所以自己重新搞个favIcon属性
-      // favIcon: globalConfig.favicon,
-      // 这个属性也是我自己定义的, dev模式下要加载一些额外的js
       devMode: true,
       favaicon: path.resolve(__dirname, 'src/favicon.ico')
     }),

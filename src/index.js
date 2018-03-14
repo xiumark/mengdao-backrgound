@@ -7,10 +7,9 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory, hashHistory } from 'react-router';
 import './utils/index.js';  // 引入各种prototype辅助方法
-import store from 'redux/store.js';  // redux store
+import store from 'redux/store.js';
 
 // import '../public/md5'   //引入root中未能引入的文件的第二种解决方案，js程序的入口引入
-// 开始引入各种自定义的组件
 import App from './components/App';
 import Welcome from './components/Welcome';
 import Error from './components/Error';
@@ -46,14 +45,11 @@ const RoleContainer = (location, cb) => {
     cb(null, require('./components/Role/RoleContainer').default)
   }, 'RoleContainer');
 };
-// 路由表, 只要menu.js中所有的叶子节点配置了路由就可以了
-// 我本来想根据menu.js自动生成路由表, 但那样太不灵活了, 还是自己配置好些
 const routes = (
   <Provider store={store}>
     <Router history={hashHistory}>
       {/* <Route path="/logout" component={App}/> */}
       <Route path="/" component={App}>
-        {/* <IndexRoute component={Hello}></IndexRoute> */}
         <Route path="userManagement">
           <Route path="addUser" component={AddUser} />
           <Route path="editUser" component={EditUser} />

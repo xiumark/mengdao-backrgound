@@ -92,9 +92,13 @@ class AddUser extends React.Component {
                     offset: 0,
                 },
                 sm: {
-                    span: 14,
-                    offset: 6,
+                    span: 16,
+                    offset: 8,
                 },
+                lg: {
+                    span: 18,
+                    offset: 6,
+                }
             },
         };
         return <div>
@@ -108,28 +112,28 @@ class AddUser extends React.Component {
                                     rules: [{ required: true, message: '请输入用户名' }],
                                 })(
                                     <Input placeholder="请输入用户名" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"用户密码"} >
                                 {getFieldDecorator('password', {
                                     rules: [{ required: true, message: '请输入用户密码' }],
                                 })(
                                     <Input type="password" placeholder="请输入用户密码" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"用户邮箱"} >
                                 {getFieldDecorator('email', {
                                     rules: [{ required: true, message: '请输入用户邮箱' }],
                                 })(
                                     <Input placeholder="请输入用户邮箱" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"用户权限"} >
                                 {getFieldDecorator('auths', {
                                     rules: [{ required: true, message: '请输入用户权限Id' }],
                                 })(
                                     <Input placeholder="用户权限Id（用冒号隔开）" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >
                                 <Button type="primary" htmlType="submit">创建用户</Button>
