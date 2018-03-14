@@ -128,8 +128,8 @@ class GiftPackage extends React.Component {
                                     ],
                                 })(
                                     <Select placeholder="请选择礼包类型">
-                                        <Option value="1">1 个人礼包</Option>
-                                        <Option value="2">2 单服礼包</Option>
+                                        <Option value="1">个人礼包</Option>
+                                        <Option value="2">单服礼包</Option>
                                     </Select>
                                 )}
                             </FormItem>

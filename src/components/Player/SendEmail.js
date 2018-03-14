@@ -66,38 +66,38 @@ class SendEmail extends React.Component {
                                     ],
                                 })(
                                     <Select placeholder="请选择邮件类型">
-                                        <Option value="1">1（个人邮件）</Option>
-                                        <Option value="2">2（单服邮件）</Option>
+                                        <Option value="1">个人邮件</Option>
+                                        <Option value="2">单服邮件</Option>
                                     </Select>
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"服务器Id"} >
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
                                     <Input placeholder="请输入服务器Id" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
                                     // rules: [{ required: true, message: '请输入目标用户名' }],
                                 })(
                                     <Input placeholder="请输入目标用户名（单服邮件可不填）" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"附件内容"} >
                                 {getFieldDecorator('attachmenet', {
                                     rules: [{ required: true, message: '请输入附件内容' }],
                                 })(
                                     <Input placeholder="请输入附件内容" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"有效时间"} >
                                 {getFieldDecorator('duration', {
                                     rules: [{ required: true, message: '请输入有效时间!' }],
                                 })(
                                     <Input placeholder="请输入有效时间（分钟）" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                         <Col sm={12} md={12} xs={24}>
@@ -106,14 +106,14 @@ class SendEmail extends React.Component {
                                     rules: [{ required: true, message: '请输入邮件名称!' }],
                                 })(
                                     <Input placeholder="请输入邮件名称" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"邮件正文"} >
                                 {getFieldDecorator('mailContent', {
                                     // rules: [{ required: true, message: '请输入滚动次数' }],
                                 })(
                                     <textarea style={{ minHeight: 200, width: "100%" }} placeholder="请输入邮件正文" />
-                                    )}
+                                )}
                             </FormItem>
                         </Col>
                     </Row>
