@@ -4,15 +4,29 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
+import { getServiceList } from '../../api/service'
 /**
  * 测试用
  */
 class GiftCode extends React.Component {
     state = {
         giftCode: [],
-        cardWidth: ''
+        cardWidth: '',
+        serviceList: [
+            { serverId: "1", serverName: "sg_banshu", serverState: 0 },
+            { serverId: "2", serverName: "sg_dev", serverState: 0 },
+            { serverId: "90002", serverName: "sg_90002", serverState: 0 }
+        ],
     }
-
+    componentWillMount() {
+        getServiceList((res) => {
+            // let serviceIdList = res.map(item => {
+            //     return item.serverId
+            // })
+            // this.setState({ serviceIdList: serviceIdList })
+            this.setState({ serviceList: res })
+        })
+    }
     /**
      * 获取礼品码并且显示
      */
@@ -37,7 +51,7 @@ class GiftCode extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { giftCode, cardWidth } = this.state;
+        const { giftCode, cardWidth, serviceList } = this.state;
         let middle = Math.ceil(giftCode.length / 2);
         // Math.ceil(5/2)
         let leftContent = [];
@@ -86,42 +100,55 @@ class GiftCode extends React.Component {
                                         <Option value="1">1 新手礼品码 </Option>
                                         <Option value="2">2 个人礼品码 </Option>
                                     </Select>
-                                    )}
+                                )}
                             </FormItem>
-                            <FormItem {...formItemLayout} label={"服务器Id"}>
+                            <FormItem {...formItemLayout} label="服务器ID" >
+                                {getFieldDecorator('serverId', {
+                                    rules: [
+                                        { required: true, message: '请选择服务器ID' },
+                                    ],
+                                })(
+                                    <Select placeholder="选择服务器名称">
+                                        {serviceList.map((item, index) => {
+                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
+                            {/* <FormItem {...formItemLayout} label={"服务器Id"}>
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
                                     <Input placeholder="服务器Id" />
-                                    )}
-                            </FormItem>
+                                )}
+                            </FormItem> */}
                             <FormItem {...formItemLayout} label={"联运商"}>
                                 {getFieldDecorator('yx', {
                                     rules: [{ required: true, message: '请输入联运商名称' }],
                                 })(
                                     <Input placeholder="联运商" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"申请礼品码数量"}>
                                 {getFieldDecorator('num', {
                                     rules: [{ required: true, message: '请输入申请的礼品码数量' }],
                                 })(
                                     <Input placeholder="礼品码数量（最多50个）" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"礼品内容"}>
                                 {getFieldDecorator('giftContent', {
                                     rules: [{ required: true, message: '请输入申请的礼品内容' }],
                                 })(
                                     <Input placeholder="礼品内容" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"有效时间"}>
                                 {getFieldDecorator('duration', {
                                     rules: [{ required: true, message: '请输入有效时间' }],
                                 })(
                                     <Input placeholder="有效时间（分钟）" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
                                 <Button type="primary" htmlType="submit">获取</Button>

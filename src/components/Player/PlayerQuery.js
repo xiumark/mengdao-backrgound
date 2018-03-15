@@ -4,6 +4,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
+import { getServiceList } from '../../api/service'
 /**
  * 测试用
  */
@@ -29,7 +30,12 @@ class PlayerQuery extends React.Component {
             //     playerName: '玩家3',
             //     vipLv: 0,
             // },
-        ]
+        ],
+        serviceList: [
+            { serverId: "1", serverName: "sg_banshu", serverState: 0 },
+            { serverId: "2", serverName: "sg_dev", serverState: 0 },
+            { serverId: "90002", serverName: "sg_90002", serverState: 0 }
+        ],
     }
 
     columns = [
@@ -62,7 +68,73 @@ class PlayerQuery extends React.Component {
             title: 'VIP等级',
             dataIndex: 'vipLv',
             key: 'vipLv',
-        }];
+        },
+
+
+        {
+            title: '战斗力',
+            dataIndex: 'fightCapacity',
+            key: 'fightCapacity',
+        },
+        {
+            title: '主线任务进度',
+            dataIndex: 'mainTaskId',
+            key: 'mainTaskId',
+        },
+        {
+            title: '主线任务名称',
+            dataIndex: 'mainTaskName',
+            key: 'mainTaskName',
+        },
+        {
+            title: '元宝数',
+            dataIndex: 'diamond',
+            key: 'diamond',
+        },
+        {
+            title: '关卡进度',
+            dataIndex: 'armyId',
+            key: 'armyId',
+        },
+        {
+            title: '用户来源',
+            dataIndex: 'yxSource',
+            key: 'yxSource',
+        },
+        {
+            title: '渠道',
+            dataIndex: 'yx',
+            key: 'yx',
+        },
+        {
+            title: '创角时间',
+            dataIndex: 'createTime',
+            key: 'createTime',
+        },
+        {
+            title: '最近登陆时间',
+            dataIndex: 'lastLoginTime',
+            key: 'lastLoginTime',
+        },
+        {
+            title: '最近退出时间',
+            dataIndex: 'lastLogoutTime',
+            key: 'lastLogoutTime',
+        },
+
+    ];
+
+
+
+    componentWillMount() {
+        getServiceList((res) => {
+            // let serviceIdList = res.map(item => {
+            //     return item.serverId
+            // })
+            // this.setState({ serviceIdList: serviceIdList })
+            this.setState({ serviceList: res })
+        })
+    }
 
     handleSubmit = (e) => {  //查询玩家信息
         e.preventDefault();
@@ -85,6 +157,16 @@ class PlayerQuery extends React.Component {
                     playerDataItem.playerName = resData.playerName;
                     playerDataItem.vipLv = resData.vipLv;
                     playerDataItem.key = key;
+                    playerDataItem.fightCapacity = resData.fightCapacity;
+                    playerDataItem.mainTaskId = resData.mainTaskId;
+                    playerDataItem.mainTaskName = resData.mainTaskName;
+                    playerDataItem.diamond = resData.diamond;
+                    playerDataItem.armyId = resData.armyId;
+                    playerDataItem.yxSource = resData.yxSource;
+                    playerDataItem.yx = resData.yx;
+                    playerDataItem.createTime = resData.createTime;
+                    playerDataItem.lastLoginTime = resData.lastLoginTime;
+                    playerDataItem.lastLogoutTime = resData.lastLogoutTime;
                     playerData = [];   //清除自定义数据
                     playerData.push(playerDataItem);
                     this.setState({ playerData: playerData, key: key + 1 });
@@ -95,7 +177,7 @@ class PlayerQuery extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { playerData } = this.state;
+        const { playerData, serviceList } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 6 },
@@ -124,19 +206,33 @@ class PlayerQuery extends React.Component {
                     <Col className="gutter-row" md={12}>
                         {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
                         <Form onSubmit={this.handleSubmit}>
-                            <FormItem {...formItemLayout} label={"服务器Id"} >
+
+                            <FormItem {...formItemLayout} label="服务器ID" >
+                                {getFieldDecorator('serverId', {
+                                    rules: [
+                                        { required: true, message: '请选择服务器名称' },
+                                    ],
+                                })(
+                                    <Select placeholder="选择服务器名称">
+                                        {serviceList.map((item, index) => {
+                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
+                            {/* <FormItem {...formItemLayout} label={"服务器Id"} >
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
                                     <Input placeholder="服务器Id" />
-                                    )}
-                            </FormItem>
+                                )}
+                            </FormItem> */}
                             <FormItem {...formItemLayout} label={"角色的名称"}>
                                 {getFieldDecorator('playerName', {
                                     rules: [{ required: true, message: '请输入角色的名称' }],
                                 })(
                                     <Input placeholder="请输入角色的名称" />
-                                    )}
+                                )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
                                 <Button type="primary" htmlType="submit">获取</Button>

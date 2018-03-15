@@ -4,6 +4,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
+import { getServiceList } from '../../api/service'
 
 class GiftPackage extends React.Component {
     state = {
@@ -12,7 +13,12 @@ class GiftPackage extends React.Component {
             // { key: '0', type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
             // { key: '1', type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
             // { key: '2', type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-        ]
+        ],
+        serviceList: [
+            { serverId: "1", serverName: "sg_banshu", serverState: 0 },
+            { serverId: "2", serverName: "sg_dev", serverState: 0 },
+            { serverId: "90002", serverName: "sg_90002", serverState: 0 }
+        ],
     }
     columns = [
         {
@@ -31,6 +37,16 @@ class GiftPackage extends React.Component {
             key: 'wildCard',
         },
     ];
+
+    componentWillMount() {
+        getServiceList((res) => {
+            // let serviceIdList = res.map(item => {
+            //     return item.serverId
+            // })
+            // this.setState({ serviceIdList: serviceIdList })
+            this.setState({ serviceList: res })
+        })
+    }
     getPackageItemList = () => { //获取礼包信息列表
         let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
         this.props.form.validateFields((err, values) => {
@@ -93,7 +109,7 @@ class GiftPackage extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { giftPackageItemsData } = this.state;
+        const { giftPackageItemsData, serviceList } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 6 },
@@ -133,13 +149,26 @@ class GiftPackage extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>
-                            <FormItem {...formItemLayout} label={"服务器Id"} >
+                            <FormItem {...formItemLayout} label="服务器ID" >
+                                {getFieldDecorator('serverId', {
+                                    rules: [
+                                        { required: true, message: '请选择服务器ID' },
+                                    ],
+                                })(
+                                    <Select placeholder="选择服务器名称">
+                                        {serviceList.map((item, index) => {
+                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
+                            {/* <FormItem {...formItemLayout} label={"服务器Id"} >
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
                                 })(
                                     <Input placeholder="服务器Id" />
                                 )}
-                            </FormItem>
+                            </FormItem> */}
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
                                     // rules: [{ required: true, message: '请输入目标用户名!' }],

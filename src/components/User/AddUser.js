@@ -9,30 +9,32 @@ import { hex_md5 } from '../../../public/md5'
  * 测试用
  */
 class AddUser extends React.Component {
-    state = {
-        authListData: [
-            // { key: 6, authId: 6, authName: "禁言" },
-            // { key: 6, authId: 6, authName: "禁言" },
-            // { key: 5, authId: 5, authName: "玩家信息查询" },
-            // { key: 7, authId: 7, authName: "补单" },
-            // { key: 8, authId: 8, authName: "发送系统公告" },
-            // { key: 2, authId: 2, authName: "删除账号" },
-            // { key: 9, authId: 9, authName: "封禁玩家" },
-        ]
+    constructor(props) {
+        super(props),
+            this.state = {
+                authListData: [
+                    // { key: 6, authId: 6, authName: "禁言" },
+                    // { key: 6, authId: 6, authName: "禁言" },
+                    // { key: 5, authId: 5, authName: "玩家信息查询" },
+                    // { key: 7, authId: 7, authName: "补单" },
+                    // { key: 8, authId: 8, authName: "发送系统公告" },
+                    // { key: 2, authId: 2, authName: "删除账号" },
+                    // { key: 9, authId: 9, authName: "封禁玩家" },
+                ]
+            },
+            this.columns = [
+                {
+                    title: '权限id',
+                    dataIndex: 'authId',
+                    key: 'authId',
+                },
+                {
+                    title: '权限名称',
+                    dataIndex: 'authName',
+                    key: 'authName',
+                },
+            ]
     }
-
-    columns = [
-        {
-            title: '权限id',
-            dataIndex: 'authId',
-            key: 'authId',
-        },
-        {
-            title: '权限名称',
-            dataIndex: 'authName',
-            key: 'authName',
-        },
-    ]
 
     handleButtonClick = (e) => { //获取权限列表
         let querystring = ''
@@ -41,7 +43,6 @@ class AddUser extends React.Component {
         let successmsg = '请求用户权限成功'
         apiFetch(url, method, querystring, successmsg,
             (res) => {
-                // console.log('请求用户权限成功成功后执行的回调函数')
                 let { authListData } = this.state;
                 let dataList = res.data.authList; //获取的权限列表数据
                 let authListDataItems = []; //待存放的容器
@@ -68,14 +69,12 @@ class AddUser extends React.Component {
                 let method = "POST"
                 let successmsg = '用户创建成功'
                 apiFetch(url, method, querystring, successmsg, (res) => {
-                    // console.log('用户创建成功后执行的回调函数')
                 })
             }
         });
     }
     render() {
         const { getFieldDecorator } = this.props.form;
-        // const { authListData } = this.state;
         const { authListData } = this.state;
         const formItemLayout = {
             labelCol: {
