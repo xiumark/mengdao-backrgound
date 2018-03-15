@@ -21,7 +21,7 @@ const logger = Logger.getLogger('Sidebar');
 class Sidebar extends React.PureComponent {
 
   state = {
-    openKeys: [],  // 当前有哪些submenu被展开
+    openKeys: ['userManagement', 'playerManagement', 'gameManagement',],  // 当前有哪些submenu被展开
   };
 
   /**
@@ -57,9 +57,9 @@ class Sidebar extends React.PureComponent {
       // parse一级菜单
       paths.push(level1.key);
       level1KeySet.add(level1.key);
-      if (this.state.openKeys.length === 0) {
-        this.setState({ openKeys: [...this.state.openKeys, level1.key] })
-      }
+      // if (this.state.openKeys.length === 0) {   //当没有展开的子菜单时候，默认展示第一个，这里用这个功能
+      //   this.setState({ openKeys: [...this.state.openKeys, items[0].key] })
+      // }
 
       // 是否有子菜单?
       if (level1.child) {

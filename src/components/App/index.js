@@ -273,7 +273,7 @@ class App extends React.Component {
     if (globalConfig.tabMode.enable === true) {
       // 如果没有tab可以显示, 就显示欢迎界面
       if (this.state.tabPanes.length === 0) {
-        return <div className="ant-layout-container"><Welcome /></div>;
+        return <div className="ant-layout-container"></div>;
       } else {
         return <Tabs activeKey={this.state.currentTabKey} type="card"
           onEdit={this.onTabRemove} onChange={this.onTabChange}
