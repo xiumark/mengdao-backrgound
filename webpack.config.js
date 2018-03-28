@@ -43,6 +43,7 @@ module.exports = {
   output: {  // 输出的目录和文件名
     path: __dirname + '/dist',
     filename: 'bundle.js',
+    publicPath: '/front/mengdao-background/'
   },
 
   resolve: {

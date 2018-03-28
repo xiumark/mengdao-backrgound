@@ -6,13 +6,60 @@ import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList } from '../../api/service'
 
+const buttonStyle = {
+    margin: '10px',
+    marginLeft:'0px',
+    width: '40px',
+  };
+const buttonAddStyle = {
+    margin: '10px',
+    marginLeft:'0px',
+    width: '80px',
+};
+const buttonContetStyle={
+    width: '35px',
+    height: '30px',
+    border: '0px',
+    marginLeft: '5px',
+    paddingTop: '-2px',
+    backgroundColor: 'rgb(255,255,255)',
+    color: 'rgb(255, 25, 174)',
+}
+const pStyle={
+    paddingTop: '6px',
+}
+
+const flex = {
+    display:"flex",
+}
+
+
+
+const EditableCell = ({ editable, value, onChange, onClick}) => (
+    <div style={flex}>
+        <button id="decrece" style={buttonStyle} onClick = {e =>onClick(e)}>-</button>
+        <Input style={{ margin: '7px 7px 7px -4px',textAlign:'center' }} value={value} onChange={e => onChange(e)}/>
+        <button id="increce" style={buttonStyle} onClick = {e =>onClick(e)}>+</button>
+        <button id="add" style={buttonAddStyle} onClick = {e =>onClick(e)}>添加</button>
+    </div>
+  );
+
+
+
 class GiftPackage extends React.Component {
     state = {
         key: 1,
         giftPackageItemsData: [
-            // { key: '0', type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
-            // { key: '1', type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-            // { key: '2', type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            // { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+            // { key: '1', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
+            // { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+        ],
+        giftContentData: [
+            { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+            { key: '1', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
+            { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
         ],
         serviceList: [
             { serverId: "1", serverName: "sg_banshu", serverState: 0 },
@@ -21,6 +68,13 @@ class GiftPackage extends React.Component {
         ],
     }
     columns = [
+        {
+            title: 'num',
+            dataIndex: 'num',
+            key:'num',
+            width: '15%',
+            render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'num'),
+        },
         {
             title: 'name',
             dataIndex: 'name',
@@ -37,6 +91,56 @@ class GiftPackage extends React.Component {
             key: 'wildCard',
         },
     ];
+    
+    renderColumns(textValue, tableItem, column) {
+        // console.log("rendercolums:" );
+        // console.log("textValue:",textValue );
+        // console.log("tableItem:",tableItem );
+        // console.log("column:",column );
+        return (
+          <EditableCell
+            // editable={tableItem.editable}
+            editable={true}
+            value={textValue}
+            onChange={(event) => this.handleChange(event, tableItem, column)}
+            onClick ={(event) => this.handleClick(event, tableItem, column)}
+          />
+        );
+      }
+
+    handleChange=(event,tableItem, column)=>{
+        const {giftPackageItemsData} = this.state;
+        let key = tableItem.key
+        giftPackageItemsData[key-1].num = event.target.value;
+        console.log("handleChange:")
+        console.log('event:',event.target)
+        console.log('eventvalue:',event.target.value)
+        this.setState({giftPackageItemsData:giftPackageItemsData})
+    }
+    handleClick=(event, tableItem, column)=>{
+        console.log("handleClick:")
+        console.log("vlaue:", event.target.value);
+        console.log("vlaue:", event.target);
+        let id = event.target.id;
+        const key = tableItem.key//数组下标
+        const {giftPackageItemsData} = this.state;
+        if(id==='decrece'){
+            giftPackageItemsData[key-1].num = event.target.value-1;
+            this.setState({giftPackageItemsData:giftPackageItemsData})
+        } else if(id==='increce'){
+            giftPackageItemsData[key-1].num = event.target.value+1;
+            this.setState({giftPackageItemsData:giftPackageItemsData})
+        } else if(id==='add'){
+            //向giftContentData添加数据
+            const {giftContentData} = this.state;
+            let filteredGiftContentData = giftContentData.filter((item)=>{
+                return item.key !== key
+            })
+            filteredGiftContentData.push(item);//将添加的item加入数组最后一行
+            this.setState({giftContentData:filteredGiftContentData});
+        }
+        
+    }
 
     componentWillMount() {
         getServiceList((res) => {
@@ -77,7 +181,7 @@ class GiftPackage extends React.Component {
                         message.info("成功获取礼包信息")
                         for (let i = 0; i < items.length; i++) {
                             let data = items[i]
-                            let tableItem = Object.assign(data, { key: key });
+                            let tableItem = Object.assign(data, { key: key ,num:1});
                             giftPackageItemsData.push(tableItem);
                             key = key + 1;
                         }
@@ -95,6 +199,7 @@ class GiftPackage extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                const {giftContentData}=this.state;
                 let { giftType, serverId, playerName, giftContent, duration, title } = values;
                 const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContent}&duration=${duration}&title=${title}`
                 let url = "/root/sendGift.action"
@@ -107,9 +212,19 @@ class GiftPackage extends React.Component {
         });
     }
 
+    buttonDeleteClick=(item)=>{
+        let key = item.key;
+        const {giftContentData} = this.state;
+        let newList = giftContentData.filter((item, index)=>{
+            return item.key!==key
+        })
+        console.log("删除keyitem：", item);
+        this.setState({giftContentData:newList});
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { giftPackageItemsData, serviceList } = this.state;
+        const { giftPackageItemsData, giftContentData, serviceList } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 6 },
@@ -132,11 +247,12 @@ class GiftPackage extends React.Component {
                 },
             },
         };
+
         return <div>
             <Card title="礼包管理">
                 <Form onSubmit={this.handleSubmit} id="add">
                     <Row>
-                        <Col className="gutter-row" md={12}>
+                        <Col className="gutter-row" md={10}>
                             <FormItem {...formItemLayout} label="礼包类型" >
                                 {getFieldDecorator('giftType', {
                                     rules: [
@@ -177,28 +293,50 @@ class GiftPackage extends React.Component {
                                 )}
                             </FormItem>
                         </Col>
-                        <Col className="gutter-row" md={12}>
-                            <FormItem {...formItemLayout} label={"礼品内容"} >
-                                {getFieldDecorator('giftContent', {
-                                    // rules: [{ required: true, message: '请输入礼品内容!' }],
-                                })(
-                                    <Input placeholder="礼品内容" />
-                                )}
-                            </FormItem>
-                            <FormItem {...formItemLayout} label={"有效时间"} >
-                                {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: '请输入有效时间!' }],
-                                })(
-                                    <Input placeholder="有效时间" />
-                                )}
-                            </FormItem>
-                            <FormItem {...formItemLayout} label={"礼包的名称"} >
-                                {getFieldDecorator('title', {
-                                    // rules: [{ required: true, message: '请输入礼包的名称!' }],
-                                })(
-                                    <Input placeholder="礼包的名称" />
-                                )}
-                            </FormItem>
+                        <Col className="gutter-row" md={14}>
+                            <Row>
+                                <Col md={12}>
+                                    {/* <FormItem {...formItemLayout} label={"礼品内容"} >
+                                        {getFieldDecorator('giftContent', {
+                                            // rules: [{ required: true, message: '请输入礼品内容!' }],
+                                        })(
+                                            <Input placeholder="礼品内容" />
+                                        )}
+                                    </FormItem> */}
+                                    <FormItem {...formItemLayout} label={"礼品内容"} >
+                                        {getFieldDecorator('giftContent', {
+                                            // rules: [{ required: true, message: '请输入滚动次数' }],
+                                        })(
+                                            <div className="gift-content" style={{ minHeight: 150, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
+                                            {giftContentData.map((item, index)=>{
+                                                console.log("item:", item)
+                                                let data = item
+                                                return <div style={flex} key={item.key}>
+                                                <p style={pStyle}>{`${item.name} 数量:${item.num}`}</p>
+                                                <a className="btn-delete"  onClick = {(event)=>this.buttonDeleteClick(item)}>X</a>
+                                                </div>
+                                            })}
+                                            </div>
+                                        )}
+                                    </FormItem>
+                                </Col>
+                                <Col md={12}>
+                                    <FormItem {...formItemLayout} label={"有效时间"} >
+                                        {getFieldDecorator('duration', {
+                                            // rules: [{ required: true, message: '请输入有效时间!' }],
+                                        })(
+                                            <Input placeholder="有效时间" />
+                                        )}
+                                    </FormItem>
+                                    <FormItem {...formItemLayout} label={"礼包的名称"} >
+                                        {getFieldDecorator('title', {
+                                            // rules: [{ required: true, message: '请输入礼包的名称!' }],
+                                        })(
+                                            <Input placeholder="礼包的名称" />
+                                        )}
+                                    </FormItem>
+                                </Col>
+                            </Row>
                         </Col>
                     </Row>
                     <Row>
@@ -216,7 +354,7 @@ class GiftPackage extends React.Component {
                 </Form>
             </Card>
             <Card>
-                <Table pagination={{ pageSize: 10 }} columns={this.columns} dataSource={giftPackageItemsData} size={'small'} />
+                <Table pagination={{ pageSize: 15 }} columns={this.columns} dataSource={giftPackageItemsData} size={'small'} />
             </Card>
         </div >;
     }

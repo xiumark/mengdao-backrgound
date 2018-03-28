@@ -35,6 +35,7 @@ module.exports = {
   output: {
     path: __dirname + '/dist',
     filename: 'bundle.min.js',
+    publicPath:'/front/mengdao-background/'
     // publicPath: 'http://mycdn.com/', // require时用来生成图片的地址
   },
 
@@ -81,7 +82,8 @@ module.exports = {
     }),
 
     new HtmlWebpackPlugin({
-      template: 'index.html.template',
+      // template: 'index.html.template',
+      template: 'index.tmpl.html',
       title: globalConfig.name,
       favIcon: globalConfig.favicon,
       hash: true,  // 引入js/css的时候加个hash, 防止cdn的缓存问题
