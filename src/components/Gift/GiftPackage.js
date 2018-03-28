@@ -55,11 +55,11 @@ class GiftPackage extends React.Component {
             // { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
         ],
         giftContentData: [
-            { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
-            { key: '1', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-            { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            { key: '1', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+            { key: '2', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
             { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-            { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            // { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
         ],
         serviceList: [
             { serverId: "1", serverName: "sg_banshu", serverState: 0 },
@@ -119,24 +119,26 @@ class GiftPackage extends React.Component {
     }
     handleClick=(event, tableItem, column)=>{
         console.log("handleClick:")
-        console.log("vlaue:", event.target.value);
-        console.log("vlaue:", event.target);
+        // console.log("vlaue:", event.target.value);
+        // console.log("vlaue:", event.target);
+        console.log("tableItemnum:", tableItem.num);
         let id = event.target.id;
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
         if(id==='decrece'){
-            giftPackageItemsData[key-1].num = event.target.value-1;
+            giftPackageItemsData[key-1].num = tableItem.num-1>=0?tableItem.num-1:0;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='increce'){
-            giftPackageItemsData[key-1].num = event.target.value+1;
+            giftPackageItemsData[key-1].num = tableItem.num+1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='add'){
             //向giftContentData添加数据
             const {giftContentData} = this.state;
             let filteredGiftContentData = giftContentData.filter((item)=>{
-                return item.key !== key
+                return item.key != key
             })
-            filteredGiftContentData.push(item);//将添加的item加入数组最后一行
+            console.log("filteredGiftContentData:", filteredGiftContentData);
+            filteredGiftContentData.push(tableItem);//将添加的item加入数组最后一行
             this.setState({giftContentData:filteredGiftContentData});
         }
         
