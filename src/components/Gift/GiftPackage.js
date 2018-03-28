@@ -202,8 +202,22 @@ class GiftPackage extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const {giftContentData}=this.state;
+                console.log("data:", giftContentData);
+                let giftContentStr = '';
+                const p = /\{.*?\}/g;//匹配的字符
+                // s = s.replace(p, 'XXX');
+                for(let i = 0;i<giftContentData.length;i++){
+                    let itemStr = giftContentData[i].wildCard;
+                    let str='';
+                    let itemNum = giftContentData[i].num;
+                    // console.log("itemStr:",itemStr);
+                    str = itemStr.replace(p,itemNum);
+                    giftContentStr=giftContentStr===''? giftContentStr + str :giftContentStr +';'+ str
+                }
+                console.log("giftContentStr:",giftContentStr);
+                
                 let { giftType, serverId, playerName, giftContent, duration, title } = values;
-                const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContent}&duration=${duration}&title=${title}`
+                const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContentStr}&duration=${duration}&title=${title}`
                 let url = "/root/sendGift.action"
                 let method = 'POST'
                 let successmsg = '成功发送礼包'
@@ -309,7 +323,7 @@ class GiftPackage extends React.Component {
                                         {getFieldDecorator('giftContent', {
                                             // rules: [{ required: true, message: '请输入滚动次数' }],
                                         })(
-                                            <div className="gift-content" style={{ minHeight: 150, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
+                                            <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
                                             {giftContentData.map((item, index)=>{
                                                 console.log("item:", item)
                                                 let data = item
