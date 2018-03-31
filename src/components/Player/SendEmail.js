@@ -18,15 +18,15 @@ const buttonAddStyle = {
     marginLeft:'0px',
     width: '80px',
 };
-const buttonContetStyle={
-    width: '35px',
-    height: '30px',
-    border: '0px',
-    marginLeft: '5px',
-    paddingTop: '-2px',
-    backgroundColor: 'rgb(255,255,255)',
-    color: 'rgb(255, 25, 174)',
-}
+// const buttonContetStyle={
+//     width: '35px',
+//     height: '30px',
+//     border: '0px',
+//     marginLeft: '5px',
+//     paddingTop: '-2px',
+//     backgroundColor: 'rgb(255,255,255)',
+//     color: 'rgb(255, 25, 174)',
+// }
 const pStyle={
     paddingTop: '6px',
 }
@@ -49,6 +49,7 @@ class SendEmail extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            isPersonal:false, //默认用户名不需要填，当个人邮件被选中，用户名需要填
             key: 1,
             giftPackageItemsData: [
                 // { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
@@ -70,39 +71,41 @@ class SendEmail extends React.Component {
         };
         this.columns = [
             {
-                title: 'num',
+                title: '数量',
                 dataIndex: 'num',
                 key:'num',
-                width: '15%',
+                width: '25%',
                 render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'num'),
             },
             {
-                title: 'name',
+                title: '名称',
                 dataIndex: 'name',
                 key: 'name',
             },
             {
-                title: 'type',
-                dataIndex: 'type',
-                key: 'type',
-            },
-            {
-                title: 'wildCard',
+                title: '虎牌',
                 dataIndex: 'wildCard',
                 key: 'wildCard',
+            },
+            {
+                title: '类型',
+                dataIndex: 'type',
+                key: 'type',
             },
         ];
         this.renderColumns = this.renderColumns.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.format = this.format.bind(this);
+        this.onServerChange = this.onServerChange.bind(this);
+        this.onMailTypeChange = this.onMailTypeChange.bind(this);
     }
-
 
     componentDidMount() {
         getServiceList((res) => {
             this.setState({ serviceList: res })
-        })
+        });
+        // this.getPackageItemList();
     }
 
     handleSubmit = (e) => { //发送邮件
@@ -193,13 +196,23 @@ class SendEmail extends React.Component {
         }
          
         return result;
-       }
+    }
 
-       getPackageItemList = () => { //获取礼包信息列表
-        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let { serverId } = values;
+    onServerChange(v){
+        this.getPackageItemList(v);
+    }
+    onMailTypeChange(v){
+        if(v==1){
+            this.setState({isPersonal: true});
+        }else{
+            this.setState({isPersonal: false});
+        }
+        // console.log("v:", v)
+    }
+        
+    getPackageItemList = (v) => { //获取礼包信息列表
+                console.log('v:', v);
+                let  serverId  = v;
                 const querystring = `serverId=${serverId}`
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/getItems.action`, {
@@ -232,11 +245,9 @@ class SendEmail extends React.Component {
                         this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
                         })
                     }).catch(err => {
-                        message.error(err.message ? err.message : '未知错误')
-
+                        message.error(err.message ? err.message : '未知错误');
+                        this.setState({ giftPackageItemsData: []});
                     })
-            }
-        })
     }
 
     buttonDeleteClick=(item)=>{
@@ -250,7 +261,7 @@ class SendEmail extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { serviceList, giftContentData, giftPackageItemsData } = this.state;
+        const {isPersonal, serviceList, giftContentData, giftPackageItemsData } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 6 },
@@ -281,11 +292,11 @@ class SendEmail extends React.Component {
                         <Col sm={8} md={8} xs={24}>
                             <FormItem {...formItemLayout} label="邮件类型" >
                                 {getFieldDecorator('mailType', {
-                                    // rules: [
-                                    //     { required: true, message: '请选择邮件类型' },
-                                    // ],
+                                    rules: [
+                                        { required: true, message: '请选择邮件类型' },
+                                    ],
                                 })(
-                                    <Select placeholder="请选择邮件类型">
+                                    <Select placeholder="请选择邮件类型" onChange = {(value)=>this.onMailTypeChange(value)}>
                                         <Option value="1">个人邮件</Option>
                                         <Option value="2">单服邮件</Option>
                                     </Select>
@@ -297,23 +308,16 @@ class SendEmail extends React.Component {
                                         { required: true, message: '请选择服务器ID' },
                                     ],
                                 })(
-                                    <Select placeholder="选择服务器名称">
+                                    <Select placeholder="选择服务器名称" onChange={(value)=>this.onServerChange(value)}>
                                         {serviceList.map((item, index) => {
                                             return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
                                         })}
                                     </Select>
                                 )}
                             </FormItem>
-                            {/* <FormItem {...formItemLayout} label={"服务器Id"} >
-                                {getFieldDecorator('serverId', {
-                                    rules: [{ required: true, message: '请输入服务器Id' }],
-                                })(
-                                    <Input placeholder="请输入服务器Id" />
-                                )}
-                            </FormItem> */}
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
-                                    // rules: [{ required: true, message: '请输入目标用户名' }],
+                                   rules: [{ required: isPersonal, message: '请输入目标用户名' }],
                                 })(
                                     <Input placeholder="请输入目标用户名（单服邮件可不填）" />
                                 )}
@@ -321,27 +325,19 @@ class SendEmail extends React.Component {
 
                             <FormItem {...formItemLayout} label={"有效时间"} >
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: '请输入有效时间!' }],
+                                    rules: [{ required: true, message: '请输入有效时间!' }],
                                 })(
                                     <Input placeholder="请输入有效时间（分钟）" />
                                 )}
                             </FormItem>
                         </Col>
                         <Col sm={8} md={8} xs={24}>
-                            {/* <FormItem {...formItemLayout} label={"附件内容"} >
-                                {getFieldDecorator('attachmenet', {
-                                    rules: [{ required: true, message: '请输入附件内容' }],
-                                })(
-                                    <Input placeholder="请输入附件内容" />
-                                )}
-                            </FormItem> */}
                             <FormItem {...formItemLayout} label={"附件内容"} >
                                 {getFieldDecorator('attachmenet', {
                                     // rules: [{ required: true, message: '请输入滚动次数' }],
                                 })(
                                     <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入附件内容">
                                     {giftContentData.map((item, index)=>{
-                                        // console.log("item:", item)
                                         let data = item
                                         return <div style={flex} key={item.key}>
                                         <p style={pStyle}>{`${item.name} 数量:${item.num}`}</p>
@@ -355,14 +351,14 @@ class SendEmail extends React.Component {
                         <Col sm={8} md={8} xs={24}>
                             <FormItem {...formItemLayout} label={"邮件名称"} >
                                 {getFieldDecorator('title', {
-                                    // rules: [{ required: true, message: '请输入邮件名称!' }],
+                                    rules: [{ required: true, message: '请输入邮件名称!' }],
                                 })(
                                     <Input placeholder="请输入邮件名称" />
                                 )}
                             </FormItem>
                             <FormItem {...formItemLayout} label={"邮件正文"} >
                                 {getFieldDecorator('mailContent', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                    rules: [{ required: true, message: '请输入滚动次数' }],
                                 })(
                                     <textarea style={{ minHeight: 200, width: "100%" }} placeholder="请输入邮件正文" />
                                 )}
@@ -370,16 +366,16 @@ class SendEmail extends React.Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col md={12}>
-                            <FormItem {...tailFormItemLayout}>
+                        {/* <Col md={12}> */}
+                            {/* <FormItem {...tailFormItemLayout}>
                                 <Button type="primary" htmlType="button" onClick={this.getPackageItemList}>获取附件信息列表</Button>
-                            </FormItem>
-                        </Col>
-                        <Col md={12}>
-                            <FormItem {...tailFormItemLayout} >
-                                <Button type="primary" htmlType="submit">发送邮件</Button>
-                            </FormItem>
-                        </Col>
+                            </FormItem> */}
+                        {/* </Col> */}
+                        {/* <Col md={12}> */}
+                    <FormItem {...tailFormItemLayout} >
+                        <Button type="primary" htmlType="submit">发送邮件</Button>
+                    </FormItem>
+                        {/* </Col> */}
                     </Row>
                 </Form>
             </Card>

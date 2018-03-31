@@ -16,15 +16,15 @@ const buttonAddStyle = {
     marginLeft:'0px',
     width: '80px',
 };
-const buttonContetStyle={
-    width: '35px',
-    height: '30px',
-    border: '0px',
-    marginLeft: '5px',
-    paddingTop: '-2px',
-    backgroundColor: 'rgb(255,255,255)',
-    color: 'rgb(255, 25, 174)',
-}
+// const buttonContetStyle={
+//     width: '35px',
+//     height: '30px',
+//     border: '0px',
+//     marginLeft: '5px',
+//     paddingTop: '-2px',
+//     backgroundColor: 'rgb(255,255,255)',
+//     color: 'rgb(255, 25, 174)',
+// }
 const pStyle={
     paddingTop: '6px',
 }
@@ -50,6 +50,7 @@ class GiftPackage extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            isPersonal:false,
             key: 1,
             giftPackageItemsData: [
                 // { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
@@ -71,32 +72,34 @@ class GiftPackage extends React.Component {
         };
         this.columns = [
             {
-                title: 'num',
+                title: '数量',
                 dataIndex: 'num',
                 key:'num',
                 width: '15%',
                 render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'num'),
             },
             {
-                title: 'name',
+                title: '名称',
                 dataIndex: 'name',
                 key: 'name',
             },
             {
-                title: 'type',
-                dataIndex: 'type',
-                key: 'type',
-            },
-            {
-                title: 'wildCard',
+                title: '虎牌',
                 dataIndex: 'wildCard',
                 key: 'wildCard',
+            },
+            {
+                title: '类型',
+                dataIndex: 'type',
+                key: 'type',
             },
         ];
         this.renderColumns = this.renderColumns.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.format = this.format.bind(this);
+        this.onServerChange = this.onServerChange.bind(this);
+        this.onGiftTypeChange = this.onGiftTypeChange.bind(this);
     }
     componentDidMount() {
         getServiceList((res) => {
@@ -166,13 +169,23 @@ class GiftPackage extends React.Component {
        }
 
 
+    onServerChange(v){
+        this.getPackageItemList(v);
+    }
+    onGiftTypeChange(v){
 
+        if(v==1){
+            this.setState({isPersonal: true});
+        }else{
+            this.setState({isPersonal: false});
+        }
+    }
 
-    getPackageItemList = () => { //获取礼包信息列表
-        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let { serverId } = values;
+    getPackageItemList = (v) => { //获取礼包信息列表
+        // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+        // this.props.form.validateFields((err, values) => {
+            // if (!err) {
+                let  serverId  = v;
                 const querystring = `serverId=${serverId}`
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/getItems.action`, {
@@ -205,11 +218,11 @@ class GiftPackage extends React.Component {
                         this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
                         })
                     }).catch(err => {
-                        message.error(err.message ? err.message : '未知错误')
-
+                        message.error(err.message ? err.message : '未知错误');
+                        this.setState({ giftPackageItemsData:[]});
                     })
-            }
-        })
+            // }
+        // })
     }
 
     handleSubmit = (e) => {//发送礼包
@@ -265,7 +278,7 @@ class GiftPackage extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { giftPackageItemsData, giftContentData, serviceList } = this.state;
+        const { isPersonal, giftPackageItemsData, giftContentData, serviceList } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 6 },
@@ -297,10 +310,10 @@ class GiftPackage extends React.Component {
                             <FormItem {...formItemLayout} label="礼包类型" >
                                 {getFieldDecorator('giftType', {
                                     rules: [
-                                        // { required: true, message: '请选择礼包类型!' },
+                                        { required: true, message: '请选择礼包类型!' },
                                     ],
                                 })(
-                                    <Select placeholder="请选择礼包类型">
+                                    <Select placeholder="请选择礼包类型" onChange = {(value)=>this.onGiftTypeChange(value)}>
                                         <Option value="1">个人礼包</Option>
                                         <Option value="2">单服礼包</Option>
                                     </Select>
@@ -312,7 +325,7 @@ class GiftPackage extends React.Component {
                                         { required: true, message: '请选择服务器ID' },
                                     ],
                                 })(
-                                    <Select placeholder="选择服务器名称">
+                                    <Select placeholder="选择服务器名称" onChange={(value)=>this.onServerChange(value)}>
                                         {serviceList.map((item, index) => {
                                             return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
                                         })}
@@ -328,7 +341,7 @@ class GiftPackage extends React.Component {
                             </FormItem> */}
                             <FormItem {...formItemLayout} label={"目标用户名"} >
                                 {getFieldDecorator('playerName', {
-                                    // rules: [{ required: true, message: '请输入目标用户名!' }],
+                                    rules: [{ required: isPersonal, message: '请输入目标用户名!' }],
                                 })(
                                     <Input placeholder="目标用户名" />
                                 )}
@@ -346,11 +359,10 @@ class GiftPackage extends React.Component {
                                     </FormItem> */}
                                     <FormItem {...formItemLayout} label={"礼品内容"} >
                                         {getFieldDecorator('giftContent', {
-                                            // rules: [{ required: true, message: '请输入滚动次数' }],
+                                            rules: [{ required: true, message: '请输入滚动次数' }],
                                         })(
                                             <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
                                             {giftContentData.map((item, index)=>{
-                                                console.log("item:", item)
                                                 let data = item
                                                 return <div style={flex} key={item.key}>
                                                 <p style={pStyle}>{`${item.name} 数量:${item.num}`}</p>
@@ -364,14 +376,14 @@ class GiftPackage extends React.Component {
                                 <Col md={12}>
                                     <FormItem {...formItemLayout} label={"有效时间"} >
                                         {getFieldDecorator('duration', {
-                                            // rules: [{ required: true, message: '请输入有效时间!' }],
+                                            rules: [{ required: true, message: '请输入有效时间!' }],
                                         })(
                                             <Input placeholder="有效时间" />
                                         )}
                                     </FormItem>
                                     <FormItem {...formItemLayout} label={"礼包的名称"} >
                                         {getFieldDecorator('title', {
-                                            // rules: [{ required: true, message: '请输入礼包的名称!' }],
+                                            rules: [{ required: true, message: '请输入礼包的名称!' }],
                                         })(
                                             <Input placeholder="礼包的名称" />
                                         )}
