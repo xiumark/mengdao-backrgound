@@ -89,17 +89,6 @@ class Announcements extends React.Component {
 
                     <Col className="gutter-row" md={11}>
                         <Form onSubmit={this.handleSubmit}>
-                            <FormItem {...formItemLayout} label="公告类型">
-                                {getFieldDecorator('noticeType', {
-                                    rules: [
-                                        { required: true, message: '请选择公告类型!' },
-                                    ],
-                                })(
-                                    <Select placeholder="请选择公告类型">
-                                        <Option value="1">公告类型1</Option>
-                                    </Select>
-                                )}
-                            </FormItem>
                             <FormItem {...formItemLayout} label="服务器ID" >
                                 {getFieldDecorator('serverId', {
                                     rules: [
@@ -113,6 +102,18 @@ class Announcements extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>
+                            <FormItem {...formItemLayout} label="公告类型">
+                                {getFieldDecorator('noticeType', {
+                                    rules: [
+                                        { required: true, message: '请选择公告类型!' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择公告类型">
+                                        <Option value="1">公告类型1</Option>
+                                    </Select>
+                                )}
+                            </FormItem>
+
                             {/* <FormItem {...formItemLayout} label={"服务器Id"}>
                                 {getFieldDecorator('serverId', {
                                     // rules: [{ required: true, message: '请输入服务器Id' }],

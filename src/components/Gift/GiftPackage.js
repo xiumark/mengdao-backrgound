@@ -309,18 +309,6 @@ class GiftPackage extends React.Component {
                 <Form onSubmit={this.handleSubmit} id="add">
                     <Row>
                         <Col className="gutter-row" md={10}>
-                            <FormItem {...formItemLayout} label="礼包类型" >
-                                {getFieldDecorator('giftType', {
-                                    rules: [
-                                        { required: true, message: '请选择礼包类型!' },
-                                    ],
-                                })(
-                                    <Select placeholder="请选择礼包类型" onChange = {(value)=>this.onGiftTypeChange(value)}>
-                                        <Option value="1">个人礼包</Option>
-                                        <Option value="2">单服礼包</Option>
-                                    </Select>
-                                )}
-                            </FormItem>
                             <FormItem {...formItemLayout} label="服务器ID" >
                                 {getFieldDecorator('serverId', {
                                     rules: [
@@ -334,6 +322,19 @@ class GiftPackage extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>
+                            <FormItem {...formItemLayout} label="礼包类型" >
+                                {getFieldDecorator('giftType', {
+                                    rules: [
+                                        { required: true, message: '请选择礼包类型!' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择礼包类型" onChange = {(value)=>this.onGiftTypeChange(value)}>
+                                        <Option value="1">个人礼包</Option>
+                                        <Option value="2">单服礼包</Option>
+                                    </Select>
+                                )}
+                            </FormItem>
+
                             {/* <FormItem {...formItemLayout} label={"服务器Id"} >
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
@@ -361,7 +362,7 @@ class GiftPackage extends React.Component {
                                     </FormItem> */}
                                     <FormItem {...formItemLayout} label={"礼品内容"} >
                                         {getFieldDecorator('giftContent', {
-                                            rules: [{ required: giftContentData.length===0?true:false, message: '请输入滚动次数' }],
+                                            rules: [{ required: giftContentData.length===0?true:false, message: '请输入礼品内容' }],
                                         })(
                                             <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
                                             {giftContentData.map((item, index)=>{
