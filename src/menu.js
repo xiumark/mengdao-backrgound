@@ -105,11 +105,11 @@ const sidebarMenu = [
           },
           {
             key: 'wordsBlock',
-            name: '封禁禁言',
+            name: '禁言',
           },
           {
             key: 'banAndLift',
-            name: '封禁解禁',
+            name: '封禁角色',
           },
           {
             key: 'recharge',

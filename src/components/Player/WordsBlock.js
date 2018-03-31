@@ -17,6 +17,11 @@ class WordsBlock extends React.Component {
             { serverId: "2", serverName: "sg_dev", serverState: 0 },
             { serverId: "90002", serverName: "sg_90002", serverState: 0 }
         ],
+        // silenceInfo:{
+        isSilenced:false,
+        reason:'',
+        endTime:''
+        // },
     }
 
     /**
@@ -29,12 +34,34 @@ class WordsBlock extends React.Component {
             let querystring = `serverId=${serverId}&playerName=${playerName}&reason=${reason}&duration=${duration}`
             let url = "/root/banChat.action"
             let method = 'POST'
-            let successmsg = '禁言成功'
+            // let successmsg = '禁言成功'
+            let successmsg = reason!==undefined&&duration!==undefined?'封禁成功':'请填写原因和期限'
             apiFetch(url, method, querystring, successmsg, (res) => {
-
+                this.queryState(e,successmsg);
             })
         })
     }
+
+    queryState=(e,successmsg)=>{
+        // e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            let { serverId, playerName} = values;
+            let querystring = `serverId=${serverId}&playerName=${playerName}`
+            let url = "/root/playerInfo.action"
+            let method = 'POST'
+            // let successmsg = '查询成功'
+            apiFetch(url, method, querystring, successmsg, (res) => {
+                console.log("state:", res);
+                let silenceInfo = res.data.silenceInfo;
+                console.log("silenceInfo:", silenceInfo);
+                
+                // const {isSilenced, reason, endTime} = this.state.silenceInfo;
+                this.setState({isSilenced:silenceInfo.isSilenced, reason:silenceInfo.reason, endTime:silenceInfo.endTime}, ()=>{console.log("33333333")});
+            });
+        })
+
+    }
+
     componentWillMount() {
         getServiceList((res) => {
             // let serviceIdList = res.map(item => {
@@ -58,14 +85,14 @@ class WordsBlock extends React.Component {
                 let method = 'POST'
                 let successmsg = '解除禁言成功'
                 apiFetch(url, method, querystring, successmsg, (res) => {
-
+                    this.queryState(e,successmsg);
                 })
             }
         });
     }
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { serviceList } = this.state;
+        const { serviceList, isSilenced,reason,endTime } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -91,16 +118,10 @@ class WordsBlock extends React.Component {
         return <div>
             <Row>
                 <Col className="gutter-row" md={12}>
-                    <Card title="解除禁言">
+                    <Card >
                         {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
-                        <Form onSubmit={this.handleSubmit}>
-                            <FormItem {...formItemLayout} label={"用户名"} >
-                                {getFieldDecorator('playerName', {
-                                    rules: [{ required: true, message: '请输入用户名' }],
-                                })(
-                                    <Input placeholder="请输入用户名" />
-                                )}
-                            </FormItem>
+                        <Form onSubmit={this.handleSubmit} style={{ minHeight:302, width: "100%" }}>
+
                             <FormItem {...formItemLayout} label="服务器ID" >
                                 {getFieldDecorator('serverId', {
                                     rules: [
@@ -114,6 +135,27 @@ class WordsBlock extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>
+                            <FormItem {...formItemLayout} label={"角色名"} >
+                                {getFieldDecorator('playerName', {
+                                    rules: [{ required: true, message: '请输入角色名' }],
+                                })(
+                                    <Input placeholder="请输入角色名" />
+                                )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"封禁原因"}>
+                            {getFieldDecorator('reason', {
+                                // rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
+                            })(
+                                <Input placeholder="请输入封禁原因" />
+                            )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"封禁时间"}>
+                                {getFieldDecorator('duration', {
+                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                })(
+                                    <Input placeholder="请输入封禁时间（分钟）" />
+                                )}
+                            </FormItem>
                             {/* <FormItem {...formItemLayout} label={"服务器Id"}>
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
@@ -121,32 +163,51 @@ class WordsBlock extends React.Component {
                                     <Input placeholder="请输入服务器Id" />
                                     )}
                             </FormItem> */}
-
-                            <FormItem {...tailFormItemLayout}>
+                            <Row>
+                                <Col sm={8} md={8}>
+                                    <FormItem {...tailFormItemLayout}>
+                                        <Button type="primary" htmlType="submit"  onClick={this.queryState}>查询状态</Button>
+                                    </FormItem>
+                                </Col>  
+                                <Col sm={8} md={8}>
+                                    <FormItem {...tailFormItemLayout}>
+                                        <Button type="primary" disabled={!isSilenced} htmlType="submit">解除禁言</Button>
+                                    </FormItem>
+                                </Col>
+                                <Col sm={8} md={8}>
+                                    <FormItem {...tailFormItemLayout}>
+                                        <Button type="primary" htmlType="submit" disabled={isSilenced} onClick={this.handleButtonClick}>禁言</Button>
+                                    </FormItem>
+                                </Col>
+                            </Row>
+                            {/* <FormItem {...tailFormItemLayout}>
                                 <Button type="primary" htmlType="submit">解除禁言</Button>
                             </FormItem>
+                            <FormItem {...tailFormItemLayout}>
+                                <Button type="primary" htmlType="submit" onClick={this.handleButtonClick}>禁言</Button>
+                            </FormItem> */}
                         </Form>
                     </Card>
                 </Col>
 
                 <Col className="gutter-row" md={12}>
-                    <Card title="禁言">
-                        <FormItem {...formItemLayout} label={"封禁原因"}>
-                            {getFieldDecorator('reason', {
-                                // rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
-                            })(
-                                <Input placeholder="请输入封禁原因" />
-                            )}
-                        </FormItem>
-                        <FormItem {...formItemLayout} label={"封禁时间"}>
-                            {getFieldDecorator('duration', {
-                                // rules: [{ required: true, message: '请输入滚动次数' }],
-                            })(
-                                <Input placeholder="请输入封禁时间（分钟）" />
-                            )}
-                        </FormItem>
-                        <FormItem {...tailFormItemLayout}>
-                            <Button type="primary" htmlType="submit" onClick={this.handleButtonClick}>禁言</Button>
+                    <Card title='角色状态:'>
+                        <FormItem {...formItemLayout}>
+                                {getFieldDecorator('mailContent', {
+                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                })(
+                                    <div style={{ minHeight:230, width: "100%" }} placeholder="显示角色状态" >
+                                        <div>
+                                            <label>是否被禁：<span>{isSilenced?"被禁":"未被禁"}</span></label>
+                                        </div>
+                                        <div>
+                                            <label>被禁原因：<span>{`${reason}`}</span></label>
+                                        </div>
+                                        <div>
+                                            <label>截止时间：<span>{endTime}</span></label>
+                                        </div>
+                                    </div>
+                                )}
                         </FormItem>
                     </Card>
                 </Col>

@@ -70,13 +70,7 @@ class SendEmail extends React.Component {
             ]
         };
         this.columns = [
-            {
-                title: '数量',
-                dataIndex: 'num',
-                key:'num',
-                width: '25%',
-                render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'num'),
-            },
+
             {
                 title: '名称',
                 dataIndex: 'name',
@@ -87,10 +81,17 @@ class SendEmail extends React.Component {
                 dataIndex: 'wildCard',
                 key: 'wildCard',
             },
+            // {
+            //     title: '类型',
+            //     dataIndex: 'type',
+            //     key: 'type',
+            // },
             {
-                title: '类型',
-                dataIndex: 'type',
-                key: 'type',
+                title: '数量',
+                dataIndex: 'num',
+                key:'num',
+                width: '25%',
+                render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'num'),
             },
         ];
         this.renderColumns = this.renderColumns.bind(this);
@@ -162,7 +163,7 @@ class SendEmail extends React.Component {
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
         if(id==='decrece'){
-            giftPackageItemsData[key-1].num = tableItem.num-1>=0?tableItem.num-1:0;
+            giftPackageItemsData[key-1].num = tableItem.num-1>0?tableItem.num-1:1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='increce'){
             giftPackageItemsData[key-1].num = tableItem.num+1;
@@ -242,7 +243,7 @@ class SendEmail extends React.Component {
                             giftPackageItemsData.push(tableItem);
                             key = key + 1;
                         }
-                        this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
+                        this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[]}, () => {
                         })
                     }).catch(err => {
                         message.error(err.message ? err.message : '未知错误');
