@@ -105,10 +105,6 @@ class GiftPackage extends React.Component {
     }
 
     renderColumns(textValue, tableItem, column) {
-        // console.log("rendercolums:" );
-        // console.log("textValue:",textValue );
-        // console.log("tableItem:",tableItem );
-        // console.log("column:",column );
         return (
           <EditableCell
             // editable={tableItem.editable}
@@ -125,15 +121,9 @@ class GiftPackage extends React.Component {
         let key = tableItem.key
         giftPackageItemsData[key-1].num = event.target.value;
         // console.log("handleChange:")
-        // console.log('event:',event.target)
-        // console.log('eventvalue:',event.target.value)
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
     handleClick(event, tableItem, column){
-        // console.log("handleClick:")
-        // console.log("vlaue:", event.target.value);
-        // console.log("vlaue:", event.target);
-        // console.log("tableItemnum:", tableItem.num);
         let id = event.target.id;
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
@@ -149,7 +139,6 @@ class GiftPackage extends React.Component {
             let filteredGiftContentData = giftContentData.filter((item)=>{
                 return item.key != key
             })
-            console.log("filteredGiftContentData:", filteredGiftContentData);
             filteredGiftContentData.push(tableItem);//将添加的item加入数组最后一行
             this.setState({giftContentData:filteredGiftContentData});
         }
@@ -228,7 +217,6 @@ class GiftPackage extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const {giftContentData}=this.state;
-                console.log("giftContentData:", giftContentData);
                 let giftContentStr = '';
                 // const p = /\{.*?\}/g;//匹配的字符
                 // s = s.replace(p, 'XXX');
@@ -272,7 +260,6 @@ class GiftPackage extends React.Component {
         let newList = giftContentData.filter((item, index)=>{
             return item.key!==key
         })
-        console.log("删除keyitem：", item);
         this.setState({giftContentData:newList});
     }
 
