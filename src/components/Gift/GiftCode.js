@@ -89,19 +89,6 @@ class GiftCode extends React.Component {
                 <Row>
                     <Col className="gutter-row" md={12} sm={24}>
                         <Form onSubmit={this.handleSubmit}>
-
-                            <FormItem {...formItemLayout} label="礼品码类型" >
-                                {getFieldDecorator('giftCodeType', {
-                                    rules: [
-                                        { required: true, message: '请选择礼品码类型!' },
-                                    ],
-                                })(
-                                    <Select placeholder="请选择礼品码类型">
-                                        <Option value="1">1 新手礼品码 </Option>
-                                        <Option value="2">2 个人礼品码 </Option>
-                                    </Select>
-                                )}
-                            </FormItem>
                             <FormItem {...formItemLayout} label="服务器ID" >
                                 {getFieldDecorator('serverId', {
                                     rules: [
@@ -115,6 +102,19 @@ class GiftCode extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>
+                            <FormItem {...formItemLayout} label="礼品码类型" >
+                                {getFieldDecorator('giftCodeType', {
+                                    rules: [
+                                        { required: true, message: '请选择礼品码类型!' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择礼品码类型">
+                                        <Option value="1">1 新手礼品码 </Option>
+                                        <Option value="2">2 个人礼品码 </Option>
+                                    </Select>
+                                )}
+                            </FormItem>
+
                             {/* <FormItem {...formItemLayout} label={"服务器Id"}>
                                 {getFieldDecorator('serverId', {
                                     rules: [{ required: true, message: '请输入服务器Id' }],
