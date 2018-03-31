@@ -3,7 +3,7 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
+import { apiFetch, apiFetchError } from '../../api/api'
 import { getServiceList } from '../../api/service'
 /**
  * 测试用
@@ -146,7 +146,7 @@ class PlayerQuery extends React.Component {
                 let url = "/root/playerInfo.action"
                 let method = 'POST'
                 let successmsg = '获取玩家数据成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
+                apiFetchError(url, method, querystring, successmsg, (res) => {
                     let { playerData, key } = this.state;
                     let resData = res.data;
                     let playerDataItem = {};
@@ -170,6 +170,9 @@ class PlayerQuery extends React.Component {
                     playerData = [];   //清除自定义数据
                     playerData.push(playerDataItem);
                     this.setState({ playerData: playerData, key: key + 1 });
+                },()=>{
+                    const {key} = this.state;
+                    this.setState({ playerData: [], key: key + 1 });
                 })
             }
         });
