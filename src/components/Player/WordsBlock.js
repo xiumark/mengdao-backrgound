@@ -17,24 +17,21 @@ class WordsBlock extends React.Component {
             { serverId: "2", serverName: "sg_dev", serverState: 0 },
             { serverId: "90002", serverName: "sg_90002", serverState: 0 }
         ],
-        // silenceInfo:{
         isSilenced:false,
         reason:'',
         endTime:''
-        // },
     }
 
     /**
      * 禁言玩家
      */
-    handleButtonClick = (e) => {
+    silence = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName, reason='', duration='' } = values;
             let querystring = `serverId=${serverId}&playerName=${playerName}&reason=${reason}&duration=${duration}`
             let url = "/root/banChat.action"
             let method = 'POST';
-            // let successmsg = '禁言成功'
             let successmsg = (reason!==''&&duration!=='')?'禁言成功':'请填写原因和期限';
             apiFetch(url, method, querystring, successmsg, (res) => {
                 this.queryState(e);
@@ -43,20 +40,15 @@ class WordsBlock extends React.Component {
     }
 
     queryState=(e)=>{
-        e.preventDefault();
+        // e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName} = values;
             let querystring = `serverId=${serverId}&playerName=${playerName}`
             let url = "/root/playerInfo.action"
             let method = 'POST'
             let successmsg = undefined
-            // successmsg===undefined?'查询成功':successmsg
             apiFetchNomsg(url, method, querystring, successmsg, (res) => {
-                console.log("state:", res);
                 let silenceInfo = res.data.silenceInfo;
-                console.log("silenceInfo:", silenceInfo);
-                
-                // const {isSilenced, reason, endTime} = this.state.silenceInfo;
                 this.setState({isSilenced:silenceInfo.isSilenced, reason:silenceInfo.reason, endTime:silenceInfo.endTime}, ()=>{console.log("33333333")});
             });
         })
@@ -65,10 +57,6 @@ class WordsBlock extends React.Component {
 
     componentWillMount() {
         getServiceList((res) => {
-            // let serviceIdList = res.map(item => {
-            //     return item.serverId
-            // })
-            // this.setState({ serviceIdList: serviceIdList })
             this.setState({ serviceList: res })
         })
     }
@@ -76,7 +64,7 @@ class WordsBlock extends React.Component {
     /**
      * 解除禁言
      */
-    handleSubmit = (e) => {
+    unSilence = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -120,8 +108,8 @@ class WordsBlock extends React.Component {
             <Row>
                 <Col className="gutter-row" md={12}>
                     <Card >
-                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
-                        <Form onSubmit={this.handleSubmit} style={{ minHeight:302, width: "100%" }}>
+                        {/* <Form layout="inline" onSubmit={this.unSilence}> */}
+                        <Form  style={{ minHeight:302, width: "100%" }}>
 
                             <FormItem {...formItemLayout} label="服务器ID" >
                                 {getFieldDecorator('serverId', {
@@ -157,13 +145,6 @@ class WordsBlock extends React.Component {
                                     <Input placeholder="请输入封禁时间（分钟）" />
                                 )}
                             </FormItem>
-                            {/* <FormItem {...formItemLayout} label={"服务器Id"}>
-                                {getFieldDecorator('serverId', {
-                                    rules: [{ required: true, message: '请输入服务器Id' }],
-                                })(
-                                    <Input placeholder="请输入服务器Id" />
-                                    )}
-                            </FormItem> */}
                             <Row>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
@@ -172,21 +153,15 @@ class WordsBlock extends React.Component {
                                 </Col>  
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" disabled={!isSilenced} htmlType="submit">解除禁言</Button>
+                                        <Button type="primary" disabled={!isSilenced} htmlType="submit" onClick={this.unSilence} >解除禁言</Button>
                                     </FormItem>
                                 </Col>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" htmlType="submit" disabled={isSilenced} onClick={this.handleButtonClick}>禁言</Button>
+                                        <Button type="primary" htmlType="submit" disabled={isSilenced} onClick={this.silence}>禁言</Button>
                                     </FormItem>
                                 </Col>
                             </Row>
-                            {/* <FormItem {...tailFormItemLayout}>
-                                <Button type="primary" htmlType="submit">解除禁言</Button>
-                            </FormItem>
-                            <FormItem {...tailFormItemLayout}>
-                                <Button type="primary" htmlType="submit" onClick={this.handleButtonClick}>禁言</Button>
-                            </FormItem> */}
                         </Form>
                     </Card>
                 </Col>

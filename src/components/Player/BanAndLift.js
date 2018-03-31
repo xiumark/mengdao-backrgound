@@ -24,24 +24,19 @@ class BanAndLift extends React.Component {
 
     componentWillMount() {
         getServiceList((res) => {
-            // let serviceIdList = res.map(item => {
-            //     return item.serverId
-            // })
-            // this.setState({ serviceIdList: serviceIdList })
             this.setState({ serviceList: res })
         })
     }
     /**
      * 封禁玩家
      */
-    handleButtonClick = (e) => { //获取权限列表
+    block = (e) => { //获取权限列表
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { playerName, serverId, reason='', duration='' } = values;
             let querystring = `playerName=${playerName}&serverId=${serverId}&reason=${reason}&duration=${duration}`
             let url = "/root/banUser.action"
             let method = 'POST'
-            // let successmsg = '封禁角色成功'
             let successmsg = (reason!==''&&duration!=='')?'封禁成功':'请填写原因和期限'
             apiFetch(url, method, querystring, successmsg, (res) => {
                 this.queryState(e);
@@ -50,7 +45,7 @@ class BanAndLift extends React.Component {
     }
 
     queryState=(e,successmsg)=>{
-        e.preventDefault();
+        // e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName} = values;
             let querystring = `serverId=${serverId}&playerName=${playerName}`
@@ -58,9 +53,7 @@ class BanAndLift extends React.Component {
             let method = 'POST'
             // let successmsg = '查询成功'
             apiFetchNomsg(url, method, querystring, successmsg, (res) => {
-                console.log("state:", res);
                 let blockInfo = res.data.blockInfo;
-                console.log("blockInfo:", blockInfo);
                 this.setState({isBlocked:blockInfo.isBlocked, reason:blockInfo.reason, endTime:blockInfo.endTime}, ()=>{console.log("33333333")});
             });
         })
@@ -69,12 +62,11 @@ class BanAndLift extends React.Component {
     /**
      * 解禁玩家
      */
-    handleSubmit = (e) => {
+    unBlock = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { playerName, serverId ,reason, duration} = values;
-                //serverId可不填
                 let querystring = `playerName=${playerName}&serverId=${serverId}`
                 let url = "/root/unbanUser.action"
                 let method = 'POST'
@@ -114,9 +106,8 @@ class BanAndLift extends React.Component {
             <Row>
                 <Col className="gutter-row" md={12}>
                     <Card >
-                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
-                        <Form onSubmit={this.handleSubmit}>
-
+                        {/* <Form layout="inline" onSubmit={this.unBlock}> */}
+                        <Form  style={{ minHeight:302, width: "100%" }}>
                             <FormItem {...formItemLayout} label="服务器ID" >
                                 {getFieldDecorator('serverId', {
                                     rules: [
@@ -151,13 +142,6 @@ class BanAndLift extends React.Component {
                                     <Input placeholder="请输入封禁时间（分钟）" />
                                 )}
                             </FormItem>
-                            {/* <FormItem {...formItemLayout} label={"服务器Id"}>
-                                {getFieldDecorator('serverId', {
-                                    rules: [{ required: true, message: '请输入服务器Id' }],
-                                })(
-                                    <Input placeholder="请输入服务器Id" />
-                                )}
-                            </FormItem> */}
                             <Row>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
@@ -166,12 +150,12 @@ class BanAndLift extends React.Component {
                                 </Col>  
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" disabled={!isBlocked} htmlType="submit">解除封禁</Button>
+                                        <Button type="primary" disabled={!isBlocked} htmlType="submit" onClick={this.unBlock} >解除封禁</Button>
                                     </FormItem>
                                 </Col>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" htmlType="submit" disabled={isBlocked} onClick={this.handleButtonClick}>封禁</Button>
+                                        <Button type="primary" htmlType="submit" disabled={isBlocked} onClick={this.block}>封禁</Button>
                                     </FormItem>
                                 </Col>
                             </Row>
@@ -203,4 +187,9 @@ class BanAndLift extends React.Component {
         </div >;
     }
 }
+
+
+// BanAndLift.propTypes = {
+//     duration:React.PropTypes.number.isRequired,
+// }
 export default Form.create()(BanAndLift);
