@@ -250,7 +250,15 @@ class SendEmail extends React.Component {
         })
     }
 
-
+    buttonDeleteClick=(item)=>{
+        let key = item.key;
+        const {giftContentData} = this.state;
+        let newList = giftContentData.filter((item, index)=>{
+            return item.key!==key
+        })
+        console.log("删除keyitem：", item);
+        this.setState({giftContentData:newList});
+    }
 
     render() {
         const { getFieldDecorator } = this.props.form;
