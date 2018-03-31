@@ -47,51 +47,63 @@ const EditableCell = ({ editable, value, onChange, onClick}) => (
 
 
 class GiftPackage extends React.Component {
-    state = {
-        key: 1,
-        giftPackageItemsData: [
-            // { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
-            // { key: '1', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-            // { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-        ],
-        giftContentData: [
-            { key: '1', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
-            { key: '2', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-            { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-            // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-            // { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-        ],
-        serviceList: [
-            { serverId: "1", serverName: "sg_banshu", serverState: 0 },
-            { serverId: "2", serverName: "sg_dev", serverState: 0 },
-            { serverId: "90002", serverName: "sg_90002", serverState: 0 }
-        ],
+    constructor(props){
+        super(props);
+        this.state = {
+            key: 1,
+            giftPackageItemsData: [
+                // { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+                // { key: '1', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
+                // { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            ],
+            giftContentData: [
+                { key: '1', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+                { key: '2', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
+                { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+                // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+                // { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+            ],
+            serviceList: [
+                { serverId: "1", serverName: "sg_banshu", serverState: 0 },
+                { serverId: "2", serverName: "sg_dev", serverState: 0 },
+                { serverId: "90002", serverName: "sg_90002", serverState: 0 }
+            ],
+        };
+        this.columns = [
+            {
+                title: 'num',
+                dataIndex: 'num',
+                key:'num',
+                width: '15%',
+                render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'num'),
+            },
+            {
+                title: 'name',
+                dataIndex: 'name',
+                key: 'name',
+            },
+            {
+                title: 'type',
+                dataIndex: 'type',
+                key: 'type',
+            },
+            {
+                title: 'wildCard',
+                dataIndex: 'wildCard',
+                key: 'wildCard',
+            },
+        ];
+        this.renderColumns = this.renderColumns.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.format = this.format.bind(this);
     }
-    columns = [
-        {
-            title: 'num',
-            dataIndex: 'num',
-            key:'num',
-            width: '15%',
-            render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'num'),
-        },
-        {
-            title: 'name',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'type',
-            dataIndex: 'type',
-            key: 'type',
-        },
-        {
-            title: 'wildCard',
-            dataIndex: 'wildCard',
-            key: 'wildCard',
-        },
-    ];
-    
+    componentDidMount() {
+        getServiceList((res) => {
+            this.setState({ serviceList: res })
+        })
+    }
+
     renderColumns(textValue, tableItem, column) {
         // console.log("rendercolums:" );
         // console.log("textValue:",textValue );
@@ -106,22 +118,22 @@ class GiftPackage extends React.Component {
             onClick ={(event) => this.handleClick(event, tableItem, column)}
           />
         );
-      }
+    }
 
-    handleChange=(event,tableItem, column)=>{
+    handleChange(event,tableItem, column){//一个令人疑惑的巨大BUG，这个以及下一个函数内部不能放入console，否则不能打包。其他的地方却不受任何影响，很奇怪
         const {giftPackageItemsData} = this.state;
         let key = tableItem.key
         giftPackageItemsData[key-1].num = event.target.value;
-        console.log("handleChange:")
-        console.log('event:',event.target)
-        console.log('eventvalue:',event.target.value)
+        // console.log("handleChange:")
+        // console.log('event:',event.target)
+        // console.log('eventvalue:',event.target.value)
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
-    handleClick=(event, tableItem, column)=>{
-        console.log("handleClick:")
+    handleClick(event, tableItem, column){
+        // console.log("handleClick:")
         // console.log("vlaue:", event.target.value);
         // console.log("vlaue:", event.target);
-        console.log("tableItemnum:", tableItem.num);
+        // console.log("tableItemnum:", tableItem.num);
         let id = event.target.id;
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
@@ -141,18 +153,32 @@ class GiftPackage extends React.Component {
             filteredGiftContentData.push(tableItem);//将添加的item加入数组最后一行
             this.setState({giftContentData:filteredGiftContentData});
         }
-        
     }
 
-    componentWillMount() {
-        getServiceList((res) => {
-            // let serviceIdList = res.map(item => {
-            //     return item.serverId
-            // })
-            // this.setState({ serviceIdList: serviceIdList })
-            this.setState({ serviceList: res })
-        })
-    }
+
+    format(pattern, params){
+        let lastIndex = -1;
+        
+        let result = "";
+        let ifTake = true;
+        for (let i = 0; i < pattern.length; i++) {
+          if (pattern.charAt(i) == '{') {
+             ifTake = false;
+          } else if (pattern.charAt(i) == '}') {
+             ifTake = true;
+             lastIndex = lastIndex + 1;
+             result = result + params[lastIndex];
+          } else if (ifTake) {
+             result = result + pattern.charAt(i);
+          }
+        }
+         
+        return result;
+       }
+
+
+
+
     getPackageItemList = () => { //获取礼包信息列表
         let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
         this.props.form.validateFields((err, values) => {
@@ -197,24 +223,45 @@ class GiftPackage extends React.Component {
         })
     }
 
+
+    testFormat=()=>{
+        let params = new Array();
+        params[0]="abc";
+        params[1]="我是谁";
+        let result = format("Hell{0}o{1}", params);
+        alert(result);
+   }
+
     handleSubmit = (e) => {//发送礼包
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const {giftContentData}=this.state;
-                console.log("data:", giftContentData);
+                console.log("giftContentData:", giftContentData);
                 let giftContentStr = '';
-                const p = /\{.*?\}/g;//匹配的字符
+                // const p = /\{.*?\}/g;//匹配的字符
                 // s = s.replace(p, 'XXX');
-                for(let i = 0;i<giftContentData.length;i++){
-                    let itemStr = giftContentData[i].wildCard;
-                    let str='';
-                    let itemNum = giftContentData[i].num;
-                    // console.log("itemStr:",itemStr);
-                    str = itemStr.replace(p,itemNum);
-                    giftContentStr=giftContentStr===''? giftContentStr + str :giftContentStr +';'+ str
+                // for(let i = 0;i<giftContentData.length;i++){
+                //     let itemStr = giftContentData[i].wildCard;
+                //     let handledStr='';
+                //     let itemNum = giftContentData[i].num;
+                //     // console.log("itemStr:",itemStr);
+                //     handledStr = itemStr.replace(p,itemNum);
+                //     giftContentStr=giftContentStr===''? giftContentStr + handledStr :giftContentStr +';'+ handledStr
+                // }
+                // console.log("giftContentStr:",giftContentStr);
+
+                for (let i=0;i<giftContentData.length;i++){
+                    let itemStr=giftContentData[i].wildCard;
+
+                    let handledStr = '';
+                    let itemNum = new Array()
+                    itemNum[0] = giftContentData[i].num;
+                    handledStr = this.format(itemStr,itemNum);
+                    giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
-                console.log("giftContentStr:",giftContentStr);
+
+
                 
                 let { giftType, serverId, playerName, giftContent, duration, title } = values;
                 const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContentStr}&duration=${duration}&title=${title}`
