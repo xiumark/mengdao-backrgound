@@ -3,7 +3,7 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
+import { apiFetch, apiFetchNomsg } from '../../api/api'
 import { getServiceList } from '../../api/service'
 /**
  * 测试用
@@ -37,27 +37,27 @@ class BanAndLift extends React.Component {
     handleButtonClick = (e) => { //获取权限列表
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            let { playerName, serverId, reason, duration } = values;
+            let { playerName, serverId, reason='', duration='' } = values;
             let querystring = `playerName=${playerName}&serverId=${serverId}&reason=${reason}&duration=${duration}`
             let url = "/root/banUser.action"
             let method = 'POST'
             // let successmsg = '封禁角色成功'
-            let successmsg = reason!==undefined&&duration!==undefined?'封禁成功':'请填写原因和期限'
+            let successmsg = (reason!==''&&duration!=='')?'封禁成功':'请填写原因和期限'
             apiFetch(url, method, querystring, successmsg, (res) => {
-                this.queryState(e,successmsg);
+                this.queryState(e);
             })
         })
     }
 
     queryState=(e,successmsg)=>{
-        // e.preventDefault();
+        e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName} = values;
             let querystring = `serverId=${serverId}&playerName=${playerName}`
             let url = "/root/playerInfo.action"
             let method = 'POST'
             // let successmsg = '查询成功'
-            apiFetch(url, method, querystring, successmsg, (res) => {
+            apiFetchNomsg(url, method, querystring, successmsg, (res) => {
                 console.log("state:", res);
                 let blockInfo = res.data.blockInfo;
                 console.log("blockInfo:", blockInfo);
@@ -80,7 +80,7 @@ class BanAndLift extends React.Component {
                 let method = 'POST'
                 let successmsg ='解除封禁成功'
                 apiFetch(url, method, querystring, successmsg, (res) => {
-                    this.queryState(e,successmsg);
+                    this.queryState(e);
                 })
             }
         });

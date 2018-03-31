@@ -78,7 +78,7 @@ class GiftPackage extends React.Component {
                 key: 'name',
             },
             {
-                title: '虎牌',
+                title: '掉落字符串',
                 dataIndex: 'wildCard',
                 key: 'wildCard',
             },

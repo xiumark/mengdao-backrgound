@@ -77,7 +77,7 @@ class SendEmail extends React.Component {
                 key: 'name',
             },
             {
-                title: '虎牌',
+                title: '掉落字符串',
                 dataIndex: 'wildCard',
                 key: 'wildCard',
             },
@@ -359,7 +359,7 @@ class SendEmail extends React.Component {
                             </FormItem>
                             <FormItem {...formItemLayout} label={"邮件正文"} >
                                 {getFieldDecorator('mailContent', {
-                                    rules: [{ required: true, message: '请输入滚动次数' }],
+                                    rules: [{ required: true, message: '请输邮件正文' }],
                                 })(
                                     <textarea style={{ minHeight: 200, width: "100%" }} placeholder="请输入邮件正文" />
                                 )}

@@ -3,7 +3,7 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
+import { apiFetch, apiFetchNomsg } from '../../api/api'
 import { getServiceList } from '../../api/service'
 /**
  * 测试用
@@ -30,27 +30,28 @@ class WordsBlock extends React.Component {
     handleButtonClick = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            let { serverId, playerName, reason, duration } = values;
+            let { serverId, playerName, reason='', duration='' } = values;
             let querystring = `serverId=${serverId}&playerName=${playerName}&reason=${reason}&duration=${duration}`
             let url = "/root/banChat.action"
-            let method = 'POST'
+            let method = 'POST';
             // let successmsg = '禁言成功'
-            let successmsg = reason!==undefined&&duration!==undefined?'封禁成功':'请填写原因和期限'
+            let successmsg = (reason!==''&&duration!=='')?'禁言成功':'请填写原因和期限';
             apiFetch(url, method, querystring, successmsg, (res) => {
-                this.queryState(e,successmsg);
+                this.queryState(e);
             })
         })
     }
 
-    queryState=(e,successmsg)=>{
-        // e.preventDefault();
+    queryState=(e)=>{
+        e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName} = values;
             let querystring = `serverId=${serverId}&playerName=${playerName}`
             let url = "/root/playerInfo.action"
             let method = 'POST'
-            // let successmsg = '查询成功'
-            apiFetch(url, method, querystring, successmsg, (res) => {
+            let successmsg = undefined
+            // successmsg===undefined?'查询成功':successmsg
+            apiFetchNomsg(url, method, querystring, successmsg, (res) => {
                 console.log("state:", res);
                 let silenceInfo = res.data.silenceInfo;
                 console.log("silenceInfo:", silenceInfo);
@@ -79,13 +80,13 @@ class WordsBlock extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { serverId, playerName, reason, duration } = values;
+                let { serverId, playerName, reason='', duration='' } = values;
                 let querystring = `serverId=${serverId}&playerName=${playerName}`
                 let url = "/root/unbanChat.action"
                 let method = 'POST'
                 let successmsg = '解除禁言成功'
                 apiFetch(url, method, querystring, successmsg, (res) => {
-                    this.queryState(e,successmsg);
+                    this.queryState(e);
                 })
             }
         });
