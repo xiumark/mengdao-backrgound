@@ -359,7 +359,7 @@ class GiftPackage extends React.Component {
                                     </FormItem> */}
                                     <FormItem {...formItemLayout} label={"礼品内容"} >
                                         {getFieldDecorator('giftContent', {
-                                            rules: [{ required: true, message: '请输入滚动次数' }],
+                                            rules: [{ required: giftContentData.length===0?true:false, message: '请输入滚动次数' }],
                                         })(
                                             <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
                                             {giftContentData.map((item, index)=>{
