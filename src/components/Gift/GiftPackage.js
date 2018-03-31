@@ -57,9 +57,9 @@ class GiftPackage extends React.Component {
                 // { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
             ],
             giftContentData: [
-                { key: '1', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
-                { key: '2', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-                { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
+                // { key: '1', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
+                // { key: '2', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
+                // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
                 // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
                 // { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
             ],
@@ -223,15 +223,6 @@ class GiftPackage extends React.Component {
         })
     }
 
-
-    testFormat=()=>{
-        let params = new Array();
-        params[0]="abc";
-        params[1]="我是谁";
-        let result = format("Hell{0}o{1}", params);
-        alert(result);
-   }
-
     handleSubmit = (e) => {//发送礼包
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -260,9 +251,9 @@ class GiftPackage extends React.Component {
                     handledStr = this.format(itemStr,itemNum);
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
-
-
                 
+
+
                 let { giftType, serverId, playerName, giftContent, duration, title } = values;
                 const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContentStr}&duration=${duration}&title=${title}`
                 let url = "/root/sendGift.action"
