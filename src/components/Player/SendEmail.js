@@ -153,9 +153,12 @@ class SendEmail extends React.Component {
 
 
                 let { mailType, serverId, playerName, attachmenet, mailContent, duration, title } = values;
-                // let playerNameArray = playerName.split(',');
-                // let playerNameStr=playerNameArray.join(',');
-                let querystring = `mailType=${mailType}&serverId=${serverId}&playerName=${playerName}&attachmenet=${giftContentStr}&mailContent=${mailContent}&duration=${duration}&title=${title}`
+                let playerNameArray = playerName.split('，');
+                let playerNameStr=playerNameArray.join(',');
+                // console.log("playerNameStr0:", playerNameStr0.trim());
+                // let playerNameStr=playerNameStr0.replace(" ", "");
+                // console.log("playerNameStr:", playerNameStr);
+                let querystring = `mailType=${mailType}&serverId=${serverId}&playerName=${playerNameStr}&attachmenet=${giftContentStr}&mailContent=${mailContent}&duration=${duration}&title=${title}`
                 let url = "/root/sendMail.action"
                 let method = 'POST'
                 let successmsg = '发送邮件成功'
