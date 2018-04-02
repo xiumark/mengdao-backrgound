@@ -49,7 +49,7 @@ export function getServiceList(cb) {
 
 
 export function getYxList(data, cb) {
-        //获取版署列表
+        //获取渠道列表
         let dataArray = data.map((item,index)=>{
             return item.yx;
         })

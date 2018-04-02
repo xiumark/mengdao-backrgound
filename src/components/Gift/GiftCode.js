@@ -89,10 +89,10 @@ class GiftCode extends React.Component {
                 <Row>
                     <Col className="gutter-row" md={12} sm={24}>
                         <Form onSubmit={this.handleSubmit}>
-                            <FormItem {...formItemLayout} label="服务器ID" >
+                            <FormItem {...formItemLayout} label="服务器名称" >
                                 {getFieldDecorator('serverId', {
                                     rules: [
-                                        { required: true, message: '请选择服务器ID' },
+                                        { required: true, message: '请选择服务器名称' },
                                     ],
                                 })(
                                     <Select placeholder="选择服务器名称">
