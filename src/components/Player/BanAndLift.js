@@ -4,7 +4,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
 import { apiFetch, apiFetchNomsg } from '../../api/api'
-import { getServiceList } from '../../api/service'
+import { getServiceList, getYxList } from '../../api/service';
 /**
  * 测试用
  */
@@ -13,19 +13,44 @@ class BanAndLift extends React.Component {
         value1: 1,
         value2: 1,
         serviceList: [
-            { serverId: "1", serverName: "sg_banshu", serverState: 0 },
-            { serverId: "2", serverName: "sg_dev", serverState: 0 },
-            { serverId: "90002", serverName: "sg_90002", serverState: 0 }
+            {yx:'版署1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
+            {yx:'版署1', serverId: "2", serverName: "sg_dev", serverState: 0 },
+            {yx:'版署2', serverId: "90002", serverName: "sg_90002", serverState: 0 }
+        ],
+
+        filteredServiceList: [
+            {yx:'版署1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
+            {yx:'版署1', serverId: "2", serverName: "sg_dev", serverState: 0 },
+        ],
+
+        yxList:[
+            {yx:'版署1' ,key:1},
+            {yx:'版署2' ,key:1},
         ],
         isBlocked:false,
         reason:'',
         endTime:''
     }
 
-    componentWillMount() {
+    componentDidMount() {
         getServiceList((res) => {
-            this.setState({ serviceList: res })
+            this.getYxList(res);
+            this.setState({ serviceList: res, filteredServiceList: res});
         })
+    }
+
+    onYxChange=(value)=>{//版署列表变换引起服务列表更新
+        const{serviceList} = this.state;
+        let filteredServiceList = serviceList.filter((item, index)=>{
+            return item.yx===value;
+        });
+        this.setState({filteredServiceList:filteredServiceList});
+    }
+
+    getYxList=(data)=>{//获取版署列表
+       getYxList(data,(yxList)=>{
+        this.setState({yxList:yxList});
+       });
     }
     /**
      * 封禁玩家
@@ -78,6 +103,7 @@ class BanAndLift extends React.Component {
         });
     }
     render() {
+        const {filteredServiceList, yxList} = this.state;
         const { getFieldDecorator } = this.props.form;
         const { serviceList, isBlocked,reason,endTime } = this.state;
         const formItemLayout = {
@@ -108,6 +134,19 @@ class BanAndLift extends React.Component {
                     <Card >
                         {/* <Form layout="inline" onSubmit={this.unBlock}> */}
                         <Form  style={{ minHeight:302, width: "100%" }}>
+                            <FormItem {...formItemLayout} label="版署" >
+                                    {getFieldDecorator('yx', {
+                                        rules: [
+                                            { required: true, message: '请选择版署' },
+                                        ],
+                                    })(
+                                        <Select placeholder="请选择版署" onChange = {(value)=>this.onYxChange(value)}>
+                                            {yxList.map((item, index) => {
+                                                return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
+                                            })}
+                                        </Select>
+                                    )}
+                            </FormItem>
                             <FormItem {...formItemLayout} label="服务器ID" >
                                 {getFieldDecorator('serverId', {
                                     rules: [
@@ -115,7 +154,7 @@ class BanAndLift extends React.Component {
                                     ],
                                 })(
                                     <Select placeholder="选择服务器名称">
-                                        {serviceList.map((item, index) => {
+                                        {filteredServiceList.map((item, index) => {
                                             return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
                                         })}
                                     </Select>

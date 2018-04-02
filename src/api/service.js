@@ -48,3 +48,19 @@ export function getServiceList(cb) {
 }
 
 
+export function getYxList(data, cb) {
+        //获取版署列表
+        let dataArray = data.map((item,index)=>{
+            return item.yx;
+        })
+        let yxArrayList=[];
+        for(let i = 0;i<dataArray.length;i++){
+            if(yxArrayList.indexOf(data[i].yx)==-1){//不重复
+                yxArrayList.push(data[i].yx);
+            }
+        }
+        let yxList = yxArrayList.map((item, index)=>{
+            return {yx:item,key:index}
+        });
+        cb&&cb(yxList);
+}
