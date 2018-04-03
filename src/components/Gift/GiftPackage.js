@@ -283,8 +283,8 @@ class GiftPackage extends React.Component {
                 
 
 
-                let { giftType, serverId, playerName, giftContent, duration, title } = values;
-                const querystring = `giftType=${giftType}&serverId=${serverId}&playerName=${playerName}&giftContent=${giftContentStr}&duration=${duration}&title=${title}`
+                let { giftType, serverId,yx, playerName, giftContent, duration, title } = values;
+                const querystring = `giftType=${giftType}&serverId=${serverId}&yx=${yx}&playerName=${playerName}&giftContent=${giftContentStr}&duration=${duration}&title=${title}`
                 let url = "/root/sendGift.action"
                 let method = 'POST'
                 let successmsg = '成功发送礼包'

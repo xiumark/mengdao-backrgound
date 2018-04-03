@@ -63,13 +63,14 @@ class SendEmail extends React.Component {
             ],
     
             filteredServiceList: [
+                {yx:'渠道1', serverId: "", serverName: "该渠道上所有服", serverState: 0 },  //serverId为空时传入的
                 {yx:'渠道1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
                 {yx:'渠道1', serverId: "2", serverName: "sg_dev", serverState: 0 },
             ],
     
             yxList:[
                 {yx:'渠道1' ,key:1},
-                {yx:'渠道2' ,key:1},
+                {yx:'渠道2' ,key:2},
             ],
             giftContentData: [
                 // { key: '1', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
@@ -77,7 +78,15 @@ class SendEmail extends React.Component {
                 // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
                 // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
                 // { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-            ]
+            ],
+            mailTypeList:[
+                {mailType:'1',name:'个人邮件', key:1},
+                {mailType:'2',name:'单服邮件', key:2}
+            ],
+            isNotYxAllserver:true,
+            isPlayerNameEditable:false,
+            yxValue:'',
+            playerName:'',
         };
         this.columns = [
 
@@ -115,15 +124,21 @@ class SendEmail extends React.Component {
     componentDidMount() {
         getServiceList((res) => {
             this.getYxList(res);
+            // res.unshift(newelement1);
             this.setState({ serviceList: res, filteredServiceList: res});
         })
     }
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
-        const{serviceList} = this.state;
+        const{serviceList, yxValue} = this.state;
         let filteredServiceList = serviceList.filter((item, index)=>{
             return item.yx===value;
         });
+        // console.log(":")
+        this.setState({yxValue:value});
+        if(filteredServiceList[0].serverId!=="等待置为空"){
+            filteredServiceList.unshift({yx:'555', serverId: "等待置为空", serverName: "该渠道上所有服", serverState: 0 });
+        }
         this.setState({filteredServiceList:filteredServiceList});
     }
 
@@ -150,15 +165,17 @@ class SendEmail extends React.Component {
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
 
-
-
-                let { mailType, serverId, playerName, attachmenet, mailContent, duration, title } = values;
+                let { mailType, serverId,yx, playerName, attachmenet, mailContent, duration, title } = values;
+                if (serverId=='等待置为空'){//yx全服模式serverId为空，playerName为空
+                    serverId='';
+                    playerName='';
+                }
                 let playerNameArray = playerName.split('，');
                 let playerNameStr=playerNameArray.join(',');
                 // console.log("playerNameStr0:", playerNameStr0.trim());
                 // let playerNameStr=playerNameStr0.replace(" ", "");
                 // console.log("playerNameStr:", playerNameStr);
-                let querystring = `mailType=${mailType}&serverId=${serverId}&playerName=${playerNameStr}&attachmenet=${giftContentStr}&mailContent=${mailContent}&duration=${duration}&title=${title}`
+                let querystring = `mailType=${mailType}&serverId=${serverId}&yx=${yx}&playerName=${playerNameStr}&attachmenet=${giftContentStr}&mailContent=${mailContent}&duration=${duration}&title=${title}`
                 let url = "/root/sendMail.action"
                 let method = 'POST'
                 let successmsg = '发送邮件成功'
@@ -238,13 +255,22 @@ class SendEmail extends React.Component {
         }else{
             this.setState({isPersonal: false});
         }
-        // console.log("v:", v)
     }
         
     getPackageItemList = (v) => { //获取礼包信息列表
-                console.log('v:', v);
-                let  serverId  = v;
-                const querystring = `serverId=${serverId}`
+                let value = v;
+                if(value=='等待置为空'){
+                    value='';
+                    this.props.form.setFieldsValue({playerName:'',mailType:'2'})
+                    const{mailTypeList} = this.state;
+                    this.setState({mailTypeList:[{mailType:'2',name:'单服邮件', key:2}],isPlayerNameEditable:true, isPersonal:false});
+                    //将邮件变为单服邮件
+                }else{
+                    this.setState({mailTypeList:[{mailType:'1',name:'个人邮件', key:1},{mailType:'2',name:'单服邮件', key:2}],isPlayerNameEditable:false})
+                };
+                let  serverId  = value;
+                const {yxValue} = this.state;
+                const querystring = `serverId=${serverId}&yx=${yxValue}`;
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/getItems.action`, {
                     credentials: 'include', //发送本地缓存数据
@@ -292,7 +318,7 @@ class SendEmail extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const {filteredServiceList, yxList} = this.state;
+        const {filteredServiceList, yxList,isNotYxAllserver, mailTypeList, isPlayerNameEditable} = this.state;
         const {isPersonal, serviceList, giftContentData, giftPackageItemsData } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -355,17 +381,20 @@ class SendEmail extends React.Component {
                                     ],
                                 })(
                                     <Select placeholder="请选择邮件类型" onChange = {(value)=>this.onMailTypeChange(value)}>
-                                        <Option value="1">个人邮件</Option>
-                                        <Option value="2">单服邮件</Option>
+                                        {mailTypeList.map((item, index)=>{
+                                            return <Option value={item.mailType} key = {item.key}>{item.name}</Option>
+                                        })}
+                                        {/* <Option value="1" intialValue={isNotYxAllserver?'':'1'}>个人邮件</Option> */}
+                                        {/* <Option value="2">单服邮件</Option> */}
                                     </Select>
                                 )}
                             </FormItem>
                             
-                            <FormItem {...formItemLayout} label={"目标用户名"} >
+                            <FormItem {...formItemLayout} label={"目标用户名"} id="playerNameId" >
                                 {getFieldDecorator('playerName', {
                                    rules: [{ required: isPersonal, message: '请输入目标用户名' }],
                                 })(
-                                    <Input placeholder="请输入目标用户名（单服邮件可不填，多个用户用','隔开）" />
+                                    <Input placeholder="请输入目标用户名（多个用户用','隔开）" disabled={isPlayerNameEditable} />
                                 )}
                             </FormItem>
 
