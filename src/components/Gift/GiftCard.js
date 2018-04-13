@@ -31,8 +31,6 @@ class GiftCard extends React.Component {
 
 
     onClick = (item)=>{
-        console.log("here:")
-        console.log("item:", item)
         this.setState({vidname:item.name,giftVid:item.vid});
         this.props.form.setFieldsValue({
             vidname: item.name,
@@ -70,15 +68,12 @@ class GiftCard extends React.Component {
                 let successmsg = '礼品获取成功'
                 let querystring=''
                 apiFetch(url, method, querystring, successmsg, (res) => {
-                    console.log("res:", res)
                     let { giftCode } = this.state;
                     giftCode = res.data.contentList.map((item,index)=>{
                         item.canRepeat = item.canRepeat?'可以':'不可';
                         return item;
                     });
-                    
                     this.setState({ giftCode: giftCode }, ()=>{
-                        console.log("state:", this.state.giftCode)
                     })
                 });
     }
