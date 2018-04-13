@@ -26,6 +26,8 @@ import BanAndLift from './components/Player/BanAndLift';
 import Recharge from './components/Player/Recharge';
 import GiftPackage from './components/Gift/GiftPackage';
 import GiftCode from './components/Gift/GiftCode';
+import GiftCard from './components/Gift/GiftCard';
+import GiftCreate from './components/Gift/GiftCreate';
 import SendEmail from './components/Player/SendEmail';
 import Announcements from './components/AnnouncementManagement/Announcements';
 //import DBTable from './components/DBTable';
@@ -80,6 +82,8 @@ const routes = (
           <Route path="announcementManagement" component={Announcements} />
           <Route path="gift" component={GiftPackage} />
           <Route path="giftCode" component={GiftCode} />
+          <Route path="giftCard" component={GiftCard} />
+          <Route path="giftCreate" component={GiftCreate} />
         </Route>
         {/* </Route> */}
 

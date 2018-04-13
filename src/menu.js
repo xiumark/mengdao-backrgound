@@ -137,6 +137,14 @@ const sidebarMenu = [
             key: 'giftCode',
             name: '礼品码管理',
           },
+          {
+            key: 'giftCard',
+            name: '创建礼品卡',
+          },
+          {
+            key: 'giftCreate',
+            name: '创建礼品',
+          },
           // {
           //   key: 'serverAnnouncement',
           //   name: '新服公告',

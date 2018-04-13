@@ -1,39 +1,31 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
-const FormItem = Form.Item;
-const Option = Select.Option;
+import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio } from 'antd';
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
+const FormItem = Form.Item;
+const Option = Select.Option;
+const RadioGroup = Radio.Group;
 
 const buttonStyle = {
     margin: '10px',
     marginLeft:'0px',
     width: '40px',
-  };
+};
+
 const buttonAddStyle = {
     margin: '10px',
     marginLeft:'0px',
     width: '80px',
 };
-// const buttonContetStyle={
-//     width: '35px',
-//     height: '30px',
-//     border: '0px',
-//     marginLeft: '5px',
-//     paddingTop: '-2px',
-//     backgroundColor: 'rgb(255,255,255)',
-//     color: 'rgb(255, 25, 174)',
-// }
+
 const pStyle={
     paddingTop: '6px',
-}
+};
 
 const flex = {
     display:"flex",
-}
-
-
+};
 
 const EditableCell = ({ editable, value, onChange, onClick}) => (
     <div style={flex}>
@@ -44,9 +36,7 @@ const EditableCell = ({ editable, value, onChange, onClick}) => (
     </div>
   );
 
-
-
-class GiftPackage extends React.Component {
+class GiftCreate extends React.Component {
     constructor(props){
         super(props);
         this.state = {
@@ -81,7 +71,6 @@ class GiftPackage extends React.Component {
             ],
         };
         this.columns = [
-
             {
                 title: '名称',
                 dataIndex: 'name',
@@ -115,25 +104,29 @@ class GiftPackage extends React.Component {
     }
 
     componentDidMount() {
-        getServiceList((res) => {
-            this.getYxList(res);
-            this.setState({ serviceList: res, filteredServiceList: res});
-        })
+        // getServiceList((res) => {
+        //     this.getYxList(res);
+        //     this.setState({ serviceList: res, filteredServiceList: res});
+        // });
+        // getItemList(()=>{
+        //     //获取礼品字符串
+        // })
+        this.getPackageItemList();
     }
 
-    onYxChange=(value)=>{//渠道列表变换引起服务列表更新
-        const{serviceList} = this.state;
-        let filteredServiceList = serviceList.filter((item, index)=>{
-            return item.yx===value;
-        });
-        this.setState({filteredServiceList:filteredServiceList});
-    }
+    // onYxChange=(value)=>{//渠道列表变换引起服务列表更新
+    //     const{serviceList} = this.state;
+    //     let filteredServiceList = serviceList.filter((item, index)=>{
+    //         return item.yx===value;
+    //     });
+    //     this.setState({filteredServiceList:filteredServiceList});
+    // }
 
-    getYxList=(data)=>{//获取渠道列表
-       getYxList(data,(yxList)=>{
-        this.setState({yxList:yxList});
-       });
-    }
+    // getYxList=(data)=>{//获取渠道列表
+    //    getYxList(data,(yxList)=>{
+    //     this.setState({yxList:yxList});
+    //    });
+    // }
 
     renderColumns(textValue, tableItem, column) {
         return (
@@ -178,7 +171,6 @@ class GiftPackage extends React.Component {
 
     format(pattern, params){
         let lastIndex = -1;
-        
         let result = "";
         let ifTake = true;
         for (let i = 0; i < pattern.length; i++) {
@@ -192,7 +184,6 @@ class GiftPackage extends React.Component {
              result = result + pattern.charAt(i);
           }
         }
-         
         return result;
        }
 
@@ -209,11 +200,8 @@ class GiftPackage extends React.Component {
         }
     }
 
-    getPackageItemList = (v) => { //获取礼包信息列表
-        // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        // this.props.form.validateFields((err, values) => {
-            // if (!err) {
-                let  serverId  = v;
+    getPackageItemList = (v) => { //获取礼包物品信息
+                let  serverId  = '2';
                 const querystring = `serverId=${serverId}`
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/getItems.action`, {
@@ -249,15 +237,13 @@ class GiftPackage extends React.Component {
                         message.error(err.message ? err.message : '未知错误');
                         this.setState({ giftPackageItemsData:[]});
                     })
-            // }
-        // })
     }
 
-    handleSubmit = (e) => {//发送礼包
+    handleSubmit = (e) => {//创建礼品
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                const {giftContentData}=this.state;
+                const {giftContentData}=this.state;   //礼品字符串
                 let giftContentStr = '';
                 for (let i=0;i<giftContentData.length;i++){
                     let itemStr=giftContentData[i].wildCard;
@@ -267,16 +253,12 @@ class GiftPackage extends React.Component {
                     handledStr = this.format(itemStr,itemNum);
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
-                
-
-
-                let { giftType, serverId,yx, playerName, giftContent, duration, title } = values;
-                const querystring = `giftType=${giftType}&serverId=${serverId}&yx=${yx}&playerName=${playerName}&giftContent=${giftContentStr}&duration=${duration}&title=${title}`
-                let url = "/root/sendGift.action"
+                let { name, batch, duration, canRepeat, giftContent} = values;
+                const querystring = `name=${name}&batch=${batch}&duration=${duration}&canRepeat=${canRepeat}&giftContent=${giftContentStr}`
+                let url = "/root/createGiftCodeContent.action"
                 let method = 'POST'
-                let successmsg = '成功发送礼包'
+                let successmsg = '成功创建礼品'
                 apiFetch(url, method, querystring, successmsg, (res) => {
-
                 })
             }
         });
@@ -319,108 +301,77 @@ class GiftPackage extends React.Component {
         };
 
         return <div>
-            <Card title="礼包管理">
-                <Form onSubmit={this.handleSubmit} id="add">
+            <Card title="创建礼品">
+                <Form onSubmit={this.handleSubmit} id="createGift">
                     <Row>
-                        <Col className="gutter-row" md={8}>
-                            <FormItem {...formItemLayout} label="渠道" >
-                                {getFieldDecorator('yx', {
-                                    rules: [
-                                        { required: true, message: '请选择渠道' },
-                                    ],
+                        <Col className="gutter-row" md={12}>
+                            <FormItem {...formItemLayout} label={"礼品名称"} >
+                                {getFieldDecorator('name', {
+                                    rules: [{ required: isPersonal, message: '请输入礼品名称!' }],
                                 })(
-                                    <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
-                                        {yxList.map((item, index) => {
-                                            return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
-                                        })}
-                                    </Select>
+                                    <Input placeholder="输入礼品名称" />
                                 )}
                             </FormItem>
-                            <FormItem {...formItemLayout} label="服务器名称" >
-                                {getFieldDecorator('serverId', {
-                                    rules: [
-                                        { required: true, message: '请选择服务器名称' },
-                                    ],
+                            <FormItem {...formItemLayout} label={"礼品批次"} >
+                                {getFieldDecorator('batch', {
+                                    rules: [{ required: isPersonal, message: '请输入礼品批次!' }],
                                 })(
-                                    <Select placeholder="选择服务器名称" onChange={(value)=>this.onServerChange(value)}>
-                                        {serviceList.map((item, index) => {
-                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
-                                        })}
-                                    </Select>
+                                    <Input placeholder="输入礼品批次" />
                                 )}
                             </FormItem>
-                            <FormItem {...formItemLayout} label="礼包类型" >
-                                {getFieldDecorator('giftType', {
-                                    rules: [
-                                        { required: true, message: '请选择礼包类型!' },
-                                    ],
+                            <FormItem {...formItemLayout} label={"过期时间"} >
+                                {getFieldDecorator('duration', {
+                                    rules: [{ required: isPersonal, message: '请输入过期时间!' }],
                                 })(
-                                    <Select placeholder="请选择礼包类型" onChange = {(value)=>this.onGiftTypeChange(value)}>
-                                        <Option value="1">个人礼包</Option>
-                                        <Option value="2">单服礼包</Option>
-                                    </Select>
+                                    <Input placeholder="输入过期时间" />
                                 )}
                             </FormItem>
-                            <FormItem {...formItemLayout} label={"目标用户名"} >
-                                {getFieldDecorator('playerName', {
-                                    rules: [{ required: isPersonal, message: '请输入目标用户名!' }],
-                                })(
-                                    <Input placeholder="目标用户名" />
+                            <FormItem
+                                {...formItemLayout}
+                                label="是否重复"
+                                >
+                                {getFieldDecorator('canRepeat')(
+                                    <RadioGroup>
+                                    <Radio value="1">可以</Radio>
+                                    <Radio value="0">不可以</Radio>
+                                    </RadioGroup>
                                 )}
                             </FormItem>
                         </Col>
-                        <Col className="gutter-row" md={16}>
-                            <Row>
-                                <Col md={12}>
-                                    <FormItem {...formItemLayout} label={"礼品内容"} >
-                                        {getFieldDecorator('giftContent', {
-                                            rules: [{ required: giftContentData.length===0?true:false, message: '请输入礼品内容' }],
-                                        })(
-                                            <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
-                                            {giftContentData.map((item, index)=>{
-                                                let data = item
-                                                return <div style={flex} key={item.key}>
-                                                <p style={pStyle}>{`${item.name} 数量:${item.num}`}</p>
-                                                <a className="btn-delete"  onClick = {(event)=>this.buttonDeleteClick(item)}>X</a>
-                                                </div>
-                                            })}
-                                            </div>
-                                        )}
-                                    </FormItem>
-                                </Col>
-                                <Col md={12}>
-                                    <FormItem {...formItemLayout} label={"有效时间"} >
-                                        {getFieldDecorator('duration', {
-                                            rules: [{ required: true, message: '请输入有效时间!' }],
-                                        })(
-                                            <Input placeholder="有效时间" />
-                                        )}
-                                    </FormItem>
-                                    <FormItem {...formItemLayout} label={"礼包的名称"} >
-                                        {getFieldDecorator('title', {
-                                            rules: [{ required: true, message: '请输入礼包的名称!' }],
-                                        })(
-                                            <Input placeholder="礼包的名称" />
-                                        )}
-                                    </FormItem>
-                                </Col>
-                            </Row>
+                        {/* 展示礼品内容 */}
+                        <Col className="gutter-row" md={12}>
+                            <FormItem {...formItemLayout} label={"礼品内容"} >
+                                {getFieldDecorator('giftContent', {
+                                    rules: [{ required: giftContentData.length===0?true:false, message: '请输入礼品内容' }],
+                                })(
+                                    <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入礼品内容">
+                                    {giftContentData.map((item, index)=>{
+                                        let data = item
+                                        return <div style={flex} key={item.key}>
+                                        <p style={pStyle}>{`${item.name} 数量:${item.num}`}</p>
+                                        <a className="btn-delete"  onClick = {(event)=>this.buttonDeleteClick(item)}>X</a>
+                                        </div>
+                                    })}
+                                    </div>
+                                )}
+                            </FormItem>
                         </Col>
                     </Row>
+                    {/* 下方按钮，左侧显示 */}
                     <Row>
-                        <Col className="gutter-row" md={12} sm={12}>
+                        {/* <Col className="gutter-row" md={12} sm={12}> */}
                             <FormItem {...tailFormItemLayout} >
-                                <Button type="primary" htmlType="submit">发送礼包</Button>
+                                <Button type="primary" htmlType="submit">创建礼品</Button>
                             </FormItem>
-                        </Col>
+                        {/* </Col> */}
                     </Row>
                 </Form>
             </Card>
-            <Card>
+            {/* 下方显示可以使用的掉落字符串 */}
+            <Card title="可选物品列表">
                 <Table pagination={{ pageSize: 15 }} columns={this.columns} dataSource={giftPackageItemsData} size={'small'} />
             </Card>
         </div >;
     }
 }
-
-export default Form.create()(GiftPackage);
+export default Form.create()(GiftCreate);
