@@ -71,6 +71,7 @@ class GiftCard extends React.Component {
                     let { giftCode } = this.state;
                     giftCode = res.data.contentList.map((item,index)=>{
                         item.canRepeat = item.canRepeat?'可以':'不可';
+                        item.downloadUrl = item.canDownload?item.downloadUrl:''
                         return item;
                     });
                     this.setState({ giftCode: giftCode }, ()=>{
@@ -124,6 +125,10 @@ class GiftCard extends React.Component {
         }, {
             title: '礼品内容',
             dataIndex: 'giftContent',
+        }, {
+            title: '链接',
+            dataIndex: 'downloadUrl',
+            render: link => {return link!==''?<a href={link}>{'下载礼品码'}</a>:''}
           }];
         return <div>
             <Card title="">
