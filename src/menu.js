@@ -142,8 +142,12 @@ const sidebarMenu = [
             name: '创建礼品',
           },
           {
+            key: 'expireTimeChange',
+            name: '修改礼品过期时间',
+          },
+          {
             key: 'giftCard',
-            name: '创建礼品卡',
+            name: '生成礼品码',
           },
 
           // {

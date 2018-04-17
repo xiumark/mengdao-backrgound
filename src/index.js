@@ -28,6 +28,7 @@ import GiftPackage from './components/Gift/GiftPackage';
 import GiftCode from './components/Gift/GiftCode';
 import GiftCard from './components/Gift/GiftCard';
 import GiftCreate from './components/Gift/GiftCreate';
+import ExpireTimeChange from './components/Gift/ExpireTimeChange';
 import SendEmail from './components/Player/SendEmail';
 import Announcements from './components/AnnouncementManagement/Announcements';
 //import DBTable from './components/DBTable';
@@ -83,7 +84,9 @@ const routes = (
           <Route path="gift" component={GiftPackage} />
           <Route path="giftCode" component={GiftCode} />
           <Route path="giftCard" component={GiftCard} />
+          <Route path="giftCard" component={GiftCard} />
           <Route path="giftCreate" component={GiftCreate} />
+          <Route path="expireTimeChange" component={ExpireTimeChange} />
         </Route>
         {/* </Route> */}
 

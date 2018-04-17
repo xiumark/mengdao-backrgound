@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio, DatePicker, TimePicker } from 'antd';
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
@@ -40,6 +40,7 @@ class GiftCreate extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            optionValue:'0',
             isPersonal:false,
             key: 1,
             giftPackageItemsData: [
@@ -101,6 +102,7 @@ class GiftCreate extends React.Component {
         this.format = this.format.bind(this);
         this.onServerChange = this.onServerChange.bind(this);
         this.onGiftTypeChange = this.onGiftTypeChange.bind(this);
+        this.checkChange = this.checkChange.bind(this);
     }
 
     componentDidMount() {
@@ -112,6 +114,9 @@ class GiftCreate extends React.Component {
         //     //获取礼品字符串
         // })
         this.getPackageItemList();
+        this.props.form.setFieldsValue({
+            canRepeat:'0'
+          });
     }
 
     // onYxChange=(value)=>{//渠道列表变换引起服务列表更新
@@ -200,6 +205,12 @@ class GiftCreate extends React.Component {
         }
     }
 
+    checkChange(e){
+        this.props.form.setFieldsValue({
+            canRepeat:e.target.value
+          });
+    }
+
     getPackageItemList = (v) => { //获取礼包物品信息
                 let  serverId  = '2';
                 const querystring = `serverId=${serverId}`
@@ -253,8 +264,10 @@ class GiftCreate extends React.Component {
                     handledStr = this.format(itemStr,itemNum);
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
-                let { name, batch, duration, canRepeat, giftContent} = values;
-                const querystring = `name=${name}&batch=${batch}&duration=${duration}&canRepeat=${canRepeat}&giftContent=${giftContentStr}`
+
+                let { name, batch, expireTime, canRepeat, giftContent} = values;
+                expireTime=expireTime.format('YYYY-MM-DD HH:mm:ss');   //ant@2需要的处理，因为类型发生改变由之前的value改为了moment类型
+                const querystring = `name=${name}&batch=${batch}&expireTime=${expireTime}&canRepeat=${canRepeat}&giftContent=${giftContentStr}`
                 let url = "/root/createGiftCodeContent.action"
                 let method = 'POST'
                 let successmsg = '成功创建礼品'
@@ -276,7 +289,7 @@ class GiftCreate extends React.Component {
     render() {
         const {filteredServiceList, yxList} = this.state;
         const { getFieldDecorator } = this.props.form;
-        const { isPersonal, giftPackageItemsData, giftContentData, serviceList } = this.state;
+        const { isPersonal, giftPackageItemsData, giftContentData, serviceList,optionValue } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 6 },
@@ -319,19 +332,28 @@ class GiftCreate extends React.Component {
                                     <Input placeholder="输入礼品批次" />
                                 )}
                             </FormItem>
-                            <FormItem {...formItemLayout} label={"过期时间"} >
+                            {/* <FormItem {...formItemLayout} label={"过期时间"} >
                                 {getFieldDecorator('duration', {
                                     rules: [{ required: isPersonal, message: '请输入过期时间!' }],
                                 })(
                                     <Input placeholder="输入过期时间" />
                                 )}
-                            </FormItem>
+                            </FormItem> */}
+                            <FormItem
+                                {...formItemLayout}
+                                label="过期时间"
+                                >
+                                {getFieldDecorator('expireTime', {
+                                    rules: [{ type: 'object', required: true, message: '请选择过期时间!' }]})(
+                                    <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                                )}
+                                </FormItem>
                             <FormItem
                                 {...formItemLayout}
                                 label="是否重复"
                                 >
                                 {getFieldDecorator('canRepeat')(
-                                    <RadioGroup>
+                                    <RadioGroup onChange={this.checkChange}>
                                     <Radio value="1">可以</Radio>
                                     <Radio value="0">不可以</Radio>
                                     </RadioGroup>

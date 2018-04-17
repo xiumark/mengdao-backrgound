@@ -1,16 +1,41 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker, TimePicker, Popconfirm } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
+import { apiFetch,apiFetchNomsg } from '../../api/api'
 import { constants } from 'zlib';
 // import { getServiceList } from '../../api/service'
 /**
- * 礼品卡
+ * 
  */
-class GiftCard extends React.Component {
+
+
+const EditableCell = ({ editable, value, onChange }) => (
+    <div>
+      {editable
+        // ? <Input style={{ margin: '-5px 0' }} value={value} onChange={e => onChange(e.target.value)} />
+        ? <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange = {(e)=>onChange(e)}/>
+            // <FormItem
+            //     {...formItemLayout}
+            //     label="过期时间"
+            //     >
+            //     {getFieldDecorator('expireTime', {
+            //         rules: [{ type: 'object', required: true, message: '请选择过期时间!' }]})(
+            //         <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            //     )}
+            // </FormItem>
+        : value
+      }
+    </div>
+  );
+
+
+class ExpireTimeChange extends React.Component {
     state = {
+        vidTochange:'',
+        expireTimeTochange:'',
+        data:{},   
         isPersonal:false,
         vid:'',
         giftCode: [
@@ -38,12 +63,31 @@ class GiftCard extends React.Component {
                   }],
             },
         ],
+        newGiftCode:[],
         cardWidth: '',
     }
     componentWillMount() {
         this.getGiftCodeContents();
     }
 
+
+
+    renderColumns=(text, record, column)=> {
+        return (
+            <EditableCell
+            editable={record.editable}
+            value={text}
+            onChange={value => this.handleChange(value, record.vid, column)}
+            />
+        );
+    }
+
+    handleChange=(value, key, column)=> {
+        value=value.format('YYYY-MM-DD HH:mm:ss');
+        const {vidTochange,expireTimeTochange} = this.state;
+        this.setState({vidTochange:key,expireTimeTochange:value});
+        // this.changeGiftCodeExpireTime(key,value)
+    }
 
     onClick = (item)=>{
         this.setState({vidname:item.name,giftVid:item.vid});
@@ -52,26 +96,33 @@ class GiftCard extends React.Component {
           });
     }
 
-    /**
-     * 生成礼品卡
-     */
-    handleSubmit = (e) => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                let { vidname, num, scope} = values;
-                let {giftName,giftVid} = this.state;
-                let querystring = `vid=${giftVid}&num=${num}&scope=${scope}`
-                let url = "/root/generateGiftCode.action"
-                let method = 'POST'
-                let successmsg = '成功生成礼品码'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    // let { giftCode } = this.state;
-                    // giftCode = res.data.giftCode.split(";");
-                    // this.setState({ giftCode: giftCode })
-                })
-            }
-        });
+    edit=(key)=> {
+        const {giftCode} = this.state;
+        const target = giftCode.filter(item => key === item.vid)[0];
+        if (target) {
+          target.editable = true;
+          this.setState({ giftCode: giftCode },()=>{
+          });
+        }
+    }
+
+    save=(key)=> {
+        const {giftCode, vidTochange, expireTimeTochange} = this.state;
+        const target = giftCode.filter(item => key === item.vid)[0];
+        if (target) {
+            delete target.editable;
+            this.setState({ giftCode: giftCode });
+        }
+        this.changeGiftCodeExpireTime(vidTochange,expireTimeTochange)
+    }
+
+    cancel=(key)=> {
+        const {giftCode} = this.state;
+        const target = giftCode.filter(item => key === item.vid)[0];
+        if (target) {
+            delete target.editable;
+        }
+        this.setState({ giftCode: giftCode });
     }
 
     handleBatch=(data)=>{
@@ -95,7 +146,6 @@ class GiftCard extends React.Component {
                 }
             }
         }
-        console.log("batchArray:", batchArray);
         return batchArray;
     }
     /** 
@@ -120,31 +170,20 @@ class GiftCard extends React.Component {
                 });
     }
 
+    changeGiftCodeExpireTime=(vid,expireTime)=>{
+        const{giftCode} = this.state;
+        //vid duration
+        let url = "/root/changeGiftCodeExpireTime.action"
+            let method = 'POST'
+            let successmsg = '过期时间修改成功'
+            const querystring =`vid=${vid}&expireTime=${expireTime}`
+            apiFetch(url, method, querystring, successmsg, (res) => {
+                this.getGiftCodeContents()
+            });
+    }
+
     render() {
-        const { getFieldDecorator } = this.props.form;
-        const { giftCode, cardWidth, isPersonal } = this.state;
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 6 },
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 14 },
-            },
-        };
-        const tailFormItemLayout = {
-            wrapperCol: {
-                xs: {
-                    span: 24,
-                    offset: 0,
-                },
-                sm: {
-                    span: 14,
-                    offset: 6,
-                },
-            },
-        };
+        const { giftCode } = this.state;
         const columns = [{
             title: '礼品名称',
             dataIndex: 'name',
@@ -163,52 +202,41 @@ class GiftCard extends React.Component {
         }, {
             title: '过期时间',
             dataIndex: 'expireTime',
-        }, {
+            render: (text, record) => this.renderColumns(text, record, 'expireTime')
+        },{
+            title: '编辑',
+            dataIndex: 'operation',
+            render: (text, record) => {
+              const { editable } = record;
+              return (
+                <div className="editable-row-operations">
+                  {
+                    editable ?
+                      <span>
+                        <a onClick={() => this.save(record.vid)}>保存</a>
+                        <a onClick={() => this.cancel(record.vid)}>取消</a>
+                      </span>
+                      : <a onClick={() => this.edit(record.vid)}>编辑</a>
+                  }
+                </div>
+              );
+            },
+          },
+         {
             title: '礼品内容',
             dataIndex: 'giftContent',
         }, {
             title: '链接',
             dataIndex: 'downloadUrl',
             render: link => {return link!==''?<a href={link}>{'下载礼品码'}</a>:''}
-          }];
+          },
+        ];
         return <div>
-            <Card title="">
-                <Row>
-                    <Col className="gutter-row" md={12} sm={24}>
-                        <Form onSubmit={this.handleSubmit}>
-                            <FormItem {...formItemLayout} label={"礼品编号"} >
-                                {getFieldDecorator('vidname', {
-                                    rules: [{ required: true, message: '请输入礼品编号!' }],
-                                })(
-                                    <Input placeholder="输入礼品编号" />
-                                )}
-                            </FormItem>
-                            <FormItem {...formItemLayout} label={"礼品码数量"} >
-                                {getFieldDecorator('num', {
-                                    rules: [{ required: true, message: '请输入礼品码数量!' }],
-                                })(
-                                    <Input placeholder="输入礼品码数量" />
-                                )}
-                            </FormItem>
-                            <FormItem {...formItemLayout} label={"区服范围"} >
-                                {getFieldDecorator('scope', {
-                                    rules: [{ required: false, message: '请输入区服范围!' }],
-                                })(
-                                    <Input placeholder="输入区服范围" />
-                                )}
-                            </FormItem>
-                            <FormItem {...tailFormItemLayout} >
-                                <Button type="primary" htmlType="submit">创建礼品</Button>
-                            </FormItem>
-                        </Form>
-                    </Col>
-                </Row>
-            </Card>
-            <Card title="可添加的礼品列表" id="giftList" style={{ minHeight: 380 }}>
-                <Table onRowClick={this.onClick} rowKey="vid" columns={columns} dataSource={giftCode} size="small" />
+            <Card title="修改过期时间" id="expireTimeChange" style={{ minHeight: 380 }}>
+                <Table rowKey="vid" columns={columns} dataSource={giftCode} size="small" />
             </Card>
         </div >;
     }
 }
 
-export default Form.create()(GiftCard);
+export default Form.create()(ExpireTimeChange);
