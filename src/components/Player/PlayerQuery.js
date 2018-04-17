@@ -134,8 +134,6 @@ class PlayerQuery extends React.Component {
 
     ];
 
-
-
     componentDidMount() {
         getServiceList((res) => {
             this.getYxList(res);
@@ -159,18 +157,27 @@ class PlayerQuery extends React.Component {
 
 
     handleSubmit = (e) => {  //查询玩家信息
+        // console.log('e:', e.target.id)   //playerName,userIdyx,playerId
+        let queryId=e.target.id
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { serverId, playerName } = values;
-                //serverId可不填
-                const querystring = `serverId=${serverId}&playerName=${playerName}`
+                let { serverId, playerName, userId, yx, playerId } = values;
+                let querystring ='';
+                if(queryId=='playerName'){
+                    querystring = `serverId=${serverId}&playerName=${playerName}`;
+                }else if(queryId=='userIdyx'){
+                    querystring = `serverId=${serverId}&userId=${userId}&yx=${yx}`;
+                }else if(queryId=='playerId'){
+                    querystring = `serverId=${serverId}&playerId=${playerId}`;
+                }
+
                 let url = "/root/playerInfo.action"
                 let method = 'POST'
                 let successmsg = '获取玩家数据成功'
                 apiFetchError(url, method, querystring, successmsg, (res) => {
                     let { playerData, key } = this.state;
-                    let resData = res.data;
+                    let resData = res.data.playerList[0];
                     let playerDataItem = {};
                     playerDataItem.cityName = resData.cityName;
                     playerDataItem.forceId = resData.forceId;
@@ -228,55 +235,79 @@ class PlayerQuery extends React.Component {
         };
         return <div>
             <Card title="获取玩家信息">
+            <Form>
+                <FormItem {...formItemLayout} label="服务器名称" >
+                    {getFieldDecorator('serverId', {
+                        rules: [
+                            { required: true, message: '请选择服务器名称' },
+                        ],
+                    })(
+                        <Select placeholder="选择服务器名称">
+                            {filteredServiceList.map((item, index) => {
+                                return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
+                            })}
+                        </Select>
+                    )}
+                </FormItem>
+            </Form>
                 <Row>
-                    <Col className="gutter-row" md={12}>
-                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
-                        <Form onSubmit={this.handleSubmit}>
-                                <FormItem {...formItemLayout} label="渠道" >
-                                    {getFieldDecorator('yx', {
-                                        rules: [
-                                            { required: true, message: '请选择渠道' },
-                                        ],
-                                    })(
-                                        <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
-                                            {yxList.map((item, index) => {
-                                                return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
-                                            })}
-                                        </Select>
-                                    )}
-                                </FormItem>
-                            <FormItem {...formItemLayout} label="服务器名称" >
-                                {getFieldDecorator('serverId', {
-                                    rules: [
-                                        { required: true, message: '请选择服务器名称' },
-                                    ],
-                                })(
-                                    <Select placeholder="选择服务器名称">
-                                        {filteredServiceList.map((item, index) => {
-                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
-                                        })}
-                                    </Select>
-                                )}
-                            </FormItem>
-                            {/* <FormItem {...formItemLayout} label={"服务器Id"} >
-                                {getFieldDecorator('serverId', {
-                                    rules: [{ required: true, message: '请输入服务器Id' }],
-                                })(
-                                    <Input placeholder="服务器Id" />
-                                )}
-                            </FormItem> */}
+                    <Col className="gutter-row" md={8}>
+                        <Form id="playerName" onSubmit = {this.handleSubmit}>
                             <FormItem {...formItemLayout} label={"角色的名称"}>
                                 {getFieldDecorator('playerName', {
-                                    rules: [{ required: true, message: '请输入角色的名称' }],
+                                    rules: [{ required: false, message: '请输入角色的名称' }],
                                 })(
                                     <Input placeholder="请输入角色的名称" />
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
-                                <Button type="primary" htmlType="submit">获取</Button>
+                                <Button type="primary" htmlType="submit" >通过角色名称获取</Button>
                             </FormItem>
                         </Form>
                     </Col>
+                    <Col className="gutter-row" md={8}>
+                        <Form id="userIdyx" onSubmit = {this.handleSubmit}>
+                            <FormItem {...formItemLayout} label={"用户Id"}>
+                                {getFieldDecorator('userId', {
+                                    rules: [{ required: false, message: '请输入用户Id' }],
+                                })(
+                                    <Input placeholder="请输入用户Id" />
+                                )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label="渠道" >
+                                {getFieldDecorator('yx', {
+                                    rules: [
+                                        { required: false, message: '请选择渠道' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
+                                        {yxList.map((item, index) => {
+                                            return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
+                            <FormItem {...tailFormItemLayout}>
+                                <Button type="primary" htmlType="submit" >通过userId获取</Button>
+                            </FormItem>
+                            
+                        </Form>
+                    </Col>      
+                    <Col className="gutter-row" md={8}>
+                        {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
+                        <Form id="playerId" onSubmit = {this.handleSubmit}>
+                            <FormItem {...formItemLayout} label={"角色的Id"}>
+                                {getFieldDecorator('playerId', {
+                                    rules: [{ required: false, message: '请输入角色Id"' }],
+                                })(
+                                    <Input placeholder="请输入角色Id" />
+                                )}
+                            </FormItem>
+                            <FormItem {...tailFormItemLayout}>
+                                <Button type="primary" htmlType="submit">通过角色Id获取</Button>
+                            </FormItem>
+                        </Form>
+                    </Col>                  
                 </Row>
             </Card>
             <Card title="玩家列表">
