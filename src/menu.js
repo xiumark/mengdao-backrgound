@@ -156,6 +156,20 @@ const sidebarMenu = [
           // },
         ],
       },
+            {
+        key: 'gameReportForms',  // 最多只能到三级导航
+        name: '游戏报表',
+        child: [
+          {
+            key: 'payRankList',
+            name: '充值排行',
+          },
+          {
+            key: 'orderListInTime',
+            name: '订单查询',
+          },
+        ],
+      },
   //   ],
   // },
 ];

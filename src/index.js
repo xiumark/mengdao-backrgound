@@ -31,6 +31,9 @@ import GiftCreate from './components/Gift/GiftCreate';
 import ExpireTimeChange from './components/Gift/ExpireTimeChange';
 import SendEmail from './components/Player/SendEmail';
 import Announcements from './components/AnnouncementManagement/Announcements';
+
+import OrderListInTime from './components/GameReportForms/OrderListInTime';
+import PayRankList from './components/GameReportForms/PayRankList';
 //import DBTable from './components/DBTable';
 import Login from '../src/components/Login';
 
@@ -88,8 +91,11 @@ const routes = (
           <Route path="giftCreate" component={GiftCreate} />
           <Route path="expireTimeChange" component={ExpireTimeChange} />
         </Route>
+        <Route path="gameReportForms">
+          <Route path="orderListInTime" component={OrderListInTime} />
+          <Route path="payRankList" component={PayRankList} />
+        </Route>
         {/* </Route> */}
-
         {/* <Route path="userMenu">
           <Route path="createUser" component={Hello}/>
           <Route path="modifyUser" component={Hello}/>

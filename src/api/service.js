@@ -64,3 +64,34 @@ export function getYxList(data, cb) {
         });
         cb&&cb(yxList);
 }
+
+//直接从后台获取渠道列表，与上面的方法区分
+export function getBackgroundYxList(cb) {
+    let url = "/root/getYxList.action"
+    let errMsg = "渠道标识列表获取失败"
+    // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+    // let method = "POST"
+    fetch(url, {
+        credentials: 'include',
+        // method: method,
+        // headers: {
+        //     headers
+        // }
+    }).then(res => {
+        if (res.status !== 200) {
+            throw new Error("渠道标识列表获取失败")
+        }
+        return res;
+    }).then(res => res.json())
+        .then(res => {
+            if (res.state === 1) {
+                cb && cb(res.data.yxList)
+            }
+            if (res.state === 0) {
+                throw new Error(errMsg)
+            }
+        }).catch(err => {
+            message.error(err.message ? err.message : "渠道标识列表获取失败")
+        })
+    cb&&cb(res);
+}

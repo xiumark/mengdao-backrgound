@@ -347,7 +347,7 @@ class GiftCreate extends React.Component {
                                     rules: [{ type: 'object', required: true, message: '请选择过期时间!' }]})(
                                     <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
                                 )}
-                                </FormItem>
+                            </FormItem>
                             <FormItem
                                 {...formItemLayout}
                                 label="是否重复"
