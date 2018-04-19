@@ -214,7 +214,7 @@ class ExpireTimeChange extends React.Component {
                     editable ?
                       <span>
                         <a onClick={() => this.save(record.vid)}>保存</a>
-                        <a onClick={() => this.cancel(record.vid)}>取消</a>
+                        <a className='cancel' onClick={() => this.cancel(record.vid)}>取消</a>
                       </span>
                       : <a onClick={() => this.edit(record.vid)}>编辑</a>
                   }
