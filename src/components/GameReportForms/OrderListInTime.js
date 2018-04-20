@@ -35,6 +35,10 @@ class OrderListInTime extends React.Component {
     }
 
     componentDidMount() {
+        this.props.form.setFieldsValue({
+            // currPage: '1',
+            numPerPage:'10000'
+          });
         getServiceList((res) => {
             this.getYxList(res);
             this.setState({ serviceList: res});
@@ -61,11 +65,11 @@ class OrderListInTime extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { yx, serverId, startTime, endTime, currPage, numPerPage,} = values;
+                let { yx, serverId, startTime, endTime, currPage, numPerPage} = values;
                 startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
                 endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
                 let { orderList } = this.state;
-                let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=1&numPerPage=${numPerPage}`
+                let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=${currPage}&numPerPage=${numPerPage}`
                 let url = "/root/getOrderListInTime.action"
                 let method = 'POST'
                 let successmsg = '查询成功'
@@ -98,6 +102,9 @@ class OrderListInTime extends React.Component {
     onYxChange=(value)=>{
         this.setState({yx:value})
     }
+    // buttonClick=(e)=>{
+    //     console.log("e:", e)
+    // }
 
     render() {
         const { getFieldDecorator } = this.props.form;
@@ -156,19 +163,6 @@ class OrderListInTime extends React.Component {
                 <Row>
                     <Col className="gutter-row" md={12} sm={24}>
                         <Form onSubmit={this.handleSubmit}>
-                            <FormItem {...formItemLayout} label="服务器" >
-                                {getFieldDecorator('serverId', {
-                                    rules: [
-                                        { required: true, message: '请选择服务器' },
-                                    ],
-                                })(
-                                    <Select placeholder="请选择服务器" onChange = {(value)=>this.onServerChange(value)}>
-                                        {serviceList.map((item, index) => {
-                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
-                                        })}
-                                    </Select>
-                                )}
-                            </FormItem>
                             <FormItem {...formItemLayout} label="渠道" >
                                 {getFieldDecorator('yx', {
                                     rules: [
@@ -178,6 +172,19 @@ class OrderListInTime extends React.Component {
                                     <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
                                         {yxList.map((item, index) => {
                                             return <Option key={item.key} value={`${item.yx}`}>{item.yx}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label="服务器" >
+                                {getFieldDecorator('serverId', {
+                                    rules: [
+                                        { required: true, message: '请选择服务器' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择服务器" onChange = {(value)=>this.onServerChange(value)}>
+                                        {serviceList.map((item, index) => {
+                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
                                         })}
                                     </Select>
                                 )}
@@ -207,11 +214,11 @@ class OrderListInTime extends React.Component {
                                     <Input placeholder="输入当前页" />
                                 )}
                             </FormItem> */}
-                            <FormItem {...formItemLayout} label={"查询记录数"} >
+                            <FormItem {...formItemLayout} label={"最大记录数"} >
                                 {getFieldDecorator('numPerPage', {
-                                    rules: [{ required: true, message: '请输入查询记录数!' }],
+                                    rules: [{ required: true, message: '请输入最大记录数!' }],
                                 })(
-                                    <Input placeholder="输入查询记录数" />
+                                    <Input placeholder="输入最大记录数" />
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >
@@ -221,7 +228,13 @@ class OrderListInTime extends React.Component {
                     </Col>
                 </Row>
             </Card>
-            <Card title="订单列表" id="orderList" style={{ minHeight: 380 }}>
+            <Card title="订单列表" id="orderList" style={{ minHeight: 380 }} >
+                {/* <Button type="primary" htmlType="submit" className="sortButton" id="time1"  >创建时间升序</Button>
+                <Button type="primary" htmlType="submit" className="sortButton" id="time2"  >创建时间降序</Button>
+                <Button type="primary" htmlType="submit" className="sortButton" id="charge1" onClick = {(e)=>this.buttonClick(e)}>充值时间升序</Button>
+                <Button type="primary" htmlType="submit" className="sortButton" id="charge2" onClick = {(e)=>this.buttonClick(e)}>充值时间降序</Button>
+                <Button type="primary" htmlType="submit" className="sortButton" id="money1" onClick = {(e)=>this.buttonClick(e)}>充值数额升序</Button>
+                <Button type="primary" htmlType="submit" className="sortButton" id="money2" onClick = {(e)=>this.buttonClick(e)}>充值数额降序</Button> */}
                 <Table onRowClick={this.onClick} rowKey="vid" columns={columns} dataSource={orderList} size="small" />
             </Card>
         </div >;

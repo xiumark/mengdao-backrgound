@@ -59,7 +59,7 @@ class PayRankList extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 // let { severId, yx} = values;
-                let {rankList, serverId, yx} = this.state;
+                let {rankList, serverId, yx,} = this.state;
                 let querystring = `serverId=${serverId}&yx=${yx}`
                 let url = "/root/getPayRankList.action"
                 let method = 'POST'
@@ -81,8 +81,17 @@ class PayRankList extends React.Component {
     onServerChange=(value)=>{
         this.setState({serverId:value})
     }
+
+    onServerinputChange=(e)=>{
+        this.setState({serverId:e.target.value})
+    }
+
     onYxChange=(value)=>{
         this.setState({yx:value})
+    }
+    
+    onYxinputChange=(e)=>{
+        this.setState({yx:e.target.value})
     }
 
     render() {
@@ -139,7 +148,7 @@ class PayRankList extends React.Component {
 
                             {/*serverId*/}
                             {inputMethod==0?<FormItem {...formItemLayout} label="服务器" >
-                                {getFieldDecorator('serverId', {
+                                {getFieldDecorator('serverId1', {
                                     rules: [
                                         { required: true, message: '请选择服务器' },
                                     ],
@@ -153,17 +162,17 @@ class PayRankList extends React.Component {
                             </FormItem>
                             :
                             <FormItem {...formItemLayout} label={"服务器"} >
-                                {getFieldDecorator('serverId', {
+                                {getFieldDecorator('serverId2', {
                                     rules: [{ required: true, message: '请输入服务器名称' }],
                                 })(
-                                    <Input placeholder="请输入服务器名称" />
+                                    <Input placeholder="请输入服务器名称" onChange = {(value)=>this.onServerinputChange(value)}/>
                                 )}
                             </FormItem>
                             }
 
                             {/* 服务端获取yx数据 */}
                             {inputMethod==0?<FormItem {...formItemLayout} label="渠道" >
-                                {getFieldDecorator('yx', {
+                                {getFieldDecorator('yx1', {
                                     rules: [
                                         { required: true, message: '请选择渠道' },
                                     ],
@@ -177,10 +186,10 @@ class PayRankList extends React.Component {
                             </FormItem>
                             :
                             <FormItem {...formItemLayout} label={"渠道"} >
-                                {getFieldDecorator('yx', {
+                                {getFieldDecorator('yx2', {
                                     rules: [{ required: true, message: '请输入渠道!' }],
                                 })(
-                                    <Input placeholder="请输入渠道" />
+                                    <Input placeholder="请输入渠道" onChange = {(value)=>this.onYxinputChange(value)}/>
                                 )}
                             </FormItem>
                             }
