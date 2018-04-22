@@ -172,6 +172,18 @@ const sidebarMenu = [
             key: 'dayReport',
             name: '运营日报',
           },
+          {
+            key: 'onlineNumData',
+            name: '在线人数',
+          },
+          {
+            key: 'stayReport',
+            name: '留存统计',
+          },
+          {
+            key: 'ltvReport',
+            name: 'LTV统计',
+          },
         ],
       },
   //   ],

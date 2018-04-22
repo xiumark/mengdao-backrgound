@@ -35,6 +35,9 @@ import Announcements from './components/AnnouncementManagement/Announcements';
 import OrderListInTime from './components/GameReportForms/OrderListInTime';
 import PayRankList from './components/GameReportForms/PayRankList';
 import DayReport from './components/GameReportForms/DayReport';
+import OnlineNumData from './components/OnlineNumData';
+import StayReport from './components/GameReportForms/StayReport';
+import LtvReport from './components/GameReportForms/LtvReport';
 //import DBTable from './components/DBTable';
 import Login from '../src/components/Login';
 
@@ -96,6 +99,9 @@ const routes = (
           <Route path="orderListInTime" component={OrderListInTime} />
           <Route path="payRankList" component={PayRankList} />
           <Route path="dayReport" component={DayReport} />
+          <Route path="onlineNumData" component={OnlineNumData} />
+          <Route path="stayReport" component={StayReport} />
+          <Route path="ltvReport" component={LtvReport} />
         </Route>
         {/* </Route> */}
         {/* <Route path="userMenu">
