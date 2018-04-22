@@ -34,6 +34,7 @@ import Announcements from './components/AnnouncementManagement/Announcements';
 
 import OrderListInTime from './components/GameReportForms/OrderListInTime';
 import PayRankList from './components/GameReportForms/PayRankList';
+import DayReport from './components/GameReportForms/DayReport';
 //import DBTable from './components/DBTable';
 import Login from '../src/components/Login';
 
@@ -94,6 +95,7 @@ const routes = (
         <Route path="gameReportForms">
           <Route path="orderListInTime" component={OrderListInTime} />
           <Route path="payRankList" component={PayRankList} />
+          <Route path="dayReport" component={DayReport} />
         </Route>
         {/* </Route> */}
         {/* <Route path="userMenu">

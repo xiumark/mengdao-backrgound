@@ -168,6 +168,10 @@ const sidebarMenu = [
             key: 'orderListInTime',
             name: '订单查询',
           },
+          {
+            key: 'dayReport',
+            name: '运营日报',
+          },
         ],
       },
   //   ],
