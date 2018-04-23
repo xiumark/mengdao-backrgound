@@ -137,13 +137,26 @@ class OrderListInTime extends React.Component {
           }, {
             title: '创建时间',
             dataIndex: 'createTime',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => {
+                return (new Date(a.createTime)).getTime()-(new Date(b.createTime)).getTime()
+            },
           }, {
             title: '充值成功时间',
             dataIndex: 'succTime',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => {
+                return (new Date(a.succTime)).getTime()-(new Date(b.succTime)).getTime()
+            },
         }, {
             title: '人民币',
             dataIndex: 'money',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => {
+                return a.money-b.money
+            },
         },
+
         //  {
         //     title: '元宝数',
         //     dataIndex: 'diamond',
@@ -229,13 +242,7 @@ class OrderListInTime extends React.Component {
                 </Row>
             </Card>
             <Card title="订单列表" id="orderList" style={{ minHeight: 380 }} >
-                {/* <Button type="primary" htmlType="submit" className="sortButton" id="time1"  >创建时间升序</Button>
-                <Button type="primary" htmlType="submit" className="sortButton" id="time2"  >创建时间降序</Button>
-                <Button type="primary" htmlType="submit" className="sortButton" id="charge1" onClick = {(e)=>this.buttonClick(e)}>充值时间升序</Button>
-                <Button type="primary" htmlType="submit" className="sortButton" id="charge2" onClick = {(e)=>this.buttonClick(e)}>充值时间降序</Button>
-                <Button type="primary" htmlType="submit" className="sortButton" id="money1" onClick = {(e)=>this.buttonClick(e)}>充值数额升序</Button>
-                <Button type="primary" htmlType="submit" className="sortButton" id="money2" onClick = {(e)=>this.buttonClick(e)}>充值数额降序</Button> */}
-                <Table onRowClick={this.onClick} rowKey="vid" columns={columns} dataSource={orderList} size="small" />
+                <Table onRowClick={this.onClick} rowKey="vid" columns={columns} dataSource={orderList} size="middle" />
             </Card>
         </div >;
     }
