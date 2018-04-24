@@ -5,6 +5,7 @@ const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
+import { setCookie, getCookie, deleteCookie, setLocalStorage, getLocalStorage, removeLocalStorage} from '../../utils/cache';
 
 /**
  * 查询指定区服指定日期的运营日报

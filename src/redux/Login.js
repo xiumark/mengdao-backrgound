@@ -1,12 +1,13 @@
 // 登录成功的事件
-export const loginSuccessCreator = (userName, responseJson) => {//通过handleSuccess传入的参数
-  console.log("res:", responseJson);
-  return {type: 'LOGIN_SUCCESS', payload: {userName : userName, responseJson : responseJson}};
+export const loginSuccessCreator = (userName, authList) => {//通过handleSuccess传入的参数
+  console.log("res:", authList);
+  return {type: 'LOGIN_SUCCESS', payload: {userName : userName, authList : authList}};
 };
 
 const initState = {
   login: false,  // 是否已登录
   userName: '未登录', // 登录后的用户名
+  authList:[1,2,3],
 };
 
 
@@ -31,7 +32,8 @@ const reducer = (state = initState, action = {}) => {
       // return {...state, login: true, userName: action.payload.userName};
       //存入cookie:loginstate值为1;
       document.cookie="loginState=1";
-      return Object.assign({},...state, {login: true}, {userName:action.payload.userName});
+      return Object.assign({},...state, {login: true},
+         {userName: action.payload.userName}, {authList: action.payload.authList});
     default:
       return state;
   }

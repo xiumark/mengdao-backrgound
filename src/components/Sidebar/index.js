@@ -51,6 +51,21 @@ class Sidebar extends React.PureComponent {
     const level1KeySet = new Set();  // 暂存所有顶级菜单的key
     const level2KeyMap = new Map();  // 次级菜单与顶级菜单的对应关系
 
+    //依照authlist对item进行过滤，获取符合条件的用户权限列表
+    console.log("sidebarauthList:", this.props.authList);//成功获取
+    let {authList} = this.props;
+    for( let i = 0;i<items.length;i++){
+      let child = items[i].child;
+      let filteredChild = []; //权限单项菜单
+      for(let j = 0;j<child.length;j++){
+        if(authList.indexOf(child[j].authIndex)>-1){
+          filteredChild.push(child[j])
+        }
+      }
+      console.log("filteredChild:", filteredChild);
+      items[i].child = filteredChild;
+    }
+
     // 菜单项是从配置中读取的, parse过程还是有点复杂的
     // map函数很好用
     const menu = items.map(level1 => {
@@ -208,6 +223,7 @@ class Sidebar extends React.PureComponent {
 const mapStateToProps = (state) => {
   return {
     collapse: state.Sidebar.collapse,
+    authList: state.Login.authList,
   };
 };
 

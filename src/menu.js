@@ -7,9 +7,6 @@
  * 3.所有的key都不能重复;
  */
 
-// 其实理论上可以嵌套更多层菜单的, 但是我觉得超过3层就不好看了
-// 可用的图标见这里: https://ant.design/components/icon-cn/
-
 // 定义siderbar菜单
 const sidebarMenu = [
   {
@@ -20,6 +17,7 @@ const sidebarMenu = [
       {
         key: 'addUser',
         name: '新增用户',
+        authIndex:'1',
         // icon: 'play-circle',   // 二级三级菜单也可以带图标
       },
       // {
@@ -102,36 +100,43 @@ const sidebarMenu = [
           {
             key: 'playerQuery',
             name: '玩家查询',
+            authIndex:'5',
           },
           {
             key: 'wordsBlock',
             name: '禁言',
+            authIndex:'6',
           },
           {
             key: 'banAndLift',
             name: '封禁角色',
+            authIndex:'9',
           },
           {
             key: 'recharge',
             name: '补单',
+            authIndex:'7',
           },
           {
             key: 'email',
             name: '发送邮件',
+            authIndex:'11',
           },
         ],
       },
       {
-        key: 'gameManagement',  // 最多只能到三级导航
+        key: 'gameManagement', 
         name: '游戏管理',
         child: [
           {
             key: 'announcementManagement',
             name: '公告管理',
+            authIndex:'10',
           },
           {
             key: 'gift',
             name: '礼包管理',
+            authIndex:'4',
           },
           // {
           //   key: 'giftCode',
@@ -140,14 +145,17 @@ const sidebarMenu = [
           {
             key: 'giftCreate',
             name: '创建礼品',
+            authIndex:'14',
           },
           {
             key: 'expireTimeChange',
             name: '修改礼品过期时间',
+            authIndex:'15',
           },
           {
             key: 'giftCard',
             name: '生成礼品码',
+            authIndex:'16',
           },
 
           // {
@@ -163,26 +171,32 @@ const sidebarMenu = [
           {
             key: 'payRankList',
             name: '充值排行',
+            authIndex:'18',
           },
           {
             key: 'orderListInTime',
             name: '订单查询',
+            authIndex:'19',
           },
           {
             key: 'dayReport',
             name: '运营日报',
+            authIndex:'21',
           },
           {
             key: 'onlineNumData',
             name: '在线人数',
+            authIndex:'20',
           },
           {
             key: 'stayReport',
             name: '留存统计',
+            authIndex:'21',
           },
           {
             key: 'ltvReport',
             name: 'LTV统计',
+            authIndex:'23',
           },
         ],
       },
