@@ -62,7 +62,7 @@ class Sidebar extends React.PureComponent {
           filteredChild.push(child[j])
         }
       }
-      console.log("filteredChild:", filteredChild);
+      // console.log("filteredChild:", filteredChild);
       items[i].child = filteredChild;
     }
 
