@@ -52,7 +52,7 @@ class Sidebar extends React.PureComponent {
     const level2KeyMap = new Map();  // 次级菜单与顶级菜单的对应关系
 
     //依照authlist对item进行过滤，获取符合条件的用户权限列表
-    console.log("sidebarauthList:", this.props.authList);//成功获取
+    // console.log("sidebarauthList:", this.props.authList);//成功获取
     let {authList} = this.props;
     for( let i = 0;i<items.length;i++){
       let child = items[i].child;
