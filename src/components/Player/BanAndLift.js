@@ -78,7 +78,8 @@ class BanAndLift extends React.Component {
             let method = 'POST'
             // let successmsg = '查询成功'
             apiFetchNomsg(url, method, querystring, successmsg, (res) => {
-                let blockInfo = res.data.blockInfo;
+                let blockInfo = res.data.playerList[0].blockInfo;
+                console.log("blockInfo:", blockInfo);
                 this.setState({isBlocked:blockInfo.isBlocked, reason:blockInfo.reason, endTime:blockInfo.endTime});
             });
         })

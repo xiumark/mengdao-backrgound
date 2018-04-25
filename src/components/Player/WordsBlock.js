@@ -58,7 +58,7 @@ class WordsBlock extends React.Component {
             let method = 'POST'
             let successmsg = undefined
             apiFetchNomsg(url, method, querystring, successmsg, (res) => {
-                let silenceInfo = res.data.silenceInfo;
+                let silenceInfo = res.data.playerList[0].silenceInfo;
                 this.setState({isSilenced:silenceInfo.isSilenced, reason:silenceInfo.reason, endTime:silenceInfo.endTime});
             });
         })
