@@ -7,7 +7,6 @@ import 'echarts/lib/component/title';
 
 export default class LineArea extends Component {
   constructor(props) {
-    console.log(":here")
     super(props);
     this.renderChart = this.renderChart.bind(this);
   }
@@ -20,109 +19,12 @@ export default class LineArea extends Component {
   }
   renderChart() {
     const { data } = this.props;
-    console.log("onLineNumData:", data);
     let datax = [];
     let datay = [];
     for(let i=0;i<data.length;i++){
       datax.push(data[i].time);
       datay.push(data[i].onlineNum);
     }
-    console.log("datax:", datax);
-    console.log("datay:", datay);
-    // let option = {
-    //   toolbox: {
-    //     show: false,
-    //     feature: {
-    //       dataZoom: {
-    //         yAxisIndex: 'none'
-    //       },
-    //       dataView: { readOnly: false },
-    //       magicType: { type: ['line', 'bar'] },
-    //       restore: {},
-    //       saveAsImage: {}
-    //     }
-    //   },
-    //   grid: {
-    //     top: 25,
-    //     left: 20,
-    //     bottom: 30,
-    //     right: 10
-    //   },
-    //   xAxis: {
-    //     type: 'category',
-    //     boundaryGap: false,
-    //     data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-    //     // data: dataX,
-    //     axisTick: {
-    //       show: true,
-    //       length: 0,
-    //       interval: 0
-    //     },
-    //     axisLabel: {
-    //       formatter: '{value}月',
-    //       fontSize: 16,
-    //       color: 'rgb(100,100,100)',
-    //       fontWeight: 500,
-    //       interval: 0 //显示标签的数量，0强制显示所有，如果不设置，则默认适合为主
-    //     }
-    //   },
-    //   yAxis: {
-    //     show: true,
-    //     type: 'value',
-    //     axisLine: {
-    //       show: false
-    //     },
-    //     axisTick: {
-    //       show: false
-    //     },
-    //     axisLabel: {
-    //       show: false
-    //     },
-    //     splitLine: {
-    //       show: true,
-    //       lineStyle: {
-    //         color: 'rgb(50,50,50)'
-    //       }
-    //     }
-    //   },
-    //   series: [
-    //     {
-    //       name: '最高气温',
-    //       type: 'line',
-    //       areaStyle: {
-    //         color: 'rgb(44,52,75)'
-    //       },
-    //       lineStyle: {
-    //         color: 'rgb(72,102,252)',
-    //         type: 'solid',
-    //         width: 4
-    //       },
-    //       data: [18, 11, 19, 13, 16, 10, 11, 23, 12, 12, 19, 20],
-    //       // data: dataY,
-    //       symbolSize: '0',
-    //       smooth: true,
-    //       markPoint: {
-    //         data: [
-    //           { type: 'max', name: '最大值' },
-    //           { type: 'min', name: '最小值' }
-    //         ],
-    //         symbol: 'pin',
-    //         symbolSize: [100, 35],
-    //         symbolOffset: [0, 0],
-    //         itemStyle: {
-    //           color: 'rgb(56,73,151)'
-    //         },
-    //         label: {
-    //           formatter: function (param) {
-    //             return `${param.data.value}kWh`;
-    //           }
-    //         }
-    //       }
-    //     }
-    //   ]
-    // };
-
-
     let option = {
       title: {
           text: '在线人数统计',
