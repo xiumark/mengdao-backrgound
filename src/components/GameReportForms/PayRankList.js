@@ -7,7 +7,8 @@ const RadioButton = Radio.Button;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
-
+import { isNotExpired, setInputLocalStorage } from '../../utils/cache';
+import moment from 'moment';
 /**
  * 充值排行榜
  */
@@ -43,8 +44,37 @@ class PayRankList extends React.Component {
             this.getYxList(res);
             this.setState({ serviceList: res});
         })
+        let {yx, serverId}=localStorage;
+        let {inputMethod} = this.state;
+        if(inputMethod==0){
+            this.setInputValue1(yx, serverId);
+            this.setState({serverId:serverId, yx:yx})
+        }else{
+            this.setInputValue2(yx, serverId);
+            this.setState({serverId:serverId, yx:yx})
+        }
     }
      
+    //自动填充表单值
+    setInputValue1=(yx, serverId)=>{
+        let expireTime = (new Date((localStorage.expireTime))).getTime();  //获取过期时间
+        if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
+            yx&&this.props.form.setFieldsValue({yx1: `${yx}`});
+            serverId&&this.props.form.setFieldsValue({serverId1: `${serverId}`});
+            // let{yx,serverId} = this.state;
+            // this.setState({yx:yx1, serverId:serverId1})
+        }
+    }
+    setInputValue2=(yx, serverId)=>{
+        let expireTime = (new Date((localStorage.expireTime))).getTime();  //获取过期时间
+        if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
+            yx&&this.props.form.setFieldsValue({yx2: `${yx}`});
+            serverId&&this.props.form.setFieldsValue({serverId2: `${serverId}`});
+            // let{yx,serverId} = this.state;
+            // this.setState({yx:yx1, serverId:serverId1})
+        }
+    }
+
     getYxList=(data)=>{//获取渠道列表
         getYxList(data,(yxList)=>{
          this.setState({yxList:yxList});
@@ -59,7 +89,9 @@ class PayRankList extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 // let { severId, yx} = values;
-                let {rankList, serverId, yx,} = this.state;
+                let {rankList, serverId, yx} = this.state;
+                // serverId=(serverId==''?serverId:values.serverId);
+                // yx=(yx==''?yx:values.yx);
                 let querystring = `serverId=${serverId}&yx=${yx}`
                 let url = "/root/getPayRankList.action"
                 let method = 'POST'
@@ -69,13 +101,24 @@ class PayRankList extends React.Component {
                     // let { giftCode } = this.state;
                     // giftCode = res.data.giftCode.split(";");
                     // this.setState({ giftCode: giftCode })
+
+                    //请求成功后设置localStorage
+                    setInputLocalStorage(yx, serverId, null, null, null, null, null, null);
                 })
             }
         });
     }
 
     onRadioChange = (e)=>{  //选择输入状态
-        this.setState({inputMethod:e.target.value});
+        this.setState({inputMethod:e.target.value},()=>{
+            let {yx, serverId}=localStorage;
+            let {inputMethod} = this.state;
+            if(inputMethod==0){
+                this.setInputValue1(yx, serverId);
+            }else{
+                this.setInputValue2(yx, serverId);
+            }
+        });
     }
 
     onServerChange=(value)=>{

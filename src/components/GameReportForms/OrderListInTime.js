@@ -5,7 +5,8 @@ const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
-
+import { isNotExpired, setInputLocalStorage } from '../../utils/cache';
+import moment from 'moment';
 /**
  * 
  */
@@ -38,13 +39,32 @@ class OrderListInTime extends React.Component {
         this.props.form.setFieldsValue({
             // currPage: '1',
             numPerPage:'10000'
-          });
+        });
+
+        let {yx, serverId, startTime, endTime, numPerPage}=localStorage;
+        this.setInputValue(yx, serverId, startTime, endTime, numPerPage);
+
         getServiceList((res) => {
             this.getYxList(res);
             this.setState({ serviceList: res});
         })
     }
-     
+
+    //自动填充表单值
+    setInputValue=(yx, serverId, startTime, endTime, numPerPage)=>{
+        let expireTime = (new Date((localStorage.expireTime))).getTime();  //获取过期时间
+        if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
+            startTime&&(startTime = new Date(startTime));
+            endTime&&(endTime = new Date(endTime));
+            numPerPage&&(numPerPage = JSON.parse(numPerPage));
+            yx&&this.props.form.setFieldsValue({yx: `${yx}`});
+            serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
+            startTime&&this.props.form.setFieldsValue({startTime: moment(`${startTime}`)});
+            endTime&&this.props.form.setFieldsValue({endTime: moment(`${endTime}`)});
+            numPerPage&&this.props.form.setFieldsValue({numPerPage: `${numPerPage}`});
+        }
+    }
+
     getYxList=(data)=>{//获取渠道列表
         getYxList(data,(yxList)=>{
          this.setState({yxList:yxList});
@@ -91,6 +111,9 @@ class OrderListInTime extends React.Component {
                         }
                     }
                     this.setState({orderList:orderList});
+
+                    //请求成功后设置localStorage
+                    setInputLocalStorage(yx, serverId, startTime, endTime, currPage, numPerPage);
                 })
             }
         });

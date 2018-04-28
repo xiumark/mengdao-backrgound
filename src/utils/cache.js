@@ -1,3 +1,4 @@
+import moment from 'moment';
 /**
  * 设置cookie
  * @param key
@@ -64,4 +65,28 @@ export function getLocalStorage(key) {
 
 export function removeLocalStorage(key) {
     localStorage && localStorage.removeItem(key);
+}
+
+export function isNotExpired(time) {
+    time=(time===undefined?0:time)
+    let data = (new Date()).getTime();
+    if (data>time){
+        return true;  //没有过期
+    }else{
+        return false; //已经过期
+    }
+    // localStorage && localStorage.removeItem(key);
+}
+
+//表单值存入localStorage
+export function setInputLocalStorage(yx, serverId, startTime, endTime, currPage, numPerPage, startDayStr, endDayStr){
+    localStorage.expireTime=new Date();
+    yx&&(localStorage.yx = yx);
+    serverId&&(localStorage.serverId=serverId);
+    startTime&&(localStorage.startTime = startTime);
+    endTime&&(localStorage.endTime = endTime);
+    currPage&&(localStorage.currPage = currPage);
+    numPerPage&&(localStorage.numPerPage = numPerPage);
+    startDayStr&&(localStorage.startDayStr = startDayStr);
+    endDayStr&&(localStorage.endDayStr = endDayStr);
 }
