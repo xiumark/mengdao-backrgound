@@ -42,7 +42,7 @@ class RoleContainer extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('从表单中获取的数据是: ', values);
+                // console.log('从表单中获取的数据是: ', values);
                 let { noticeType, serverId, duration, times } = values;
                 //serverId可不填
                 const querystring = `noticeType=${noticeType}&serverId=${serverId}&duration=${duration}&times=${times}`
@@ -55,7 +55,7 @@ class RoleContainer extends React.Component {
                     },
                     // body
                 }).then(res => {
-                    console.log('res:', res)
+                    // console.log('res:', res)
                     if (res.status !== 200) {
                         throw new Error('添加失败')
                     }

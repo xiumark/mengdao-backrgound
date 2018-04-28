@@ -1,6 +1,6 @@
 // 登录成功的事件
 export const loginSuccessCreator = (userName, authList) => {//通过handleSuccess传入的参数
-  console.log("res:", authList);
+  // console.log("res:", authList);
   return {type: 'LOGIN_SUCCESS', payload: {userName : userName, authList : authList}};
 };
 

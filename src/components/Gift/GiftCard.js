@@ -95,7 +95,7 @@ class GiftCard extends React.Component {
                 }
             }
         }
-        console.log("batchArray:", batchArray);
+        // console.log("batchArray:", batchArray);
         return batchArray;
     }
     /** 

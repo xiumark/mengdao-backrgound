@@ -27,7 +27,7 @@ class ThawAccount extends React.Component {
 
 
       onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
+        // console.log('selected', selectedKeys, info);
       }
       submit = () =>{
         //   this.setState({})
@@ -43,12 +43,12 @@ class ThawAccount extends React.Component {
           );
           function handleButtonClick(e) {
             message.info('Click on left button.');
-            console.log('click left button', e);
+            // console.log('click left button', e);
           }
           
           function handleMenuClick(e) {
             message.info('Click on menu item.');
-            console.log('click', e);
+            // console.log('click', e);
           }
         return <div>
 

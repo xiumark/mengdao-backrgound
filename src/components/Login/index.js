@@ -51,7 +51,7 @@ class Login extends React.PureComponent {
       message.success('登录成功');
       this.hide();
       this.setState({ requesting: false, login: true }, () => {
-        console.log("登陆状态:", this.state.login);
+        // console.log("登陆状态:", this.state.login);
       });
 
       // this.props.handleLoginSuccess(param.userName, json); //传入redux 的值有；userName,responseJson

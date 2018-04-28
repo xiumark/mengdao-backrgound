@@ -133,7 +133,7 @@ class Logger {
       args.unshift(`${this.name}: ${pattern}`);
     else
       args.unshift(pattern);
-    console.log.apply(console, args);
+    // console.log.apply(console, args);
   }
 
   /**

@@ -13,7 +13,7 @@ export function setCookie(key, value) {
         document.cookie = key+"="+JSON.stringify(value)+"; path=/";
         // $.cookie(key, JSON.stringify(value), {expires:1});
     }catch (err){
-        console.log('存cookie错误:'+key);
+        // console.log('存cookie错误:'+key);
     }
 
 }
@@ -31,7 +31,7 @@ export function deleteCookie(key){
     try{
         document.cookie = key+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
     }catch (err){
-        console.log('删cookie错误:'+key);
+        // console.log('删cookie错误:'+key);
     }
 }
 
@@ -45,7 +45,7 @@ export function setLocalStorage(key, value) {
     try {
         localStorage && localStorage.setItem(key, JSON.stringify(value));
     }catch (err){
-        console.log('存localStorage错误:'+key);
+        // console.log('存localStorage错误:'+key);
     }
 }
 

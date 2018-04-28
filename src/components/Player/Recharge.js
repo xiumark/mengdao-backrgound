@@ -50,7 +50,7 @@ class Rrecharge extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('从表单中获取的数据是: ', values);
+                // console.log('从表单中获取的数据是: ', values);
                 let { serverId, playerName, orderId } = values;
                 //serverId可不填
                 const querystring = `serverId=${serverId}&playerName=${playerName}&orderId=${orderId}`

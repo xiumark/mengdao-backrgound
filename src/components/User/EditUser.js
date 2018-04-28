@@ -25,22 +25,26 @@ class EditUser extends React.Component {
         
       }
       onChange = (e) => {
-        console.log('radio checked', e.target.value);
+        // console.log('radio checked', e.target.value);
         this.setState({
           value1: e.target.value,
-        }, ()=>{console.log("value1:", this.state.value1)});
+        }, 
+        // ()=>{console.log("value1:", this.state.value1)}
+    );
       }
       onChange2 = (e) =>{
         this.setState({
             value2: e.target.value,
-          }, ()=>{console.log("value1:", this.state.value2)});
+          }, 
+        //   ()=>{console.log("value1:", this.state.value2)}
+        );
       }
 
       onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
+        // console.log('selected', selectedKeys, info);
       }
       onCheck = (checkedKeys, info) => {
-        console.log('onCheck', checkedKeys, info);
+        // console.log('onCheck', checkedKeys, info);
       }
       submit = () =>{
         //   this.setState({})
@@ -56,12 +60,12 @@ class EditUser extends React.Component {
           );
           function handleButtonClick(e) {
             message.info('Click on left button.');
-            console.log('click left button', e);
+            // console.log('click left button', e);
           }
           
           function handleMenuClick(e) {
             message.info('Click on menu item.');
-            console.log('click', e);
+            // console.log('click', e);
           }
         return <div>
                 <Card title="操作">
