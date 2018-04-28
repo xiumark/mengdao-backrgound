@@ -119,19 +119,19 @@ class Ajax {
    * @param errorCall
    * @param errorParam
    */
-  // login(userName, password) {
   login(userName, password, command, callback, param, errorCall, errorParam) {
     let md5password = hex_md5(password);
     let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-    this.post(`${globalConfig.getAPIPath()}` +
+    this.get(`${globalConfig.getAPIPath()}` +
       `${globalConfig.login.validate}` +
       `?command=${command}&userName=${userName}&password=${md5password}`,
-      { command: command, userName: userName, password: md5password },
+      // { command: command, userName: userName, password: md5password },
       { headers },
       callback,
       param,
       errorCall,
-      errorParam);
+      errorParam
+    );
   }
 
   /**

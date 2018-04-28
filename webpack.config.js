@@ -41,9 +41,9 @@ module.exports = {
   ],
 
   output: {  // 输出的目录和文件名
-    path: __dirname + '/dist',
+    path: path.resolve(__dirname ,'dist'),
     filename: 'bundle.js',
-    publicPath: '/front/mengdao-background/'
+    publicPath: '/'
   },
 
   resolve: {
@@ -74,7 +74,7 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.BannerPlugin('This file is created by jxy'),   // 生成文件时加上注释
+    new webpack.BannerPlugin('This file is created by mx'),   // 生成文件时加上注释
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'),
       __DEV__: JSON.stringify(JSON.parse(process.env.NODE_ENV === 'production' ? 'false' : 'true')),  // magic globals, 用于打印一些调试的日志, webpack -p时会删除

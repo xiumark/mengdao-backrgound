@@ -33,8 +33,8 @@ module.exports = {
   ],
 
   output: {
-    path: __dirname + '/dist',
-    filename: 'bundle.min.js',
+    path: __dirname + '/dist/front/mengdao-background',
+    filename: 'bundle.js',
     publicPath:'/front/mengdao-background/'
     // publicPath: 'http://mycdn.com/', // require时用来生成图片的地址
   },
@@ -95,20 +95,20 @@ module.exports = {
     // 同时还会加上webpack的runtime相关代码
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      filename: 'vendor.min.js',
+      filename: '[name].js',
       // 这个函数决定哪些模块会被放到vender.min.js中
-      minChunks: (module) => {
-        // 得到资源路径
-        var resource = module.resource;
-        if (!resource)
-          return false;
-        // 坑爹的webpack, for-of里不用能const, 会有bug
-        for (var libName of vendorLibs) {
-          if (resource.indexOf(path.resolve(__dirname, 'node_modules', libName)) >= 0)
-            return true;
-        }
-        return false;
-      },
+      // minChunks: (module) => {
+      //   // 得到资源路径
+      //   var resource = module.resource;
+      //   if (!resource)
+      //     return false;
+      //   // 坑爹的webpack, for-of里不用能const, 会有bug
+      //   for (var libName of vendorLibs) {
+      //     if (resource.indexOf(path.resolve(__dirname, 'node_modules', libName)) >= 0)
+      //       return true;
+      //   }
+      //   return false;
+      // },
     }),
 
     new webpack.optimize.DedupePlugin(),
@@ -119,7 +119,7 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
 
     // css单独抽出来
-    new ExtractTextPlugin('bundle.min.css', {allChunks: false}),
+    new ExtractTextPlugin('styles.css', {allChunks: false}),
     // 压缩成gzip格式
     new CompressionPlugin({
       asset: "[path].gz[query]",

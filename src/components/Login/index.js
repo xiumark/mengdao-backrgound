@@ -40,7 +40,7 @@ class Login extends React.PureComponent {
 
   // 登陆请求回调处理
   handleAfterLogin = (json, param) => {
-    let authList = json.data.auths.split(':');   //权限标识列表：1,2,3,4...23
+    let authList = json.data.auths&&json.data.auths.split(':');   //权限标识列表：1,2,3,4...23
     // authList=['1','2','3','4','5','6','7','8','9'];//测试数据
     let { login } = this.props;
     let state = json.state;
@@ -96,6 +96,11 @@ class Login extends React.PureComponent {
         password: password,
         command: command
       };
+      // fetch('/root/gateway.action?command=login&userName=admin&password=8df63d1f54b38da0e10db1e3de95be63')
+      // .then(res=>res.json())
+      // .then(res=>{
+      //   console.log(res)
+      // })
       ajax.login(userName, password, command, this.handleAfterLogin, param, this.handleAfterLoginFail, param);
     } catch (exception) {
       message.error(`网络请求出错: ${exception.message}`);
