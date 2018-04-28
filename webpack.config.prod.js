@@ -5,6 +5,7 @@ const globalConfig = require('./src/config.js');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const babelLoaderConfig = {
   presets: ['latest', 'stage-0', 'react'],
@@ -34,7 +35,7 @@ module.exports = {
 
   output: {
     path: __dirname + '/dist/front/mengdao-background',
-    filename: 'bundle.js',
+    filename: 'bundle.[chunkhash].js',
     publicPath:'/front/mengdao-background/'
     // publicPath: 'http://mycdn.com/', // require时用来生成图片的地址
   },
@@ -133,5 +134,14 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       __DEV__: JSON.stringify(JSON.parse(process.env.NODE_ENV === 'production' ? 'false' : 'true')),
     }),
+
+    new CleanWebpackPlugin(
+      ['dist/front/mengdao-background/'],　 //匹配删除的文件
+      {
+          root: __dirname,       　　　　　　　　　　//根目录
+          verbose:  true,        　　　　　　　　　　//开启在控制台输出信息
+          dry:      false        　　　　　　　　　　//启用删除文件
+      }
+  )
   ],
 };
