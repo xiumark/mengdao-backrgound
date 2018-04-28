@@ -12,6 +12,7 @@ npm-debug.log
 
 # other
 # dist/
+dist
 # front/
 # !dist/*.html
 
