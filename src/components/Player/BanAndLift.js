@@ -72,8 +72,8 @@ class BanAndLift extends React.Component {
     queryState=(e,successmsg)=>{
         // e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            let { serverId, playerName} = values;
-            let querystring = `serverId=${serverId}&playerName=${playerName}`
+            let { serverId, playerName, yx} = values;
+            let querystring = `serverId=${serverId}&playerName=${playerName}&yx=${yx}`
             let url = "/root/playerInfo.action"
             let method = 'POST'
             // let successmsg = '查询成功'

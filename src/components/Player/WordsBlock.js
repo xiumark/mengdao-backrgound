@@ -52,8 +52,8 @@ class WordsBlock extends React.Component {
     queryState=(e)=>{
         // e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            let { serverId, playerName} = values;
-            let querystring = `serverId=${serverId}&playerName=${playerName}`
+            let { serverId, playerName, yx} = values;
+            let querystring = `yx=${yx}&serverId=${serverId}&playerName=${playerName}`
             let url = "/root/playerInfo.action"
             let method = 'POST'
             let successmsg = undefined
@@ -93,7 +93,7 @@ class WordsBlock extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { serverId, playerName, reason='', duration='' } = values;
+                let { serverId, playerName, reason='', duration='',yx } = values;
                 let querystring = `serverId=${serverId}&playerName=${playerName}&yx=${yx}`
                 let url = "/root/unbanChat.action"
                 let method = 'POST'
