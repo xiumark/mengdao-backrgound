@@ -58,8 +58,8 @@ class BanAndLift extends React.Component {
     block = (e) => { //获取权限列表
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            let { playerName, serverId, reason='', duration='' } = values;
-            let querystring = `playerName=${playerName}&serverId=${serverId}&reason=${reason}&duration=${duration}`
+            let { playerName, serverId, reason='', duration='',yx } = values;
+            let querystring = `playerName=${playerName}&serverId=${serverId}&yx=${yx}&reason=${reason}&duration=${duration}`
             let url = "/root/banUser.action"
             let method = 'POST'
             let successmsg = (reason!==''&&duration!=='')?'封禁成功':'请填写原因和期限'
@@ -91,8 +91,8 @@ class BanAndLift extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { playerName, serverId ,reason, duration} = values;
-                let querystring = `playerName=${playerName}&serverId=${serverId}`
+                let { playerName, serverId ,reason, duration, yx} = values;
+                let querystring = `playerName=${playerName}&serverId=${serverId}&yx=${yx}`
                 let url = "/root/unbanUser.action"
                 let method = 'POST'
                 let successmsg ='解除封禁成功'

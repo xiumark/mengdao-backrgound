@@ -165,11 +165,11 @@ class PlayerQuery extends React.Component {
                 let { serverId, playerName, userId, yx, playerId } = values;
                 let querystring ='';
                 if(queryId=='playerName'){
-                    querystring = `serverId=${serverId}&playerName=${playerName}`;
+                    querystring = `serverId=${serverId}&yx=${yx}&playerName=${playerName}`;
                 }else if(queryId=='userIdyx'){
                     querystring = `serverId=${serverId}&userId=${userId}&yx=${yx}`;
                 }else if(queryId=='playerId'){
-                    querystring = `serverId=${serverId}&playerId=${playerId}`;
+                    querystring = `serverId=${serverId}&yx=${yx}&playerId=${playerId}`;
                 }
 
                 let url = "/root/playerInfo.action"
@@ -236,19 +236,39 @@ class PlayerQuery extends React.Component {
         return <div>
             <Card title="获取玩家信息">
             <Form>
-                <FormItem {...formItemLayout} label="服务器名称" >
-                    {getFieldDecorator('serverId', {
-                        rules: [
-                            { required: true, message: '请选择服务器名称' },
-                        ],
-                    })(
-                        <Select placeholder="选择服务器名称">
-                            {filteredServiceList.map((item, index) => {
-                                return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
-                            })}
-                        </Select>
-                    )}
-                </FormItem>
+                <Row>
+                    <Col className="gutter-row" md={12}>
+                        <FormItem {...formItemLayout} label="服务器名称" >
+                        {getFieldDecorator('serverId', {
+                            rules: [
+                                { required: true, message: '请选择服务器名称' },
+                            ],
+                        })(
+                            <Select placeholder="选择服务器名称">
+                                {filteredServiceList.map((item, index) => {
+                                    return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
+                                })}
+                            </Select>
+                        )}
+                        </FormItem>
+                    </Col>
+                    <Col className="gutter-row" md={12}>
+                        <FormItem {...formItemLayout} label="渠道" >
+                            {getFieldDecorator('yx', {
+                                rules: [
+                                    { required: true, message: '请选择渠道' },
+                                ],
+                            })(
+                                <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
+                                    {yxList.map((item, index) => {
+                                        return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
+                                    })}
+                                </Select>
+                            )}
+                        </FormItem>
+                    </Col>
+                </Row>
+                
             </Form>
                 <Row>
                     <Col className="gutter-row" md={8}>
@@ -272,19 +292,6 @@ class PlayerQuery extends React.Component {
                                     rules: [{ required: false, message: '请输入用户Id' }],
                                 })(
                                     <Input placeholder="请输入用户Id" />
-                                )}
-                            </FormItem>
-                            <FormItem {...formItemLayout} label="渠道" >
-                                {getFieldDecorator('yx', {
-                                    rules: [
-                                        { required: false, message: '请选择渠道' },
-                                    ],
-                                })(
-                                    <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
-                                        {yxList.map((item, index) => {
-                                            return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
-                                        })}
-                                    </Select>
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>

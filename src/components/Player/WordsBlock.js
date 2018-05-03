@@ -38,8 +38,8 @@ class WordsBlock extends React.Component {
     silence = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            let { serverId, playerName, reason='', duration='' } = values;
-            let querystring = `serverId=${serverId}&playerName=${playerName}&reason=${reason}&duration=${duration}`
+            let { serverId, playerName, reason='', duration='' ,yx} = values;
+            let querystring = `serverId=${serverId}&yx=${yx}&playerName=${playerName}&reason=${reason}&duration=${duration}`
             let url = "/root/banChat.action"
             let method = 'POST';
             let successmsg = (reason!==''&&duration!=='')?'禁言成功':'请填写原因和期限';
@@ -94,7 +94,7 @@ class WordsBlock extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { serverId, playerName, reason='', duration='' } = values;
-                let querystring = `serverId=${serverId}&playerName=${playerName}`
+                let querystring = `serverId=${serverId}&playerName=${playerName}&yx=${yx}`
                 let url = "/root/unbanChat.action"
                 let method = 'POST'
                 let successmsg = '解除禁言成功'

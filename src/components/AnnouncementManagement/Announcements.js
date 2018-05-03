@@ -50,7 +50,7 @@ class Announcements extends React.Component {
        });
     }
 
-
+    
     handleButtonClick = (e) => { //更新公告内容
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -69,9 +69,9 @@ class Announcements extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { noticeType, serverId, content, duration, times } = values;
+                let { noticeType, serverId, content, duration, times, yx } = values;
                 //serverId可不填
-                let querystring = `noticeType=${noticeType}&serverId=${serverId}&content=${content}&duration=${duration}&times=${times}`
+                let querystring = `noticeType=${noticeType}&serverId=${serverId}&yx=${yx}&content=${content}&duration=${duration}&times=${times}`
                 let url = "/root/sendNotice.action"
                 let method = 'POST'
                 let successmsg = '发送公告成功'

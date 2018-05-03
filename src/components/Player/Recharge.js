@@ -51,9 +51,9 @@ class Rrecharge extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 // console.log('从表单中获取的数据是: ', values);
-                let { serverId, playerName, orderId } = values;
+                let { serverId, playerName, orderId, yx } = values;
                 //serverId可不填
-                const querystring = `serverId=${serverId}&playerName=${playerName}&orderId=${orderId}`
+                const querystring = `serverId=${serverId}&playerName=${playerName}&yx=${yx}&orderId=${orderId}`
                 let url = "/root/repay.action"
                 let method = 'POST'
                 let successmsg = '补单成功'

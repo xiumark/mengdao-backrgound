@@ -67,9 +67,11 @@ class GiftCreate extends React.Component {
             ],
     
             yxList:[
-                {yx:'渠道1' ,key:1},
-                {yx:'渠道2' ,key:1},
+                // {yx:'渠道1' ,key:1},
+                // {yx:'渠道2' ,key:1},
             ],
+            yx:'',
+            serverId:''
         };
         this.columns = [
             {
@@ -106,32 +108,32 @@ class GiftCreate extends React.Component {
     }
 
     componentDidMount() {
-        // getServiceList((res) => {
-        //     this.getYxList(res);
-        //     this.setState({ serviceList: res, filteredServiceList: res});
-        // });
+        getServiceList((res) => {
+            this.getYxList(res);
+            this.setState({ serviceList: res, filteredServiceList: res});
+        })
         // getItemList(()=>{
         //     //获取礼品字符串
         // })
-        this.getPackageItemList();
+        // this.getPackageItemList();
         this.props.form.setFieldsValue({
             canRepeat:'0'
           });
     }
 
-    // onYxChange=(value)=>{//渠道列表变换引起服务列表更新
-    //     const{serviceList} = this.state;
-    //     let filteredServiceList = serviceList.filter((item, index)=>{
-    //         return item.yx===value;
-    //     });
-    //     this.setState({filteredServiceList:filteredServiceList});
-    // }
+    onYxChange=(value)=>{//渠道列表变换引起服务列表更新
+        const{serviceList} = this.state;
+        let filteredServiceList = serviceList.filter((item, index)=>{
+            return item.yx===value;
+        });
+        this.setState({filteredServiceList:filteredServiceList, yx:value});
+    }
 
-    // getYxList=(data)=>{//获取渠道列表
-    //    getYxList(data,(yxList)=>{
-    //     this.setState({yxList:yxList});
-    //    });
-    // }
+    getYxList=(data)=>{//获取渠道列表
+        getYxList(data,(yxList)=>{
+         this.setState({yxList:yxList});
+        });
+     }
 
     renderColumns(textValue, tableItem, column) {
         return (
@@ -194,7 +196,10 @@ class GiftCreate extends React.Component {
 
 
     onServerChange(v){
-        this.getPackageItemList(v);
+        //serverId
+        this.setState({serverId:v},()=>{
+        this.getPackageItemList();
+    })
     }
     onGiftTypeChange(v){
 
@@ -211,9 +216,9 @@ class GiftCreate extends React.Component {
           });
     }
 
-    getPackageItemList = (v) => { //获取礼包物品信息
-                let  serverId  = '2';
-                const querystring = `serverId=${serverId}`
+    getPackageItemList = () => { //获取礼包物品信息
+                let  {serverId,yx}  = this.state;
+                const querystring = `serverId=${serverId}&yx=${yx}`
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/getItems.action`, {
                     credentials: 'include', //发送本地缓存数据
@@ -265,9 +270,10 @@ class GiftCreate extends React.Component {
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
 
-                let { name, batch, expireTime, canRepeat, giftContent} = values;
+                let { name, batch, expireTime, canRepeat, giftContent, yx, serverId} = values;
+                // this.setState({yx:yx});
                 expireTime=expireTime.format('YYYY-MM-DD HH:mm:ss');   //ant@2需要的处理，因为类型发生改变由之前的value改为了moment类型
-                const querystring = `name=${name}&batch=${batch}&expireTime=${expireTime}&canRepeat=${canRepeat}&giftContent=${giftContentStr}`
+                const querystring = `yx=${yx}&serverId=${serverId}&name=${name}&batch=${batch}&expireTime=${expireTime}&canRepeat=${canRepeat}&giftContent=${giftContentStr}`
                 let url = "/root/createGiftCodeContent.action"
                 let method = 'POST'
                 let successmsg = '成功创建礼品'
@@ -318,6 +324,32 @@ class GiftCreate extends React.Component {
                 <Form onSubmit={this.handleSubmit} id="createGift">
                     <Row>
                         <Col className="gutter-row" md={12}>
+                            <FormItem {...formItemLayout} label="渠道" >
+                                {getFieldDecorator('yx', {
+                                    rules: [
+                                        { required: true, message: '请选择渠道' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
+                                        {yxList.map((item, index) => {
+                                            return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label="服务器名称" >
+                                {getFieldDecorator('serverId', {
+                                    rules: [
+                                        { required: true, message: '请选择服务器名称' },
+                                    ],
+                                })(
+                                    <Select placeholder="选择服务器名称" onChange={(value)=>this.onServerChange(value)}>
+                                        {filteredServiceList.map((item, index) => {
+                                            return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
                             <FormItem {...formItemLayout} label={"礼品名称"} >
                                 {getFieldDecorator('name', {
                                     rules: [{ required: isPersonal, message: '请输入礼品名称!' }],
