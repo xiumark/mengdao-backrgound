@@ -311,8 +311,9 @@ class App extends React.Component {
         }
       }
     }
+    // debugger;
 
-    if (!this.props.login && (!loginState)) {
+    if (!this.props.login || (!loginState)) {
       return <Login />;
     }
 
