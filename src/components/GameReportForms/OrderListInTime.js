@@ -1,7 +1,9 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker, TimePicker } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker, TimePicker,Radio } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
@@ -23,6 +25,9 @@ class OrderListInTime extends React.Component {
         //     state: 1,                                // 订单状态(0新建,1已成功,2已失败)
         // },
         ],
+        sucList:[],
+        failList:[],
+
         yxList:[{key:'1',yx:'渠道1'},{key:'2',yx:'渠道2'}],
         serviceList:[
             {yx: "aa", serverId: 10000, serverName: "sg_banshu1", serverState: 0},
@@ -85,33 +90,63 @@ class OrderListInTime extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { yx, serverId, startTime, endTime, currPage, numPerPage} = values;
+                let { yx, serverId, startTime, endTime, currPage, numPerPage, containType} = values;
                 startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
                 endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
                 let { orderList } = this.state;
-                let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=${currPage}&numPerPage=${numPerPage}`
+
+                /**
+                 * 默认获取全部数据（1）
+                 * @param containType:0:成功订单；1：全部订单；2：失败订单
+                */
+
+                let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=${currPage}&numPerPage=${numPerPage}&containFail=1`
                 let url = "/root/getOrderListInTime.action"
                 let method = 'POST'
-                let successmsg = '查询成功'
+                let successmsg = '查询成功';
+                let sucList=[];
+                let failList = [];
+                let allList = [];
                 apiFetch(url, method, querystring, successmsg, (res) => {
                     let orderList = res.data.orderList;
                     for(let i=0;i<orderList.length;i++){
                         switch(orderList[i].state){
+                            //新建（错误）
                             case 0: 
                                 orderList[i].statemsg='新建';
+                                failList.push(orderList[i]);
                             break;
+                            // 已成功
                             case 1: 
                                 orderList[i].statemsg='已成功';
+                                sucList.push(orderList[i]);
                             break;
+                            //已失败
                             case 2: 
                                 orderList[i].statemsg='已失败';
+                                failList.push(orderList[i]);
                             break;
+                            //已失败
                             default:
                                 orderList[i].statemsg='错误';
+                                failList.push(orderList[i]);
                         }
                     }
-                    this.setState({orderList:orderList});
 
+                    switch(containType){
+                        //成功订单
+                        case '0':
+                            this.setState({orderList:sucList});
+                        break;
+                        //全部订单
+                        case '1':
+                            this.setState({orderList:orderList});
+                        break;
+                        //失败订单
+                        case '2':
+                            this.setState({orderList:failList});
+                        break;
+                    }
                     //请求成功后设置localStorage
                     setInputLocalStorage(yx, serverId, startTime, endTime, currPage, numPerPage);
                 })
@@ -124,6 +159,8 @@ class OrderListInTime extends React.Component {
     }
     onYxChange=(value)=>{
         this.setState({yx:value})
+    }
+    onRadioChange = (v)=>{
     }
     // buttonClick=(e)=>{
     //     console.log("e:", e)
@@ -255,6 +292,18 @@ class OrderListInTime extends React.Component {
                                     rules: [{ required: true, message: '请输入最大记录数!' }],
                                 })(
                                     <Input placeholder="输入最大记录数" />
+                                )}
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="订单类型"
+                                >
+                                {getFieldDecorator('containType',{ initialValue: '0' })(
+                                    <RadioGroup onChange = {this.onRadioChange}>
+                                    <Radio value="0">成功订单</Radio>
+                                    <Radio value="1">全部订单</Radio>
+                                    <Radio value="2">失败订单</Radio>
+                                    </RadioGroup>
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >
