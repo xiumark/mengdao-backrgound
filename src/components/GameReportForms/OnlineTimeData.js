@@ -46,8 +46,8 @@ class OnlineTimeData extends React.Component {
         if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
             yx&&this.props.form.setFieldsValue({yx: `${yx}`});
             serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
-            startDayStr&&this.props.form.setFieldsValue({startDayStr: moment(`${startDayStr}`)});
-            endDayStr&&this.props.form.setFieldsValue({endDayStr: moment(`${endDayStr}`)});
+            startDayStr&&this.props.form.setFieldsValue({startTime: moment(`${startDayStr}`)});
+            endDayStr&&this.props.form.setFieldsValue({endTime: moment(`${endDayStr}`)});
 
             if(yx&&serverId&&startDayStr&&endDayStr){
                 this.requestSearch(yx, serverId,startDayStr, endDayStr);
