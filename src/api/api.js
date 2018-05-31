@@ -10,14 +10,16 @@ export function apiFetch(url, method, querystring, successmsg, cb) {
         },
         body: querystring
     }).then(res => {
-        // console.log("here")
+        //显示请求数据提示
+        message.loading('数据请求中...',0);
         if (res.status !== 200) {
             throw new Error("未知错误")
         }
         return res;
     }).then(res => res.json())
         .then(res => {
-            // console.log("res", res)
+            //隐藏请求数据提示
+            message.destroy();
             if (res.state === 1) {
                 message.info(successmsg)
                 cb && cb(res)
