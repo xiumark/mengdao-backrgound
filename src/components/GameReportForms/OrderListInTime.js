@@ -114,7 +114,6 @@ class OrderListInTime extends React.Component {
      * @param containType:0:成功订单；1：全部订单；2：失败订单
     */
     requestSearch=(yx, serverId, startTime, endTime, currPage, numPerPage, containType)=>{
-        console.log("333:",localStorage)
         let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=${currPage}&numPerPage=${numPerPage}&containFail=1`
         let url = "/root/getOrderListInTime.action"
         let method = 'POST'

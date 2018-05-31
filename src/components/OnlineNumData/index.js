@@ -38,7 +38,6 @@ class OnlineNumData extends React.Component {
         })
 
         let {olineYx, olineServerId, olineStartTime, olineEndTime}=localStorage;
-        console.log("localStorage:", localStorage);
         let yx, serverId, startTime, endTime;
         yx=olineYx; serverId=olineServerId; startTime=olineStartTime; endTime=olineEndTime;
         this.setInputValue(yx, serverId, startTime, endTime);
