@@ -38,6 +38,7 @@ import DayReport from './components/GameReportForms/DayReport';
 import OnlineNumData from './components/OnlineNumData';
 import StayReport from './components/GameReportForms/StayReport';
 import LtvReport from './components/GameReportForms/LtvReport';
+import OnlineTimeData from './components/GameReportForms/OnlineTimeData';
 //import DBTable from './components/DBTable';
 import Login from '../src/components/Login';
 
@@ -102,6 +103,7 @@ const routes = (
           <Route path="onlineNumData" component={OnlineNumData} />
           <Route path="stayReport" component={StayReport} />
           <Route path="ltvReport" component={LtvReport} />
+          <Route path="onlineTimeData" component={OnlineTimeData} />
         </Route>
         {/* </Route> */}
         {/* <Route path="userMenu">

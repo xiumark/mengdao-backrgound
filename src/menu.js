@@ -199,6 +199,11 @@ const sidebarMenu = [
             name: 'LTV统计',
             authIndex:'23',
           },
+          {
+            key: 'onlineTimeData',
+            name: '在线时长',
+            authIndex:'24',
+          },
         ],
       },
   //   ],

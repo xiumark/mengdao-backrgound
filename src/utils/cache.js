@@ -168,3 +168,15 @@ export function setLtvReportStorage(ltvReportYx, ltvReportServerId, ltvReportSta
     ltvReportStartDayStr&&(localStorage.ltvReportStartDayStr=ltvReportStartDayStr);
     ltvReportEndDayStr&&(localStorage.ltvReportEndDayStr=ltvReportEndDayStr);
 }
+
+/**
+ * 在线时长缓存设置onlineTimeData
+ * 
+ */
+export function setOnlineTimeData(onlineTimeYx, onlineTimeServerId, onlineTimeStartDayStr, onlineTimeEndDayStr){
+    // localStorage.ltvReportExpireTime=new Date();
+    onlineTimeYx&&(localStorage.onlineTimeYx = onlineTimeYx);
+    onlineTimeServerId&&(localStorage.onlineTimeServerId=onlineTimeServerId);
+    onlineTimeStartDayStr&&(localStorage.onlineTimeStartDayStr=onlineTimeStartDayStr);
+    onlineTimeEndDayStr&&(localStorage.onlineTimeEndDayStr=onlineTimeEndDayStr);
+}
