@@ -5,7 +5,7 @@ const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
-import { isNotExpired, setInputLocalStorage } from '../../utils/cache';
+import { isNotExpired, setStayReportStorage } from '../../utils/cache';
 import moment from 'moment';
 
 /**
@@ -31,20 +31,27 @@ class StayReport extends React.Component {
             this.getYxList(res);
             this.setState({ serviceList: res});
         })
-        let {yx, serverId, startDayStr, endDayStr}=localStorage;
+
+        let {stayReportYx, stayReportServerId, stayReportStartDayStr, stayReportEndDayStr}=localStorage;
+        let yx, serverId, startDayStr, endDayStr;
+        yx=stayReportYx; serverId=stayReportServerId; startDayStr=stayReportStartDayStr; endDayStr=stayReportEndDayStr;
         this.setInputValue(yx, serverId, startDayStr, endDayStr);
     }
 
     //自动填充表单值
     setInputValue=(yx, serverId, startDayStr, endDayStr)=>{
-        let expireTime = (new Date((localStorage.expireTime))).getTime();  //获取过期时间
+        let expireTime =localStorage.expireTime;  //获取过期时间
         if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
-            startDayStr&&(startDayStr = new Date(startDayStr));
-            endDayStr&&(endDayStr = new Date(endDayStr));
+            // startDayStr&&(startDayStr = new Date(startDayStr));
+            // endDayStr&&(endDayStr = new Date(endDayStr));
             yx&&this.props.form.setFieldsValue({yx: `${yx}`});
             serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
             startDayStr&&this.props.form.setFieldsValue({startDayStr: moment(`${startDayStr}`)});
             endDayStr&&this.props.form.setFieldsValue({endDayStr: moment(`${endDayStr}`)});
+
+            if(yx&&serverId&&startDayStr&&endDayStr){
+                this.requestSearch(yx, serverId,startDayStr, endDayStr);
+            }
         }
     }
      
@@ -71,18 +78,22 @@ class StayReport extends React.Component {
                 let { yx, serverId, startDayStr, endDayStr, dayStr} = values;
                 startDayStr=startDayStr.format('YYYY-MM-DD');
                 endDayStr=endDayStr.format('YYYY-MM-DD');
-                let { stayReports } = this.state;
-                let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}`;
-                let url = "/root/getStayReport.action";
-                let method = 'POST';
-                let successmsg = '查询成功';
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    let stayReports = res.data.stayReports;
-                    this.setState({stayReports:stayReports});
-                    //请求成功后设置localStorage
-                    setInputLocalStorage(yx, serverId, null, null, null, null, startDayStr, endDayStr);
-                });
+                this.requestSearch(yx, serverId,startDayStr, endDayStr);
             }
+        });
+    }
+
+    requestSearch=(yx, serverId,startDayStr, endDayStr)=>{
+        let { stayReports } = this.state;
+        let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}`;
+        let url = "/root/getStayReport.action";
+        let method = 'POST';
+        let successmsg = '查询成功';
+        apiFetch(url, method, querystring, successmsg, (res) => {
+            let stayReports = res.data.stayReports;
+            this.setState({stayReports:stayReports});
+            //请求成功后设置localStorage
+            setStayReportStorage(yx, serverId, startDayStr, endDayStr);
         });
     }
 

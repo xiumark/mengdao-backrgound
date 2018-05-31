@@ -47,7 +47,8 @@ class Login extends React.PureComponent {
     let requesting = this.state.requesting;
 
     if (state == "1") {
-      // 登陆成功
+      // 登陆成功，设置locaStorage过期时间为两小时
+      localStorage.expireTime=(new Date((new Date()).getTime()+2*3600*1000)).getTime();
       message.success('登录成功');
       this.hide();
       this.setState({ requesting: false, login: true }, () => {

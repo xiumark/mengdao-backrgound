@@ -67,12 +67,13 @@ export function removeLocalStorage(key) {
     localStorage && localStorage.removeItem(key);
 }
 
-export function isNotExpired(time) {
-    time=(time===undefined?0:time)
-    let data = (new Date()).getTime();
-    if (data>time){
+export function isNotExpired(expireTime) {
+    let nowTime = (new Date()).getTime(); //当前时间
+    if (nowTime<expireTime){
+        // console.log("没有过期")
         return true;  //没有过期
     }else{
+        // console.log("过期")
         return false; //已经过期
     }
     // localStorage && localStorage.removeItem(key);
@@ -80,7 +81,6 @@ export function isNotExpired(time) {
 
 //表单值存入localStorage
 export function setInputLocalStorage(yx, serverId, startTime, endTime, currPage, numPerPage, startDayStr, endDayStr){
-    localStorage.expireTime=new Date();
     yx&&(localStorage.yx = yx);
     serverId&&(localStorage.serverId=serverId);
     startTime&&(localStorage.startTime = startTime);
@@ -89,4 +89,82 @@ export function setInputLocalStorage(yx, serverId, startTime, endTime, currPage,
     numPerPage&&(localStorage.numPerPage = numPerPage);
     startDayStr&&(localStorage.startDayStr = startDayStr);
     endDayStr&&(localStorage.endDayStr = endDayStr);
+}
+
+
+/**
+ * 游戏报表部分缓存处理
+ */
+
+/**
+ * 充值排行缓存设置rank
+ * @param: yx, serverId
+ */
+export function setRankListStorage(rankYx, rankServerId){
+    rankYx&&(localStorage.rankYx = rankYx);
+    rankServerId&&(localStorage.rankServerId=rankServerId);
+}
+
+/**
+ * 充值订单列表缓存设置orderList
+ */
+export function setOrderListStorage(orderYx, orderServerId, orderStartTime, orderEndTime, orderCurrPage, ordernumPerPage){
+    // localStorage.orderExpireTime=new Date();
+    orderYx&&(localStorage.orderYx = orderYx);
+    orderServerId&&(localStorage.orderServerId=orderServerId);
+    orderStartTime&&(localStorage.orderStartTime=orderStartTime);
+    orderEndTime&&(localStorage.orderEndTime=orderEndTime);
+    orderCurrPage&&(localStorage.orderCurrPage=orderCurrPage);
+    ordernumPerPage&&(localStorage.ordernumPerPage=ordernumPerPage);
+    // orderSortType&&(localStorage.orderSortType=orderSortType);
+    // orderIsAscend&&(localStorage.orderIsAscend=orderIsAscend);
+    // orderContainFail&&(localStorage.orderContainFail=orderContainFail);
+}
+
+/**
+ * 在线人数缓存设置Online
+ * 
+ */
+export function setOlineStorage(olineYx, olineServerId, olineStartTime, olineEndTime){
+    // localStorage.onlineExpireTime=new Date();
+    olineYx&&(localStorage.olineYx = olineYx);
+    olineServerId&&(localStorage.olineServerId=olineServerId);
+    olineStartTime&&(localStorage.olineStartTime=olineStartTime);
+    olineEndTime&&(localStorage.olineEndTime=olineEndTime);
+}
+
+/**
+ * 运营日报缓存设置dayReport
+ * 
+ */
+export function setDayReportStorage(dayReportYx, dayReportServerId, dayReportStartDay, dayReportEndDay){
+    // localStorage.dayReportExpireTime=new Date();
+    dayReportYx&&(localStorage.dayReportYx = dayReportYx);
+    dayReportServerId&&(localStorage.dayReportServerId=dayReportServerId);
+    dayReportStartDay&&(localStorage.dayReportStartDay=dayReportStartDay);
+    dayReportEndDay&&(localStorage.dayReportEndDay=dayReportEndDay);
+}
+
+/**
+ * 留存统计缓存设置stayReport
+ * 
+ */
+export function setStayReportStorage(stayReportYx, stayReportServerId, stayReportStartDayStr, stayReportEndDayStr){
+    // localStorage.stayReportExpireTime=new Date();
+    stayReportYx&&(localStorage.stayReportYx = stayReportYx);
+    stayReportServerId&&(localStorage.stayReportServerId=stayReportServerId);
+    stayReportStartDayStr&&(localStorage.stayReportStartDayStr=stayReportStartDayStr);
+    stayReportEndDayStr&&(localStorage.stayReportEndDayStr=stayReportEndDayStr);
+}
+
+/**
+ * LTV统计缓存设置ltvReport
+ * 
+ */
+export function setLtvReportStorage(ltvReportYx, ltvReportServerId, ltvReportStartDayStr, ltvReportEndDayStr){
+    // localStorage.ltvReportExpireTime=new Date();
+    ltvReportYx&&(localStorage.ltvReportYx = ltvReportYx);
+    ltvReportServerId&&(localStorage.ltvReportServerId=ltvReportServerId);
+    ltvReportStartDayStr&&(localStorage.ltvReportStartDayStr=ltvReportStartDayStr);
+    ltvReportEndDayStr&&(localStorage.ltvReportEndDayStr=ltvReportEndDayStr);
 }

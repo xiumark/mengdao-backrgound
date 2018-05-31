@@ -179,15 +179,16 @@ const sidebarMenu = [
             authIndex:'19',
           },
           {
-            key: 'dayReport',
-            name: '运营日报',
-            authIndex:'21',
-          },
-          {
             key: 'onlineNumData',
             name: '在线人数',
             authIndex:'20',
           },
+          {
+            key: 'dayReport',
+            name: '运营日报',
+            authIndex:'21',
+          },
+
           {
             key: 'stayReport',
             name: '留存统计',

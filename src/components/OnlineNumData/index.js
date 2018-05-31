@@ -7,7 +7,7 @@ import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
 import LineArea from './Components/LineArea';
 import './index.less';
-import { isNotExpired, setInputLocalStorage } from '../../utils/cache';
+import { isNotExpired, setOlineStorage } from '../../utils/cache';
 import moment from 'moment';
 
 class OnlineNumData extends React.Component {
@@ -19,10 +19,6 @@ class OnlineNumData extends React.Component {
                 //     "time": "2018-04-19 00:05:00",   // 时间标识
                 //     "onlineNum":1	             // 在线人数
                 // },
-                // {
-                //     "time": "2018-04-19 00:10:00",   // 时间标识
-                //     "onlineNum":1	             // 在线人数
-                // }
             ],
             yxList:[{key:'1',yx:'渠道1'},{key:'2',yx:'渠道2'}],
             serviceList:[
@@ -39,21 +35,28 @@ class OnlineNumData extends React.Component {
         getServiceList((res) => {
             this.getYxList(res);
             this.setState({ serviceList: res});
-            let {yx, serverId, startTime, endTime}=localStorage;
-            this.setInputValue(yx, serverId, startTime, endTime);
         })
+
+        let {olineYx, olineServerId, olineStartTime, olineEndTime}=localStorage;
+        console.log("localStorage:", localStorage);
+        let yx, serverId, startTime, endTime;
+        yx=olineYx; serverId=olineServerId; startTime=olineStartTime; endTime=olineEndTime;
+        this.setInputValue(yx, serverId, startTime, endTime);
     }
      
     //自动填充表单值
     setInputValue=(yx, serverId, startTime, endTime)=>{
-        let expireTime = (new Date((localStorage.expireTime))).getTime();  //获取过期时间
+        let expireTime =localStorage.expireTime;  //获取过期时间
         if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
-            startTime&&(startTime = new Date(startTime));
-            endTime&&(endTime = new Date(endTime));
             yx&&this.props.form.setFieldsValue({yx: `${yx}`});
             serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
             startTime&&this.props.form.setFieldsValue({startTime: moment(`${startTime}`)});
             endTime&&this.props.form.setFieldsValue({endTime: moment(`${endTime}`)});
+
+            //设置成功后，如果数据是全的，请求后台数据一次
+            if(yx&&serverId&&startTime&&endTime){
+                this.requestSearch(yx, serverId, startTime, endTime)
+            }
         }
     }
 
@@ -88,20 +91,24 @@ class OnlineNumData extends React.Component {
                 let { yx, serverId, startTime, endTime} = values;
                 startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
                 endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
-                let { onlineNumList } = this.state;
-                let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}`;
-                let url = "/root/getOnlineNumData.action";
-                let method = 'POST';
-                let successmsg = '查询成功';
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    let onlineNumList = res.data.onlineNumList;
-                    this.setState({onlineNumList:onlineNumList});
-                //请求成功后设置localStorage
-                setInputLocalStorage(yx, serverId, startTime, endTime, null, null, null, null);
-        
-                });
+                this.requestSearch(yx, serverId, startTime, endTime);
             }
         });
+    }
+
+    requestSearch=(yx, serverId, startTime, endTime)=>{
+        let { onlineNumList } = this.state;
+            let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}`;
+            let url = "/root/getOnlineNumData.action";
+            let method = 'POST';
+            let successmsg = '查询成功';
+            apiFetch(url, method, querystring, successmsg, (res) => {
+                let onlineNumList = res.data.onlineNumList;
+                this.setState({onlineNumList:onlineNumList});
+
+            //请求成功后设置localStorage
+            setOlineStorage(yx, serverId, startTime, endTime);
+            });
     }
 
     render() {

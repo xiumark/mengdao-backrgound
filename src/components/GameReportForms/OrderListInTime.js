@@ -7,7 +7,7 @@ const RadioButton = Radio.Button;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
-import { isNotExpired, setInputLocalStorage } from '../../utils/cache';
+import { isNotExpired, setOrderListStorage } from '../../utils/cache';
 import moment from 'moment';
 /**
  * 
@@ -45,28 +45,38 @@ class OrderListInTime extends React.Component {
             // currPage: '1',
             numPerPage:'10000'
         });
-
-        let {yx, serverId, startTime, endTime, numPerPage}=localStorage;
-        this.setInputValue(yx, serverId, startTime, endTime, numPerPage);
-
         getServiceList((res) => {
             this.getYxList(res);
             this.setState({ serviceList: res});
         })
+
+        let yx, serverId, startTime, endTime, numPerPage;
+        let {orderYx, orderServerId, orderStartTime, orderEndTime, ordernumPerPage}=localStorage;
+        yx = orderYx; serverId =orderServerId; startTime =orderStartTime; endTime =orderEndTime; numPerPage =ordernumPerPage;
+        this.setInputValue(yx, serverId, startTime, endTime, numPerPage);
     }
 
     //自动填充表单值
     setInputValue=(yx, serverId, startTime, endTime, numPerPage)=>{
-        let expireTime = (new Date((localStorage.expireTime))).getTime();  //获取过期时间
+        let expireTime =localStorage.expireTime;  //获取过期时间
         if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
-            startTime&&(startTime = new Date(startTime));
-            endTime&&(endTime = new Date(endTime));
+            // startTime&&(startTime = new Date(startTime));
+            // endTime&&(endTime = new Date(endTime));
             numPerPage&&(numPerPage = JSON.parse(numPerPage));
             yx&&this.props.form.setFieldsValue({yx: `${yx}`});
             serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
             startTime&&this.props.form.setFieldsValue({startTime: moment(`${startTime}`)});
             endTime&&this.props.form.setFieldsValue({endTime: moment(`${endTime}`)});
             numPerPage&&this.props.form.setFieldsValue({numPerPage: `${numPerPage}`});
+
+            //如果请求数据完整，则请求后台数据，并且显示
+            if(yx&&serverId&&startTime&&endTime&&numPerPage){
+                let containType = '1';
+                let currPage = undefined;
+                // startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
+                // endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
+                this.requestSearch(yx, serverId, startTime, endTime, currPage, numPerPage, containType);
+            }
         }
     }
 
@@ -93,65 +103,70 @@ class OrderListInTime extends React.Component {
                 let { yx, serverId, startTime, endTime, currPage, numPerPage, containType} = values;
                 startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
                 endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
-                let { orderList } = this.state;
-
-                /**
-                 * 默认获取全部数据（1）
-                 * @param containType:0:成功订单；1：全部订单；2：失败订单
-                */
-
-                let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=${currPage}&numPerPage=${numPerPage}&containFail=1`
-                let url = "/root/getOrderListInTime.action"
-                let method = 'POST'
-                let successmsg = '查询成功';
-                let sucList=[];
-                let failList = [];
-                let allList = [];
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    let orderList = res.data.orderList;
-                    for(let i=0;i<orderList.length;i++){
-                        switch(orderList[i].state){
-                            //新建（错误）
-                            case 0: 
-                                orderList[i].statemsg='新建';
-                                failList.push(orderList[i]);
-                            break;
-                            // 已成功
-                            case 1: 
-                                orderList[i].statemsg='已成功';
-                                sucList.push(orderList[i]);
-                            break;
-                            //已失败
-                            case 2: 
-                                orderList[i].statemsg='已失败';
-                                failList.push(orderList[i]);
-                            break;
-                            //已失败
-                            default:
-                                orderList[i].statemsg='错误';
-                                failList.push(orderList[i]);
-                        }
-                    }
-
-                    switch(containType){
-                        //成功订单
-                        case '0':
-                            this.setState({orderList:sucList});
-                        break;
-                        //全部订单
-                        case '1':
-                            this.setState({orderList:orderList});
-                        break;
-                        //失败订单
-                        case '2':
-                            this.setState({orderList:failList});
-                        break;
-                    }
-                    //请求成功后设置localStorage
-                    setInputLocalStorage(yx, serverId, startTime, endTime, currPage, numPerPage);
-                })
+                this.requestSearch(yx, serverId, startTime, endTime, currPage, numPerPage, containType);
             }
         });
+    }
+
+
+    /**
+     * 默认获取全部数据（1）
+     * @param containType:0:成功订单；1：全部订单；2：失败订单
+    */
+    requestSearch=(yx, serverId, startTime, endTime, currPage, numPerPage, containType)=>{
+        console.log("333:",localStorage)
+        let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=${currPage}&numPerPage=${numPerPage}&containFail=1`
+        let url = "/root/getOrderListInTime.action"
+        let method = 'POST'
+        let successmsg = '查询成功';
+        let sucList=[];
+        let failList = [];
+        let allList = [];
+        apiFetch(url, method, querystring, successmsg, (res) => {
+            let orderList = res.data.orderList;
+            for(let i=0;i<orderList.length;i++){
+                switch(orderList[i].state){
+                    //新建（错误）
+                    case 0: 
+                        orderList[i].statemsg='新建';
+                        failList.push(orderList[i]);
+                    break;
+                    // 已成功
+                    case 1: 
+                        orderList[i].statemsg='已成功';
+                        sucList.push(orderList[i]);
+                    break;
+                    //已失败
+                    case 2: 
+                        orderList[i].statemsg='已失败';
+                        failList.push(orderList[i]);
+                    break;
+                    //已失败
+                    default:
+                        orderList[i].statemsg='错误';
+                        failList.push(orderList[i]);
+                }
+            }
+
+            switch(containType){
+                //成功订单
+                case '0':
+                    this.setState({orderList:sucList});
+                break;
+                //全部订单
+                case '1':
+                    this.setState({orderList:orderList});
+                break;
+                //失败订单
+                case '2':
+                    this.setState({orderList:failList});
+                break;
+            }
+            //请求成功后设置localStorage
+            if(res.data.orderList.length!==0){
+                setOrderListStorage(yx, serverId, startTime, endTime, currPage, numPerPage);
+            }
+        })
     }
 
     onServerChange=(value)=>{
@@ -162,9 +177,6 @@ class OrderListInTime extends React.Component {
     }
     onRadioChange = (v)=>{
     }
-    // buttonClick=(e)=>{
-    //     console.log("e:", e)
-    // }
 
     render() {
         const { getFieldDecorator } = this.props.form;
