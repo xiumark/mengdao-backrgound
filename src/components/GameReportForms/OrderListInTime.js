@@ -93,6 +93,32 @@ class OrderListInTime extends React.Component {
           });
     }
 
+
+
+
+    stringifyData=(data)=>{
+        let dataStr = '角色编号'+'         '+'创建时间'+'  '+'充值成功时间'+'  '+'人民币'+'  '+'平台订单号'+'  '+'商品编号'+'  '+'订单状态\n';
+        for(let i =0;i<data.length;i++){
+            let item = data[i]
+            dataStr =dataStr+`${item.playerId}`+'       '+`${item.createTime}`+'       '+`${item.succTime}`+'       '+`${item.money}`+'       '+`${item.productId}`+'       '+`${item.statemsg}\n`
+        }
+        return dataStr;
+    }
+
+    copyClick=(e)=>{
+        let {orderList} = this.state;
+        this.stringifyData(orderList);
+
+        let tableStr =this.stringifyData(orderList);
+        
+        let input = document.getElementById("input");
+        input.value = tableStr; // 修改文本框的内容
+        input.select(); // 选中文本
+        document.execCommand("copy"); // 执行浏览器复制命令
+        message.info("表格内容已复制");
+    }
+
+
     /**
      * 查询指定时间段的充值订单列表
      */
@@ -319,6 +345,7 @@ class OrderListInTime extends React.Component {
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >
                                 <Button type="primary" htmlType="submit">查询订单</Button>
+                                <Button type="primary" id='copyButton' style={{ marginLeft: 40 }} onClick = {this.copyClick}>复制</Button>
                             </FormItem>
                         </Form>
                     </Col>
@@ -326,6 +353,7 @@ class OrderListInTime extends React.Component {
             </Card>
             <Card title="订单列表" id="orderList" style={{ minHeight: 380 }} >
                 <Table onRowClick={this.onClick} rowKey="vid" columns={columns} dataSource={orderList} size="middle" />
+                <textarea id="input" value='' style={{ position: 'absolute',top: '0',left: '0',opacity: '0',zIndex: '-10'}}>这是幕后黑手</textarea>
             </Card>
         </div >;
     }

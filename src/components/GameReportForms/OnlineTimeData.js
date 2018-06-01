@@ -105,6 +105,29 @@ class OnlineTimeData extends React.Component {
         this.setState({yx:value})
     }
 
+
+    stringifyData=(data)=>{
+        let dataStr = '日期'+'         '+'登陆人数'+'   '+'总在线时长(秒)'+'   '+'总在线时长'+'   '+'平均在线时长(秒)'+'   '+'平均在线时长'+'\n';
+        for(let i =0;i<data.length;i++){
+            let item = data[i]
+            dataStr =dataStr+`${item.dayStr}`+'     '+`${item.count}`+'     '+`${item.onlineTime}`+'     '+`${item.countTimeStr}`+'     '+`${item.eachOnlineTime}`+'     '+`${item.eachOnlineTimeStr}\n`
+        }
+        return dataStr;
+    }
+
+    copyClick=(e)=>{
+        let {onlineTimeReports} = this.state;
+        this.stringifyData(onlineTimeReports);
+
+        let tableStr =this.stringifyData(onlineTimeReports);
+        
+        let input = document.getElementById("input");
+        input.value = tableStr; // 修改文本框的内容
+        input.select(); // 选中文本
+        document.execCommand("copy"); // 执行浏览器复制命令
+        message.info("表格内容已复制");
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
         const { serviceList, yxList, onlineTimeReports } = this.state;
@@ -209,13 +232,15 @@ class OnlineTimeData extends React.Component {
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >
                                 <Button type="primary" htmlType="submit">查询</Button>
+                                <Button type="primary" id='copyButton' style={{ marginLeft: 40 }} onClick = {this.copyClick}>复制</Button>
                             </FormItem>
                         </Form>
                     </Col>
                 </Row>
             </Card>
             <Card title="运营日报列表" id="onlineTimeReports" style={{ minHeight: 680 }} >
-                <Table rowKey="dayStr" columns={columns} dataSource={onlineTimeReports} size="small" />
+                <Table  id="tableData" rowKey="dayStr" columns={columns} dataSource={onlineTimeReports} size="small"/>
+                <textarea id="input" value='' style={{ position: 'absolute',top: '0',left: '0',opacity: '0',zIndex: '-10'}}>这是幕后黑手</textarea>
             </Card>
         </div >;
     }

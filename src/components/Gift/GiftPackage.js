@@ -5,6 +5,7 @@ const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
+import { isNotExpired, setSendGiftData } from '../../utils/cache';
 
 const buttonStyle = {
     margin: '10px',
@@ -79,6 +80,7 @@ class GiftPackage extends React.Component {
                 {yx:'渠道1' ,key:1},
                 {yx:'渠道2' ,key:1},
             ],
+            yx:''
         };
         this.columns = [
 
@@ -118,7 +120,36 @@ class GiftPackage extends React.Component {
         getServiceList((res) => {
             this.getYxList(res);
             this.setState({ serviceList: res, filteredServiceList: res});
-        })
+        });
+
+        //根据缓存，填充表单数据
+        let {sendGiftYx, sendGiftServerId, sendGiftGiftType, sendGiftPlayerName,
+             sendGiftGiftContent, sendGiftDuration, sendGiftTitle}=localStorage;
+        let yx, serverId, giftType, playerName, giftContent, duration, title;
+        yx=sendGiftYx; 
+        serverId=sendGiftServerId;
+        giftType=sendGiftGiftType; 
+        playerName=sendGiftPlayerName;
+        giftContent=sendGiftGiftContent;
+        duration=sendGiftDuration;
+        title=sendGiftTitle;
+        this.setInputValue(yx, serverId, giftType, playerName, giftContent, duration, title);
+    }
+
+    setInputValue=(yx, serverId, giftType, playerName, giftContent, duration, title)=>{
+        let expireTime =localStorage.expireTime;  //获取过期时间
+        if(isNotExpired(expireTime)){
+            yx&&this.props.form.setFieldsValue({yx: `${yx}`});
+            serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
+            giftType&&this.props.form.setFieldsValue({giftType: `${giftType}`});
+            playerName&&this.props.form.setFieldsValue({playerName: `${playerName}`});
+            giftContent&&this.props.form.setFieldsValue({giftContent: `${giftContent}`});
+            duration&&this.props.form.setFieldsValue({duration: `${duration}`});
+            title&&this.props.form.setFieldsValue({title: `${title}`});
+            if(yx&&serverId){
+                this.getPackageItemList(yx,serverId);
+            }
+        }
     }
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
@@ -126,7 +157,7 @@ class GiftPackage extends React.Component {
         let filteredServiceList = serviceList.filter((item, index)=>{
             return item.yx===value;
         });
-        this.setState({filteredServiceList:filteredServiceList});
+        this.setState({filteredServiceList:filteredServiceList,yx:value});
     }
 
     getYxList=(data)=>{//获取渠道列表
@@ -197,8 +228,9 @@ class GiftPackage extends React.Component {
        }
 
 
-    onServerChange(v){
-        this.getPackageItemList(v);
+    onServerChange(serverId){
+        let {yx} = this.state;
+        this.getPackageItemList(yx,serverId);
     }
     onGiftTypeChange(v){
 
@@ -209,12 +241,8 @@ class GiftPackage extends React.Component {
         }
     }
 
-    getPackageItemList = (v) => { //获取礼包信息列表
-        // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        // this.props.form.validateFields((err, values) => {
-            // if (!err) {
-                let  serverId  = v;
-                const querystring = `serverId=${serverId}`
+    getPackageItemList = (yx,serverId) => { //获取礼包信息列表
+                const querystring = `yx=${yx}&serverId=${serverId}`
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/getItems.action`, {
                     credentials: 'include', //发送本地缓存数据
@@ -249,12 +277,11 @@ class GiftPackage extends React.Component {
                         message.error(err.message ? err.message : '未知错误');
                         this.setState({ giftPackageItemsData:[]});
                     })
-            // }
-        // })
     }
 
     handleSubmit = (e) => {//发送礼包
         e.preventDefault();
+        
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const {giftContentData}=this.state;
@@ -268,18 +295,22 @@ class GiftPackage extends React.Component {
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
                 
-
-
-                let { giftType, serverId,yx, playerName, giftContent, duration, title } = values;
-                const querystring = `giftType=${giftType}&serverId=${serverId}&yx=${yx}&playerName=${playerName}&giftContent=${giftContentStr}&duration=${duration}&title=${title}`
-                let url = "/root/sendGift.action"
-                let method = 'POST'
-                let successmsg = '成功发送礼包'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-
-                })
+                let {yx, serverId, giftType, playerName, giftContent, duration, title } = values;
+                this.requestSearch(yx, serverId, giftType, playerName, giftContent, duration, title);
             }
         });
+    }
+
+    requestSearch=(yx, serverId, giftType, playerName, giftContent, duration, title)=>{
+        const querystring = `yx=${yx}&serverId=${serverId}&giftType=${giftType}&playerName=${playerName}&giftContent=${giftContent}&duration=${duration}&title=${title}`
+        let url = "/root/sendGift.action"
+        let method = 'POST'
+        let successmsg = '成功发送礼包'
+        
+        apiFetch(url, method, querystring, successmsg, (res) => {
+            //请求成功后设置缓存
+            setSendGiftData(yx, serverId, giftType, playerName, giftContent, duration, title);
+        })
     }
 
     buttonDeleteClick=(item)=>{

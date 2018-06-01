@@ -6,6 +6,7 @@ import { getServiceList, getYxList } from '../../api/service';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
+import { isNotExpired, setGiftCreateData } from '../../utils/cache';
 
 const buttonStyle = {
     margin: '10px',
@@ -112,14 +113,42 @@ class GiftCreate extends React.Component {
             this.getYxList(res);
             this.setState({ serviceList: res, filteredServiceList: res});
         })
-        // getItemList(()=>{
-        //     //获取礼品字符串
-        // })
-        // this.getPackageItemList();
         this.props.form.setFieldsValue({
             canRepeat:'0'
           });
+
+        //根据缓存，填充表单数据
+        let {giftCreateYx, giftCreateServerId, giftCreateName, giftCreateBatch,
+             giftCreateExpireTime, giftCreateCanRepeat, giftCreateGiftContenter}=localStorage;
+        let yx, serverId, name, batch, expireTime, canRepeat, giftContent;
+        yx=giftCreateYx; 
+        serverId=giftCreateServerId;
+        name=giftCreateName; 
+        batch=giftCreateBatch;
+        expireTime=giftCreateExpireTime;
+        canRepeat=giftCreateCanRepeat;
+        giftContent=giftCreateGiftContenter;
+        this.setInputValue(yx, serverId, name, batch, expireTime, canRepeat, giftContent);
+            
     }
+
+
+    setInputValue=(yx, serverId, name, batch, expireTime, canRepeat, giftContent)=>{
+        let expireTime2 =localStorage.expireTime;  //获取过期时间
+        if(isNotExpired(expireTime2)){
+            yx&&this.props.form.setFieldsValue({yx: `${yx}`});
+            serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
+            name&&this.props.form.setFieldsValue({name: `${name}`});
+            batch&&this.props.form.setFieldsValue({batch: `${batch}`});
+            // expireTime&&this.props.form.setFieldsValue({expireTime: `${expireTime}`});
+            canRepeat&&this.props.form.setFieldsValue({canRepeat: `${canRepeat}`});
+            giftContent&&this.props.form.setFieldsValue({giftContent: `${giftContent}`});
+            if(yx&&serverId){
+                this.getPackageItemList(yx,serverId);
+            }
+        }
+    }
+
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
         const{serviceList} = this.state;
@@ -195,12 +224,14 @@ class GiftCreate extends React.Component {
        }
 
 
-    onServerChange(v){
+    onServerChange(serverId){
         //serverId
-        this.setState({serverId:v},()=>{
-        this.getPackageItemList();
+        let {yx} = this.state;
+        this.setState({serverId:serverId},()=>{
+        this.getPackageItemList(yx,serverId);
     })
     }
+
     onGiftTypeChange(v){
 
         if(v==1){
@@ -216,8 +247,7 @@ class GiftCreate extends React.Component {
           });
     }
 
-    getPackageItemList = () => { //获取礼包物品信息
-                let  {serverId,yx}  = this.state;
+    getPackageItemList = (yx,serverId) => { //获取礼包物品信息
                 const querystring = `serverId=${serverId}&yx=${yx}`
                 let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 fetch(`/root/getItems.action`, {
@@ -270,17 +300,24 @@ class GiftCreate extends React.Component {
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
 
-                let { name, batch, expireTime, canRepeat, giftContent, yx, serverId} = values;
-                // this.setState({yx:yx});
+                let { yx, serverId, name, batch, expireTime, canRepeat, giftContent} = values;
                 expireTime=expireTime.format('YYYY-MM-DD HH:mm:ss');   //ant@2需要的处理，因为类型发生改变由之前的value改为了moment类型
-                const querystring = `yx=${yx}&serverId=${serverId}&name=${name}&batch=${batch}&expireTime=${expireTime}&canRepeat=${canRepeat}&giftContent=${giftContentStr}`
-                let url = "/root/createGiftCodeContent.action"
-                let method = 'POST'
-                let successmsg = '成功创建礼品'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                })
+                this.requestSearch(yx, serverId, name, batch, expireTime, canRepeat, giftContent);
             }
         });
+    }
+
+    requestSearch=(yx, serverId, name, batch, expireTime, canRepeat, giftContent)=>{
+        
+        const querystring = `yx=${yx}&serverId=${serverId}&name=${name}&batch=${batch}&expireTime=${expireTime}&canRepeat=${canRepeat}&giftContent=${giftContent}`
+        let url = "/root/createGiftCodeContent.action"
+        let method = 'POST'
+        let successmsg = '成功创建礼品'
+        
+        apiFetch(url, method, querystring, successmsg, (res) => {
+            //设置缓存
+            setGiftCreateData(yx, serverId, name, batch, expireTime, canRepeat, giftContent)
+        })
     }
 
     buttonDeleteClick=(item)=>{

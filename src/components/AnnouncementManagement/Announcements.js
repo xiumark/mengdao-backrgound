@@ -5,6 +5,7 @@ const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
+import { isNotExpired, setAnnouncementData } from '../../utils/cache';
 /**
  * 测试用
  */
@@ -33,9 +34,33 @@ class Announcements extends React.Component {
         getServiceList((res) => {
             this.getYxList(res);
             this.setState({ serviceList: res, filteredServiceList: res});
-        })
+        });
+
+        //根据缓存，填充表单数据
+        let {announcementYx, announcementServerId, announcementNoticeType, 
+            announcementDuration, announcementTimes, announcementContent}=localStorage;
+        let yx, serverId, noticeType, duration, times, content;
+        yx=announcementYx; 
+        serverId=announcementServerId;
+        noticeType=announcementNoticeType; 
+        duration=announcementDuration;
+        times=announcementTimes;
+        content=announcementContent;
+        this.setInputValue(yx, serverId, noticeType, duration, times, content);
     }
 
+    setInputValue=(yx, serverId, noticeType, duration, times, content)=>{
+        let expireTime =localStorage.expireTime;  //获取过期时间
+        if(isNotExpired(expireTime)){
+            yx&&this.props.form.setFieldsValue({yx: `${yx}`});
+            serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
+            noticeType&&this.props.form.setFieldsValue({noticeType: `${noticeType}`});
+            duration&&this.props.form.setFieldsValue({duration: `${duration}`});
+            times&&this.props.form.setFieldsValue({times: `${times}`});
+            content&&this.props.form.setFieldsValue({content: `${content}`});
+        }
+    }
+     
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
         const{serviceList} = this.state;
         let filteredServiceList = serviceList.filter((item, index)=>{
@@ -69,18 +94,24 @@ class Announcements extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { noticeType, serverId, content, duration, times, yx } = values;
+                let { yx, serverId, noticeType, duration, times, content } = values;
                 //serverId可不填
-                let querystring = `noticeType=${noticeType}&serverId=${serverId}&yx=${yx}&content=${content}&duration=${duration}&times=${times}`
-                let url = "/root/sendNotice.action"
-                let method = 'POST'
-                let successmsg = '发送公告成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-
-                })
+                this.requestSearch(yx, serverId, noticeType, duration, times, content)
             }
         });
     }
+
+    requestSearch=(yx, serverId, noticeType, duration, times, content)=>{
+        let querystring = `yx=${yx}&serverId=${serverId}&noticeType=${noticeType}&duration=${duration}&times=${times}&content=${content}`
+        let url = "/root/sendNotice.action"
+        let method = 'POST'
+        let successmsg = '发送公告成功'
+        apiFetch(url, method, querystring, successmsg, (res) => {
+            //数据请求成功后设置缓存
+            setAnnouncementData(yx, serverId, noticeType, duration, times, content);
+        })
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
         const {filteredServiceList, yxList} = this.state;

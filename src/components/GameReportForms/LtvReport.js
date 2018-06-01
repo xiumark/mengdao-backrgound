@@ -65,6 +65,30 @@ class LtvReport extends React.Component {
           });
     }
 
+
+    stringifyData=(data)=>{
+        let dataStr = '日期'+'         '+'首日数据'+'  '+'次日数据'+'  '+'3日数据'+'  '+'4日数据'+'  '+'5日数据'+'  '+'6日数据'+'  '+'7日数据'+'  '+'14日数据'+'  '+'30日数据'+'  '+'60日数据\n';
+        for(let i =0;i<data.length;i++){
+            let item = data[i]
+            dataStr =dataStr+`${item.dayStr}`+'     '+`${item.num1}`+'     '+`${item.num2}`+'     '+`${item.num3}`+'     '+`${item.num4}`+'     '+`${item.num5}`+'     '+`${item.num6}`+'     '+`${item.num7}`+'     '+`${item.num14}`+'     '+`${item.num30}`+'     '+`${item.num60}\n`
+        }
+        return dataStr;
+    }
+
+    copyClick=(e)=>{
+        let {ltvReports} = this.state;
+        this.stringifyData(ltvReports);
+
+        let tableStr =this.stringifyData(ltvReports);
+        
+        let input = document.getElementById("input");
+        input.value = tableStr; // 修改文本框的内容
+        input.select(); // 选中文本
+        document.execCommand("copy"); // 执行浏览器复制命令
+        message.info("表格内容已复制");
+    }
+
+
     /**
      * 查询指定时间段的运营日报
      */
@@ -216,6 +240,7 @@ class LtvReport extends React.Component {
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >
                                 <Button type="primary" htmlType="submit">查询</Button>
+                                <Button type="primary" id='copyButton' style={{ marginLeft: 40 }} onClick = {this.copyClick}>复制</Button>
                             </FormItem>
                         </Form>
                     </Col>
@@ -223,6 +248,7 @@ class LtvReport extends React.Component {
             </Card>
             <Card title="运营日报列表" id="ltvReports" style={{ minHeight: 680 }} >
                 <Table rowKey="dayStr" columns={columns} dataSource={ltvReports} size="small" />
+                <textarea id="input" value='' style={{ position: 'absolute',top: '0',left: '0',opacity: '0',zIndex: '-10'}}>这是幕后黑手</textarea>
             </Card>
         </div >;
     }

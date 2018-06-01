@@ -65,6 +65,39 @@ class DayReport extends React.Component {
           });
     }
 
+
+    stringifyData=(data)=>{
+        let dataStr = '日期'+'         '+'注册数'+'  '+'创角数'+'  '+'创角率'+'  '+'活跃玩家数'+'  '
+        +'最高在线人数'+'  '+'最高在线时刻'+'  '+'付费次数'+'  '+'付费人数'+'  '+'付费总额(元)'+'  '+'活跃玩家付费率'+'  '
+        +'付费玩家ARPU'+'  '+'活跃玩家ARPU'+'  '+'新增付费玩家数'+'  '+'新增玩家付费总额(元)'+'  '+'新增玩家付费率'+'  '+'新增玩家ARPU'+'  '
+        +'老玩家ARPU\n';
+        for(let i =0;i<data.length;i++){
+            let item = data[i]
+            dataStr =dataStr+`${item.dayStr}`+'       '+`${item.registerNum}`+'       '+`${item.createRoleNum}`+'       '
+            +`${item.createRoleRatio}`+'       '+`${item.activeRoleNum}`+'       '+`${item.maxOnlineNum}`+'       '
+            +`${item.maxOnlineTime}`+'       '+`${item.payTimes}`+'       '+`${item.roleNumPayed}`+'       '+`${item.paySum}`+'       '
+            +`${item.activePayRatio}`+'       '+`${item.payArpu}`+'       '+`${item.activeArpu}`+'       '+`${item.newRoleNumPayed}`+'       '
+            +`${item.newRolePaySum}`+'       '+`${item.newRolePayRatio}`+'       '+`${item.newRoleArpu}`+'       '+`${item.oldRoleArpu}\n`
+        }
+        return dataStr;
+    }
+
+    copyClick=(e)=>{
+        let {dayReports} = this.state;
+        this.stringifyData(dayReports);
+
+        let tableStr =this.stringifyData(dayReports);
+        
+        let input = document.getElementById("input");
+        input.value = tableStr; // 修改文本框的内容
+        input.select(); // 选中文本
+        document.execCommand("copy"); // 执行浏览器复制命令
+        message.info("表格内容已复制");
+    }
+
+
+
+
     /**
      * 查询指定时间段的运营日报
      */
@@ -236,6 +269,7 @@ class DayReport extends React.Component {
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >
                                 <Button type="primary" htmlType="submit">查询</Button>
+                                <Button type="primary" id='copyButton' style={{ marginLeft: 40 }} onClick = {this.copyClick}>复制</Button>
                             </FormItem>
                         </Form>
                     </Col>
@@ -243,6 +277,7 @@ class DayReport extends React.Component {
             </Card>
             <Card title="运营日报列表" id="dayReports" style={{ minHeight: 380 }} >
                 <Table rowKey="dayStr" columns={columns} dataSource={dayReports} size="small" />
+                <textarea id="input" value='' style={{ position: 'absolute',top: '0',left: '0',opacity: '0',zIndex: '-10'}}>这是幕后黑手</textarea>
             </Card>
         </div >;
     }

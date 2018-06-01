@@ -180,3 +180,64 @@ export function setOnlineTimeData(onlineTimeYx, onlineTimeServerId, onlineTimeSt
     onlineTimeStartDayStr&&(localStorage.onlineTimeStartDayStr=onlineTimeStartDayStr);
     onlineTimeEndDayStr&&(localStorage.onlineTimeEndDayStr=onlineTimeEndDayStr);
 }
+
+/**
+ * 游戏管理模块
+ */
+
+/**
+ * 公告管理缓存设置
+ */
+export function setAnnouncementData(announcementYx, announcementServerId, announcementNoticeType, 
+    announcementDuration, announcementTimes, announcementContent){
+        announcementYx&&(localStorage.announcementYx = announcementYx);
+        announcementServerId&&(localStorage.announcementServerId=announcementServerId);
+        announcementNoticeType&&(localStorage.announcementNoticeType=announcementNoticeType);
+        announcementDuration&&(localStorage.announcementDuration=announcementDuration);
+        announcementTimes&&(localStorage.announcementTimes=announcementTimes);
+        announcementContent&&(localStorage.announcementContent=announcementContent);
+}
+/**
+ * 礼包管理缓存设置
+ */
+export function setSendGiftData(sendGiftYx, sendGiftServerId, sendGiftGiftType, sendGiftPlayerName, sendGiftGiftContent, sendGiftDuration, sendGiftTitle){
+    sendGiftYx&&(localStorage.sendGiftYx = sendGiftYx);
+    sendGiftServerId&&(localStorage.sendGiftServerId=sendGiftServerId);
+    sendGiftGiftType&&(localStorage.sendGiftGiftType=sendGiftGiftType);
+    sendGiftPlayerName&&(localStorage.sendGiftPlayerName=sendGiftPlayerName);
+    sendGiftGiftContent&&(localStorage.sendGiftGiftContent=sendGiftGiftContent);
+    sendGiftDuration&&(localStorage.sendGiftDuration=sendGiftDuration);
+    sendGiftTitle&&(localStorage.sendGiftTitle=sendGiftTitle);
+}
+
+/**
+ * 创建礼品缓存设置
+ */
+export function setGiftCreateData(giftCreateYx, giftCreateServerId, giftCreateName, giftCreateBatch, giftCreateExpireTime, giftCreateCanRepeat, giftCreateGiftContenter){
+    giftCreateYx&&(localStorage.giftCreateYx = giftCreateYx);
+    giftCreateServerId&&(localStorage.giftCreateServerId=giftCreateServerId);
+    giftCreateName&&(localStorage.giftCreateName=giftCreateName);
+    giftCreateBatch&&(localStorage.giftCreateBatch=giftCreateBatch);
+    giftCreateExpireTime&&(localStorage.giftCreateExpireTime=giftCreateExpireTime);
+    giftCreateCanRepeat&&(localStorage.giftCreateCanRepeat=giftCreateCanRepeat);
+    giftCreateGiftContenter&&(localStorage.giftCreateGiftContenter=giftCreateGiftContenter);
+}
+/**
+ * 修改礼品过期时间缓存设置
+ */
+export function setExpireTimeChangeData(onlineTimeYx, onlineTimeServerId, onlineTimeStartDayStr, onlineTimeEndDayStr){
+    onlineTimeYx&&(localStorage.onlineTimeYx = onlineTimeYx);
+    onlineTimeServerId&&(localStorage.onlineTimeServerId=onlineTimeServerId);
+    onlineTimeStartDayStr&&(localStorage.onlineTimeStartDayStr=onlineTimeStartDayStr);
+    onlineTimeEndDayStr&&(localStorage.onlineTimeEndDayStr=onlineTimeEndDayStr);
+}
+
+/**
+ * 生成礼品码缓存设置
+ */
+export function setGiftCardData(onlineTimeYx, onlineTimeServerId, onlineTimeStartDayStr, onlineTimeEndDayStr){
+    onlineTimeYx&&(localStorage.onlineTimeYx = onlineTimeYx);
+    onlineTimeServerId&&(localStorage.onlineTimeServerId=onlineTimeServerId);
+    onlineTimeStartDayStr&&(localStorage.onlineTimeStartDayStr=onlineTimeStartDayStr);
+    onlineTimeEndDayStr&&(localStorage.onlineTimeEndDayStr=onlineTimeEndDayStr);
+}

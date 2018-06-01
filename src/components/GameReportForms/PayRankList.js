@@ -95,6 +95,31 @@ class PayRankList extends React.Component {
         });
     }
 
+
+
+    stringifyData=(data)=>{
+        let dataStr = '玩家'+'         '+'充值\n';
+        for(let i =0;i<data.length;i++){
+            let item = data[i]
+            dataStr =dataStr+`${item.playerId}`+'       '+`${item.payPoint}\n`
+        }
+        return dataStr;
+    }
+
+    copyClick=(e)=>{
+        let {rankList} = this.state;
+        this.stringifyData(rankList);
+
+        let tableStr =this.stringifyData(rankList);
+        
+        let input = document.getElementById("input");
+        input.value = tableStr; // 修改文本框的内容
+        input.select(); // 选中文本
+        document.execCommand("copy"); // 执行浏览器复制命令
+        message.info("表格内容已复制");
+    }
+
+
     /**
      * 获取用户充值数据
      */
@@ -252,6 +277,7 @@ class PayRankList extends React.Component {
                             }
                             <FormItem {...tailFormItemLayout} >
                                 <Button type="primary" htmlType="submit">查询排行</Button>
+                                <Button type="primary" id='copyButton' style={{ marginLeft: 40 }} onClick = {this.copyClick}>复制</Button>
                             </FormItem>
                         </Form>
                     </Col>
@@ -259,6 +285,7 @@ class PayRankList extends React.Component {
             </Card>
             <Card title="充值排行" id="payRankList" style={{ minHeight: 380 }}>
                 <Table rowKey="playerId" columns={columns} dataSource={rankList} size="small" />
+                <textarea id="input" value='' style={{ position: 'absolute',top: '0',left: '0',opacity: '0',zIndex: '-10'}}>这是幕后黑手</textarea>
             </Card>
         </div >;
     }
