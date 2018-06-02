@@ -170,8 +170,13 @@ class SendEmail extends React.Component {
                     serverId='';
                     playerName='';
                 }
-                let playerNameArray = playerName.split('，');
-                let playerNameStr=playerNameArray.join(',');
+
+                let playerNameStr = "";
+                if (playerName) {
+                    let playerNameArray = playerName.split('，');
+                    playerNameStr = playerNameArray.join(',');
+                }
+                
                 // console.log("playerNameStr0:", playerNameStr0.trim());
                 // let playerNameStr=playerNameStr0.replace(" ", "");
                 // console.log("playerNameStr:", playerNameStr);
