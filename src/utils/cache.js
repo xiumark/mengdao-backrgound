@@ -108,7 +108,8 @@ export function setRankListStorage(rankYx, rankServerId){
 /**
  * 充值订单列表缓存设置orderList
  */
-export function setOrderListStorage(orderYx, orderServerId, orderStartTime, orderEndTime, orderCurrPage, ordernumPerPage){
+export function setOrderListStorage(orderYx, orderServerId, orderStartTime, orderEndTime, 
+    orderCurrPage, ordernumPerPage, ordernumContainType){
     // localStorage.orderExpireTime=new Date();
     orderYx&&(localStorage.orderYx = orderYx);
     orderServerId&&(localStorage.orderServerId=orderServerId);
@@ -116,6 +117,7 @@ export function setOrderListStorage(orderYx, orderServerId, orderStartTime, orde
     orderEndTime&&(localStorage.orderEndTime=orderEndTime);
     orderCurrPage&&(localStorage.orderCurrPage=orderCurrPage);
     ordernumPerPage&&(localStorage.ordernumPerPage=ordernumPerPage);
+    ordernumContainType&&(localStorage.ordernumContainType=ordernumContainType);
     // orderSortType&&(localStorage.orderSortType=orderSortType);
     // orderIsAscend&&(localStorage.orderIsAscend=orderIsAscend);
     // orderContainFail&&(localStorage.orderContainFail=orderContainFail);
@@ -149,24 +151,26 @@ export function setDayReportStorage(dayReportYx, dayReportServerId, dayReportSta
  * 留存统计缓存设置stayReport
  * 
  */
-export function setStayReportStorage(stayReportYx, stayReportServerId, stayReportStartDayStr, stayReportEndDayStr){
+export function setStayReportStorage(stayReportYx, stayReportServerId, stayReportStartDayStr, stayReportEndDayStr, stayReportType){
     // localStorage.stayReportExpireTime=new Date();
     stayReportYx&&(localStorage.stayReportYx = stayReportYx);
     stayReportServerId&&(localStorage.stayReportServerId=stayReportServerId);
     stayReportStartDayStr&&(localStorage.stayReportStartDayStr=stayReportStartDayStr);
     stayReportEndDayStr&&(localStorage.stayReportEndDayStr=stayReportEndDayStr);
+    stayReportType&&(localStorage.stayReportType=stayReportType);
 }
 
 /**
  * LTV统计缓存设置ltvReport
  * 
  */
-export function setLtvReportStorage(ltvReportYx, ltvReportServerId, ltvReportStartDayStr, ltvReportEndDayStr){
+export function setLtvReportStorage(ltvReportYx, ltvReportServerId, ltvReportStartDayStr, ltvReportEndDayStr, ltvReportType){
     // localStorage.ltvReportExpireTime=new Date();
     ltvReportYx&&(localStorage.ltvReportYx = ltvReportYx);
     ltvReportServerId&&(localStorage.ltvReportServerId=ltvReportServerId);
     ltvReportStartDayStr&&(localStorage.ltvReportStartDayStr=ltvReportStartDayStr);
     ltvReportEndDayStr&&(localStorage.ltvReportEndDayStr=ltvReportEndDayStr);
+    ltvReportType&&(localStorage.ltvReportType=ltvReportType);
 }
 
 /**

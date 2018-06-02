@@ -1,7 +1,9 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker, Radio } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
@@ -32,23 +34,25 @@ class StayReport extends React.Component {
             this.setState({ serviceList: res});
         })
 
-        let {stayReportYx, stayReportServerId, stayReportStartDayStr, stayReportEndDayStr}=localStorage;
-        let yx, serverId, startDayStr, endDayStr;
+        let {stayReportYx, stayReportServerId, stayReportStartDayStr, stayReportEndDayStr, stayReportType}=localStorage;
+        let yx, serverId, startDayStr, endDayStr, type;
         yx=stayReportYx; serverId=stayReportServerId; startDayStr=stayReportStartDayStr; endDayStr=stayReportEndDayStr;
-        this.setInputValue(yx, serverId, startDayStr, endDayStr);
+        type=stayReportType;
+        this.setInputValue(yx, serverId, startDayStr, endDayStr, type);
     }
 
     //自动填充表单值
-    setInputValue=(yx, serverId, startDayStr, endDayStr)=>{
+    setInputValue=(yx, serverId, startDayStr, endDayStr, type)=>{
         let expireTime =localStorage.expireTime;  //获取过期时间
         if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
             yx&&this.props.form.setFieldsValue({yx: `${yx}`});
             serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
             startDayStr&&this.props.form.setFieldsValue({startDayStr: moment(`${startDayStr}`)});
             endDayStr&&this.props.form.setFieldsValue({endDayStr: moment(`${endDayStr}`)});
+            type&&this.props.form.setFieldsValue({type: `${type}`});
 
-            if(yx&&serverId&&startDayStr&&endDayStr){
-                this.requestSearch(yx, serverId,startDayStr, endDayStr);
+            if(yx&&serverId&&startDayStr&&endDayStr&&type){
+                this.requestSearch(yx, serverId, startDayStr, endDayStr, type);
             }
         }
     }
@@ -96,17 +100,17 @@ class StayReport extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { yx, serverId, startDayStr, endDayStr, dayStr} = values;
+                let { yx, serverId, startDayStr, endDayStr, dayStr, type} = values;
                 startDayStr=startDayStr.format('YYYY-MM-DD');
                 endDayStr=endDayStr.format('YYYY-MM-DD');
-                this.requestSearch(yx, serverId,startDayStr, endDayStr);
+                this.requestSearch(yx, serverId,startDayStr, endDayStr, type);
             }
         });
     }
 
-    requestSearch=(yx, serverId,startDayStr, endDayStr)=>{
+    requestSearch=(yx, serverId,startDayStr, endDayStr, type)=>{
         let { stayReports } = this.state;
-        let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}`;
+        let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}&type=${type}`;
         let url = "/root/getStayReport.action";
         let method = 'POST';
         let successmsg = '查询成功';
@@ -114,7 +118,7 @@ class StayReport extends React.Component {
             let stayReports = res.data.stayReports;
             this.setState({stayReports:stayReports});
             //请求成功后设置localStorage
-            setStayReportStorage(yx, serverId, startDayStr, endDayStr);
+            setStayReportStorage(yx, serverId, startDayStr, endDayStr, type);
         });
     }
 
@@ -234,6 +238,18 @@ class StayReport extends React.Component {
                                 {getFieldDecorator('endDayStr', {
                                     rules: [{ type: 'object', required: true, message: '请选择终止时间!' }]})(
                                     <DatePicker showTime format="YYYY-MM-DD" />
+                                )}
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="订单类型"
+                                >
+                                {getFieldDecorator('type',{ initialValue: '0' })(
+                                    <RadioGroup onChange = {this.onRadioChange}>
+                                    <Radio value="0">全部</Radio>
+                                    <Radio value="1">非滚服玩家</Radio>
+                                    <Radio value="2">滚服玩家</Radio>
+                                    </RadioGroup>
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >

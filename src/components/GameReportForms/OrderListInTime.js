@@ -50,14 +50,16 @@ class OrderListInTime extends React.Component {
             this.setState({ serviceList: res});
         })
 
-        let yx, serverId, startTime, endTime, numPerPage;
-        let {orderYx, orderServerId, orderStartTime, orderEndTime, ordernumPerPage}=localStorage;
-        yx = orderYx; serverId =orderServerId; startTime =orderStartTime; endTime =orderEndTime; numPerPage =ordernumPerPage;
-        this.setInputValue(yx, serverId, startTime, endTime, numPerPage);
+        let yx, serverId, startTime, endTime, numPerPage, containType;
+        let {orderYx, orderServerId, orderStartTime, orderEndTime, ordernumPerPage, ordernumContainType}=localStorage;
+        yx = orderYx; serverId =orderServerId; startTime =orderStartTime; endTime =orderEndTime;
+         numPerPage =ordernumPerPage;
+         containType =ordernumContainType;
+        this.setInputValue(yx, serverId, startTime, endTime, numPerPage, containType);
     }
 
     //自动填充表单值
-    setInputValue=(yx, serverId, startTime, endTime, numPerPage)=>{
+    setInputValue=(yx, serverId, startTime, endTime, numPerPage,containType)=>{
         let expireTime =localStorage.expireTime;  //获取过期时间
         if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
             // startTime&&(startTime = new Date(startTime));
@@ -68,10 +70,10 @@ class OrderListInTime extends React.Component {
             startTime&&this.props.form.setFieldsValue({startTime: moment(`${startTime}`)});
             endTime&&this.props.form.setFieldsValue({endTime: moment(`${endTime}`)});
             numPerPage&&this.props.form.setFieldsValue({numPerPage: `${numPerPage}`});
+            containType&&this.props.form.setFieldsValue({containType: `${containType}`});
 
             //如果请求数据完整，则请求后台数据，并且显示
-            if(yx&&serverId&&startTime&&endTime&&numPerPage){
-                let containType = '1';
+            if(yx&&serverId&&startTime&&endTime&&numPerPage&&containType){
                 let currPage = undefined;
                 // startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
                 // endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
@@ -189,7 +191,7 @@ class OrderListInTime extends React.Component {
             }
             //请求成功后设置localStorage
             if(res.data.orderList.length!==0){
-                setOrderListStorage(yx, serverId, startTime, endTime, currPage, numPerPage);
+                setOrderListStorage(yx, serverId, startTime, endTime, currPage, numPerPage, containType);
             }
         })
     }
