@@ -165,7 +165,10 @@ class SendEmail extends React.Component {
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
 
-                let { mailType, serverId,yx, playerName, attachmenet, mailContent, duration, title } = values;
+                let { mailType, serverId,yx, playerName, attachmenet, mailContent, duration, title, attachmenet2} = values;
+                if(attachmenet2!=null){
+                    giftContentStr=giftContentStr+';'+attachmenet2
+                }
                 if (serverId=='等待置为空'){//yx全服模式serverId为空，playerName为空
                     serverId='';
                     playerName='';
@@ -425,6 +428,13 @@ class SendEmail extends React.Component {
                                         </div>
                                     })}
                                     </div>
+                                )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"附件内容2"} id="attachmenet2" >
+                                {getFieldDecorator('attachmenet2', {
+                                   rules: [{ required: false, message: '' }],
+                                })(
+                                    <Input placeholder="附件内容"/>
                                 )}
                             </FormItem>
                         </Col>
