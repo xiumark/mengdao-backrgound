@@ -302,7 +302,7 @@ class GiftCreate extends React.Component {
 
                 let { yx, serverId, name, batch, expireTime, canRepeat, giftContent} = values;
                 expireTime=expireTime.format('YYYY-MM-DD HH:mm:ss');   //ant@2需要的处理，因为类型发生改变由之前的value改为了moment类型
-                this.requestSearch(yx, serverId, name, batch, expireTime, canRepeat, giftContent);
+                this.requestSearch(yx, serverId, name, batch, expireTime, canRepeat, giftContentStr);
             }
         });
     }
