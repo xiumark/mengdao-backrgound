@@ -165,11 +165,11 @@ class PlayerQuery extends React.Component {
                 let { serverId, playerName, userId, yx, playerId } = values;
                 let querystring ='';
                 if(queryId=='playerName'){
-                    querystring = `serverId=${serverId}&yx=${yx}&playerName=${playerName}`;
+                    querystring = `playerId=1&serverId=${serverId}&yx=${yx}&playerName=${playerName}`;
                 }else if(queryId=='userIdyx'){
-                    querystring = `serverId=${serverId}&userId=${userId}&yx=${yx}`;
+                    querystring = `playerId=2&serverId=${serverId}&userId=${userId}&yx=${yx}`;
                 }else if(queryId=='playerId'){
-                    querystring = `serverId=${serverId}&yx=${yx}&playerId=${playerId}`;
+                    querystring = `playerId=3&serverId=${serverId}&yx=${yx}&playerName=${playerId}`;
                 }
 
                 let url = "/root/playerInfo.action"
@@ -177,32 +177,37 @@ class PlayerQuery extends React.Component {
                 let successmsg = '获取玩家数据成功'
                 apiFetchError(url, method, querystring, successmsg, (res) => {
                     let { playerData, key } = this.state;
-                    let resData = res.data.playerList[0];
-                    let playerDataItem = {};
-                    playerDataItem.cityName = resData.cityName;
-                    playerDataItem.forceId = resData.forceId;
-                    playerDataItem.playerId = resData.playerId;
-                    playerDataItem.playerLv = resData.playerLv;
-                    playerDataItem.playerName = resData.playerName;
-                    playerDataItem.vipLv = resData.vipLv;
-                    playerDataItem.key = key;
-                    playerDataItem.fightCapacity = resData.fightCapacity;
-                    playerDataItem.mainTaskId = resData.mainTaskId;
-                    playerDataItem.mainTaskName = resData.mainTaskName;
-                    playerDataItem.diamond = resData.diamond;
-                    playerDataItem.armyId = resData.armyId;
-                    playerDataItem.yxSource = resData.yxSource;
-                    playerDataItem.yx = resData.yx;
-                    playerDataItem.createTime = resData.createTime;
-                    playerDataItem.lastLoginTime = resData.lastLoginTime;
-                    playerDataItem.lastLogoutTime = resData.lastLogoutTime;
                     playerData = [];   //清除自定义数据
-                    playerData.push(playerDataItem);
-                    this.setState({ playerData: playerData, key: key + 1 });
-                },()=>{
-                    const {key} = this.state;
-                    this.setState({ playerData: [], key: key + 1 });
-                })
+                    let resDataArray = res.data.playerList;
+                    for(let i = 0;i<resDataArray.length;i++){
+                        let resData = resDataArray[i]; 
+                        let playerDataItem = {};
+                        playerDataItem.cityName = resData.cityName;
+                        playerDataItem.forceId = resData.forceId;
+                        playerDataItem.playerId = resData.playerId;
+                        playerDataItem.playerLv = resData.playerLv;
+                        playerDataItem.playerName = resData.playerName;
+                        playerDataItem.vipLv = resData.vipLv;
+                        playerDataItem.key = i;
+                        playerDataItem.fightCapacity = resData.fightCapacity;
+                        playerDataItem.mainTaskId = resData.mainTaskId;
+                        playerDataItem.mainTaskName = resData.mainTaskName;
+                        playerDataItem.diamond = resData.diamond;
+                        playerDataItem.armyId = resData.armyId;
+                        playerDataItem.yxSource = resData.yxSource;
+                        playerDataItem.yx = resData.yx;
+                        playerDataItem.createTime = resData.createTime;
+                        playerDataItem.lastLoginTime = resData.lastLoginTime;
+                        playerDataItem.lastLogoutTime = resData.lastLogoutTime;
+                        playerData.push(playerDataItem);
+                    }
+                    this.setState({ playerData: playerData, key: key });
+                }
+                // ,()=>{
+                //     const {key} = this.state;
+                //     this.setState({ playerData: [], key: key + 1 });
+                // }
+            )
             }
         });
     }
@@ -277,7 +282,7 @@ class PlayerQuery extends React.Component {
                                 {getFieldDecorator('playerName', {
                                     rules: [{ required: false, message: '请输入角色的名称' }],
                                 })(
-                                    <Input placeholder="请输入角色的名称" />
+                                    <Input placeholder="请输入角色的名称,多个角色用逗号分开" />
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
@@ -291,7 +296,7 @@ class PlayerQuery extends React.Component {
                                 {getFieldDecorator('userId', {
                                     rules: [{ required: false, message: '请输入用户Id' }],
                                 })(
-                                    <Input placeholder="请输入用户Id" />
+                                    <Input placeholder="请输入用户Id,多个Id用逗号分开" />
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
@@ -307,7 +312,7 @@ class PlayerQuery extends React.Component {
                                 {getFieldDecorator('playerId', {
                                     rules: [{ required: false, message: '请输入角色Id"' }],
                                 })(
-                                    <Input placeholder="请输入角色Id" />
+                                    <Input placeholder="请输入角色Id,多个Id用逗号分开" />
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>
