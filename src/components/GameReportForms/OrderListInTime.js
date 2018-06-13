@@ -99,10 +99,16 @@ class OrderListInTime extends React.Component {
 
 
     stringifyData=(data)=>{
-        let dataStr = '角色编号'+'         '+'创建时间'+'  '+'充值成功时间'+'  '+'人民币'+'  '+'平台订单号'+'  '+'商品编号'+'  '+'订单状态\n';
+        let dataStr = '角色编号'+'\t'+'创建时间'+'\t'+'充值成功时间'+'\t'+'人民币'+'\t'+'平台订单号'+'\t'+'商品编号'+'\t'+'订单状态\n';
         for(let i =0;i<data.length;i++){
             let item = data[i]
-            dataStr =dataStr+`${item.playerId}`+'       '+`${item.createTime}`+'       '+`${item.succTime}`+'       '+`${item.money}`+'       '+`${item.productId}`+'       '+`${item.statemsg}\n`
+            dataStr =dataStr+`${item.playerId}`
+                    +'\t'+`${item.createTime}`
+                    +'\t'+`${item.succTime}`
+                    +'\t'+`${item.money}`
+                    +'\t'+`${item.platformOrderId}`
+                    +`\t`+`${item.productId}`
+                    +'\t'+`${item.statemsg}\n`
         }
         return dataStr;
     }

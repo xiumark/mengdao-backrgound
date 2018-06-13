@@ -67,17 +67,17 @@ class DayReport extends React.Component {
 
 
     stringifyData=(data)=>{
-        let dataStr = '日期'+'         '+'注册数'+'  '+'创角数'+'  '+'创角率'+'  '+'活跃玩家数'+'  '
-        +'最高在线人数'+'  '+'最高在线时刻'+'  '+'付费次数'+'  '+'付费人数'+'  '+'付费总额(元)'+'  '+'活跃玩家付费率'+'  '
-        +'付费玩家ARPU'+'  '+'活跃玩家ARPU'+'  '+'新增付费玩家数'+'  '+'新增玩家付费总额(元)'+'  '+'新增玩家付费率'+'  '+'新增玩家ARPU'+'  '
+        let dataStr = '日期'+'\t'+'注册数'+'\t'+'创角数'+'\t'+'创角率'+'\t'+'活跃玩家数'+'\t'
+        +'最高在线人数'+'\t'+'最高在线时刻'+'\t'+'付费次数'+'\t'+'付费人数'+'\t'+'付费总额(元)'+'\t'+'活跃玩家付费率'+'\t'
+        +'付费玩家ARPU'+'\t'+'活跃玩家ARPU'+'\t'+'新增付费玩家数'+'\t'+'新增玩家付费总额(元)'+'\t'+'新增玩家付费率'+'\t'+'新增玩家ARPU'+'\t'
         +'老玩家ARPU\n';
         for(let i =0;i<data.length;i++){
             let item = data[i]
-            dataStr =dataStr+`${item.dayStr}`+'       '+`${item.registerNum}`+'       '+`${item.createRoleNum}`+'       '
-            +`${item.createRoleRatio}`+'       '+`${item.activeRoleNum}`+'       '+`${item.maxOnlineNum}`+'       '
-            +`${item.maxOnlineTime}`+'       '+`${item.payTimes}`+'       '+`${item.roleNumPayed}`+'       '+`${item.paySum}`+'       '
-            +`${item.activePayRatio}`+'       '+`${item.payArpu}`+'       '+`${item.activeArpu}`+'       '+`${item.newRoleNumPayed}`+'       '
-            +`${item.newRolePaySum}`+'       '+`${item.newRolePayRatio}`+'       '+`${item.newRoleArpu}`+'       '+`${item.oldRoleArpu}\n`
+            dataStr =dataStr+`${item.dayStr}`+'\t'+`${item.registerNum}`+'\t'+`${item.createRoleNum}`+'\t'
+            +`${item.createRoleRatio}`+'\t'+`${item.activeRoleNum}`+'\t'+`${item.maxOnlineNum}`+'\t'
+            +`${item.maxOnlineTime}`+'\t'+`${item.payTimes}`+'\t'+`${item.roleNumPayed}`+'\t'+`${item.paySum}`+'\t'
+            +`${item.activePayRatio}`+'\t'+`${item.payArpu}`+'\t'+`${item.activeArpu}`+'\t'+`${item.newRoleNumPayed}`+'\t'
+            +`${item.newRolePaySum}`+'\t'+`${item.newRolePayRatio}`+'\t'+`${item.newRoleArpu}`+'\t'+`${item.oldRoleArpu}\n`
         }
         return dataStr;
     }

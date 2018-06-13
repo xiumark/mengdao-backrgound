@@ -98,10 +98,10 @@ class PayRankList extends React.Component {
 
 
     stringifyData=(data)=>{
-        let dataStr = '玩家'+'         '+'充值\n';
+        let dataStr = '玩家'+'\t'+'充值\n';
         for(let i =0;i<data.length;i++){
             let item = data[i]
-            dataStr =dataStr+`${item.playerId}`+'       '+`${item.payPoint}\n`
+            dataStr =dataStr+`${item.playerId}`+'\t'+`${item.payPoint}\n`
         }
         return dataStr;
     }

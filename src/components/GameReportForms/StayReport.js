@@ -71,10 +71,10 @@ class StayReport extends React.Component {
     }
 
     stringifyData=(data)=>{
-        let dataStr = '日期'+'         '+'首日数据'+'  '+'次日数据'+'  '+'3日数据'+'  '+'4日数据'+'  '+'5日数据'+'  '+'6日数据'+'  '+'7日数据'+'  '+'14日数据'+'  '+'30日数据'+'  '+'60日数据\n';
+        let dataStr = '日期'+'\t'+'首日数据'+'\t'+'次日数据'+'\t'+'3日数据'+'\t'+'4日数据'+'\t'+'5日数据'+'\t'+'6日数据'+'\t'+'7日数据'+'\t'+'14日数据'+'\t'+'30日数据'+'\t'+'60日数据\n';
         for(let i =0;i<data.length;i++){
             let item = data[i]
-            dataStr =dataStr+`${item.dayStr}`+'       '+`${item.num1}`+'       '+`${item.num2}`+'       '+`${item.num3}`+'       '+`${item.num4}`+'       '+`${item.num5}`+'       '+`${item.num6}`+'       '+`${item.num7}`+'       '+`${item.num14}`+'       '+`${item.num30}`+'       '+`${item.num60}\n`
+            dataStr =dataStr+`${item.dayStr}`+'\t'+`${item.num1}`+'\t'+`${item.num2}`+'\t'+`${item.num3}`+'\t'+`${item.num4}`+'\t'+`${item.num5}`+'\t'+`${item.num6}`+'\t'+`${item.num7}`+'\t'+`${item.num14}`+'\t'+`${item.num30}`+'\t'+`${item.num60}\n`
         }
         return dataStr;
     }

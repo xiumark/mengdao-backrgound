@@ -107,10 +107,10 @@ class OnlineTimeData extends React.Component {
 
 
     stringifyData=(data)=>{
-        let dataStr = '日期'+'         '+'登陆人数'+'   '+'总在线时长(秒)'+'   '+'总在线时长'+'   '+'平均在线时长(秒)'+'   '+'平均在线时长'+'\n';
+        let dataStr = '日期'+'\t'+'登陆人数'+'\t'+'总在线时长(秒)'+'\t'+'总在线时长'+'\t'+'平均在线时长(秒)'+'\t'+'平均在线时长'+'\n';
         for(let i =0;i<data.length;i++){
             let item = data[i]
-            dataStr =dataStr+`${item.dayStr}`+'     '+`${item.count}`+'     '+`${item.onlineTime}`+'     '+`${item.countTimeStr}`+'     '+`${item.eachOnlineTime}`+'     '+`${item.eachOnlineTimeStr}\n`
+            dataStr =dataStr+`${item.dayStr}`+'\t'+`${item.count}`+'\t'+`${item.onlineTime}`+'\t'+`${item.countTimeStr}`+'\t'+`${item.eachOnlineTime}`+'\t'+`${item.eachOnlineTimeStr}\n`
         }
         return dataStr;
     }
