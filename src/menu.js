@@ -157,11 +157,11 @@ const sidebarMenu = [
             name: '生成礼品码',
             authIndex:'16',
           },
-
-          // {
-          //   key: 'serverAnnouncement',
-          //   name: '新服公告',
-          // },
+          {
+            key: 'activityManage',
+            name: '活动管理',
+            authIndex: '25',
+          },
         ],
       },
             {

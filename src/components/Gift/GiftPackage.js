@@ -182,7 +182,6 @@ class GiftPackage extends React.Component {
         const {giftPackageItemsData} = this.state;
         let key = tableItem.key
         giftPackageItemsData[key-1].num = event.target.value;
-        // console.log("handleChange:")
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
     handleClick(event, tableItem, column){

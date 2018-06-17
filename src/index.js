@@ -39,6 +39,8 @@ import OnlineNumData from './components/OnlineNumData';
 import StayReport from './components/GameReportForms/StayReport';
 import LtvReport from './components/GameReportForms/LtvReport';
 import OnlineTimeData from './components/GameReportForms/OnlineTimeData';
+
+import ActivityManage from './components/Gift/ActivityManage';
 //import DBTable from './components/DBTable';
 import Login from '../src/components/Login';
 
@@ -94,6 +96,7 @@ const routes = (
           <Route path="giftCard" component={GiftCard} />
           <Route path="giftCard" component={GiftCard} />
           <Route path="giftCreate" component={GiftCreate} />
+          <Route path="activityManage" component={ActivityManage} />
           <Route path="expireTimeChange" component={ExpireTimeChange} />
         </Route>
         <Route path="gameReportForms">

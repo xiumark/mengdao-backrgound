@@ -245,3 +245,11 @@ export function setGiftCardData(onlineTimeYx, onlineTimeServerId, onlineTimeStar
     onlineTimeStartDayStr&&(localStorage.onlineTimeStartDayStr=onlineTimeStartDayStr);
     onlineTimeEndDayStr&&(localStorage.onlineTimeEndDayStr=onlineTimeEndDayStr);
 }
+
+/**
+ * 活动管理缓存设置
+ */
+export function setActivityManageData(activityManageYx, activityManageServerId){
+    activityManageYx&&(localStorage.activityManageYx = activityManageYx);
+    activityManageServerId&&(localStorage.activityManageServerId=activityManageServerId);
+}
