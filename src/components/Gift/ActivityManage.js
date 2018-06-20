@@ -391,9 +391,9 @@ class ActivityManage extends React.Component {
                                     </FormItem>
                                     <FormItem {...formItemLayout} label={"活动名称"} >
                                         {getFieldDecorator('activityName', {
-                                            rules: [{ required: true, message: '请从下方列表选择活动' }],
+                                            rules: [{ required: true, message: '请从右边列表选择活动' }],
                                         })(
-                                            <Input placeholder="请从下方列表选择活动" />
+                                            <Input placeholder="请从右边列表选择活动" />
                                         )}
                                     </FormItem>
                                     <FormItem
