@@ -3,6 +3,7 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio, Dat
 import './index.less';
 import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service';
+import moment from 'moment';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
@@ -211,6 +212,39 @@ class ActivityManage extends React.Component {
     })
     }
 
+    onStartTimeChange=(date)=>{
+        let dd =  date.format('YYYY-MM-DD HH:mm:ss')
+        const { startTime } = this.props.form;
+        // debugger
+        let startTimeStr = this.formatStartTime(date);
+        setTimeout(()=>this.props.form.setFieldsValue({startTime: moment(startTimeStr)}),100);
+    }
+
+    onEndTimeChange=(date)=>{
+        // debugger;
+        const { endTime } = this.props.form;
+        let endTimeStr = this.formatEndTime(date);
+        setTimeout(()=>this.props.form.setFieldsValue({endTime: moment(endTimeStr)}),100);
+    }
+
+
+ //格式化到：00:00:00
+    formatStartTime=(startTime)=>{
+        let timeStart = (new Date(startTime)).getTime();
+        let timeStartF = parseInt(timeStart/86400000)*86400000-8*3600*1000   //00:00:00
+        let startTimeResult = new Date(timeStartF)
+        let startTimeR=moment(startTimeResult).format('YYYY-MM-DD HH:mm:ss');  
+        return startTimeR;
+    }
+
+//格式化到：59:59:59
+    formatEndTime=(endTime)=>{
+        let timeEnd = (new Date(endTime)).getTime();
+        let timeEndF = parseInt(timeEnd/86400000+1)*86400000-8*3600*1000-1000   //59:59:59
+        let endTimeResult = new Date(timeEndF)
+        let endTimeR=moment(endTimeResult).format('YYYY-MM-DD HH:mm:ss'); 
+        return endTimeR;
+    }
     /**
      * 获取可配置的活动列表
      */
@@ -293,6 +327,24 @@ class ActivityManage extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let {yx, serverId, startTime, endTime} = values;
+                // debugger
+
+                // let timeStart = (new Date(startTime)).getTime();
+                // let timeStartF = parseInt(timeStart/86400000)*86400000-8*3600*1000   //00:00:00
+                // let startTimeResult = new Date(timeStartF)
+                // startTime=moment(startTimeResult).format('YYYY-MM-DD HH:mm:ss');  
+
+
+                // let timeEnd = (new Date(endTime)).getTime();
+                // endTime=moment(new Date((timeEnd%86400000+1)*86400000-1));
+
+
+                // let timeEnd = (new Date(endTime)).getTime();
+                // let timeEndF = parseInt(timeEnd/86400000+1)*86400000-8*3600*1000-1000   //59:59:59
+                // let endTimeResult = new Date(timeEndF)
+                // endTime=moment(endTimeResult).format('YYYY-MM-DD HH:mm:ss');  
+
+
                 let activityId = this.state.activityToAdd.activityId;
                 startTime=startTime.format('YYYY-MM-DD HH:mm:ss');  
                 endTime=endTime.format('YYYY-MM-DD HH:mm:ss');  
@@ -399,10 +451,11 @@ class ActivityManage extends React.Component {
                                     <FormItem
                                         {...formItemLayout}
                                         label="开始时间"
+                                        onChange = {(value)=>this.onStartTimeChange(value)}
                                         >
                                         {getFieldDecorator('startTime', {
                                             rules: [{ type: 'object', required: true, message: '请选择活动开启时间!' }]})(
-                                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange = {this.onStartTimeChange} />
                                         )}
                                     </FormItem>
                                     <FormItem
@@ -411,7 +464,7 @@ class ActivityManage extends React.Component {
                                         >
                                         {getFieldDecorator('endTime', {
                                             rules: [{ type: 'object', required: true, message: '请选择活动过期时间!' }]})(
-                                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange = {this.onEndTimeChange} />
                                         )}
                                     </FormItem>
                                 </Col>
