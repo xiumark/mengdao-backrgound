@@ -402,7 +402,7 @@ class SendEmail extends React.Component {
                                 {getFieldDecorator('playerName', {
                                    rules: [{ required: isPersonal, message: '请输入目标用户名' }],
                                 })(
-                                    <Input placeholder="请输入目标用户名（多个用户用','隔开）" disabled={isPlayerNameEditable} />
+                                    <Input placeholder="如：星星#5001,月亮#3016" disabled={isPlayerNameEditable} />
                                 )}
                             </FormItem>
 

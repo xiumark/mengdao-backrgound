@@ -131,7 +131,11 @@ class PlayerQuery extends React.Component {
             dataIndex: 'lastLogoutTime',
             key: 'lastLogoutTime',
         },
-
+        {
+            title: '唯一编号',
+            dataIndex: 'uniqId',
+            key: 'uniqId',
+        },
     ];
 
     componentDidMount() {
@@ -199,6 +203,7 @@ class PlayerQuery extends React.Component {
                         playerDataItem.createTime = resData.createTime;
                         playerDataItem.lastLoginTime = resData.lastLoginTime;
                         playerDataItem.lastLogoutTime = resData.lastLogoutTime;
+                        playerDataItem.uniqId = resData.uniqId;
                         playerData.push(playerDataItem);
                     }
                     this.setState({ playerData: playerData, key: key });
