@@ -26,6 +26,8 @@ const flex = {
     display:"flex",
 };
 
+
+
 class ActivityManage extends React.Component {
     constructor(props){
         super(props);
@@ -45,8 +47,8 @@ class ActivityManage extends React.Component {
                 {
                     "activityId": 1001,            // 活动的id
                     "activityName":"活动名称" ,    // 活动名称
-                    "startTime":"2016-06-20 00:00:00" ,    // 活动开启时间
-                    "endTime":"2016-06-20 23:59:59" ,    // 活动结束时间
+                    "startTime":"2016-06-20 05:00:00" ,    // 活动开启时间
+                    "endTime":"2016-06-20 04:59:59" ,    // 活动结束时间
                 },
             ],
 
@@ -54,8 +56,8 @@ class ActivityManage extends React.Component {
             {
                 "activityId": 1001,            // 活动的id
                 "activityName":"活动名称" ,    // 活动名称
-                "startTime":"2016-06-20 00:00:00" ,    // 活动开启时间
-                "endTime":"2016-06-20 23:59:59" ,    // 活动结束时间
+                "startTime":"2016-06-20 05:00:00" ,    // 活动开启时间
+                "endTime":"2016-06-20 04:59:59" ,    // 活动结束时间
             },
 
             serviceList: [
@@ -74,7 +76,9 @@ class ActivityManage extends React.Component {
                 // {yx:'渠道2' ,key:1},
             ],
             yx:'',
-            serverId:''
+            serverId:'',
+
+            timeModeState:1,
         };
         this.columnsAll = [
             {
@@ -131,11 +135,13 @@ class ActivityManage extends React.Component {
                   },
             },
         ];
+
         this.renderColumns = this.renderColumns.bind(this);
         this.renderColumnsDelete = this.renderColumnsDelete.bind(this);
         this.chooseActivity = this.chooseActivity.bind(this);
         this.onServerChange = this.onServerChange.bind(this);
         this.deleteActivity = this.deleteActivity.bind(this);
+        this.checkChange = this.checkChange.bind(this);
     }
 
     renderColumnsDelete(text, tableItem, index){
@@ -169,6 +175,17 @@ class ActivityManage extends React.Component {
         yx=activityManageYx; 
         serverId=activityManageServerId;
         this.setInputValue(yx, serverId);
+
+        this.props.form.setFieldsValue({
+            timeMode:'1'
+          });
+    }
+
+    checkChange(e){
+        this.props.form.setFieldsValue({
+            timeMode:e.target.value
+          });
+        this.setState({timeModeState:e.target.value});   //时间模式
     }
 
     setInputValue=(yx, serverId)=>{
@@ -228,19 +245,19 @@ class ActivityManage extends React.Component {
     }
 
 
- //格式化到：00:00:00
+ //格式化到：05:00:00
     formatStartTime=(startTime)=>{
         let timeStart = (new Date(startTime)).getTime();
-        let timeStartF = parseInt(timeStart/86400000)*86400000-8*3600*1000   //00:00:00
+        let timeStartF = this.state.timeModeState==1?(parseInt(timeStart/86400000)*86400000-8*3600*1000 +3600*1000*5):timeStart  //00:00:00或者默认模式
         let startTimeResult = new Date(timeStartF)
         let startTimeR=moment(startTimeResult).format('YYYY-MM-DD HH:mm:ss');  
         return startTimeR;
     }
 
-//格式化到：59:59:59
+//格式化到：04:59:59
     formatEndTime=(endTime)=>{
         let timeEnd = (new Date(endTime)).getTime();
-        let timeEndF = parseInt(timeEnd/86400000+1)*86400000-8*3600*1000-1000   //59:59:59
+        let timeEndF = this.state.timeModeState==1?parseInt(timeEnd/86400000+1)*86400000-8*3600*1000-1000+3600*1000*5:timeEnd   //59:59:59
         let endTimeResult = new Date(timeEndF)
         let endTimeR=moment(endTimeResult).format('YYYY-MM-DD HH:mm:ss'); 
         return endTimeR;
@@ -465,6 +482,17 @@ class ActivityManage extends React.Component {
                                         {getFieldDecorator('endTime', {
                                             rules: [{ type: 'object', required: true, message: '请选择活动过期时间!' }]})(
                                             <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange = {this.onEndTimeChange} />
+                                        )}
+                                    </FormItem>
+                                    <FormItem
+                                        {...formItemLayout}
+                                        label="时间模式"
+                                        >
+                                        {getFieldDecorator('timeMode')(
+                                            <RadioGroup onChange={this.checkChange}>
+                                            <Radio value="1">默认</Radio>
+                                            <Radio value="0">自定义</Radio>
+                                            </RadioGroup>
                                         )}
                                     </FormItem>
                                 </Col>
