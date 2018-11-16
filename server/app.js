@@ -31,6 +31,10 @@ app.use('/root',proxy({
   target:'http://116.62.233.28:5011',
   changeOrigin:true
 }))
+// app.use(userConfig.path,proxy({
+//   target:'http://116.62.233.28:5011',
+//   changeOrigin:true
+// }))
 
 // app.use()
 // catch 404 and forward to error handler

@@ -271,6 +271,7 @@ class GiftCreate extends React.Component {
                             throw new Error('获取礼包信息失败')
                         }
                         message.info("成功获取礼包信息")
+                        key = 1;
                         for (let i = 0; i < items.length; i++) {
                             let data = items[i]
                             let tableItem = Object.assign(data, { key: key ,num:1});

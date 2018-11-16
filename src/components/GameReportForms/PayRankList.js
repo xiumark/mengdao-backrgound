@@ -58,18 +58,19 @@ class PayRankList extends React.Component {
         }
 
         //如果当前请求数据完整且没有过期，则请求后台数据
-        // this.handleSubmit();
-        this.requestSearch();
+        if (serverId && yx) {
+            this.requestSearch(serverId, yx);
+        }
     }
      
     //自动填充选择表单
     setInputValue1=(yx, serverId)=>{
         let expireTime =localStorage.expireTime;  //获取过期时间
         if(isNotExpired(expireTime)){//localSorate信息没有过期，为表单填充已经存在的值
-            yx&&this.props.form.setFieldsValue({yx1: `${yx}`});
-            serverId&&this.props.form.setFieldsValue({serverId1: `${serverId}`});
+            yx && this.props.form.setFieldsValue({yx1: `${yx}`});
+            serverId && this.props.form.setFieldsValue({serverId1: `${serverId}`});
 
-            if(serverId&&yx){//如果请求数据齐全则请求后天数据
+            if (serverId && yx) {//如果请求数据齐全则请求后天数据
                 this.requestSearch(serverId, yx);
             }
         }
@@ -83,7 +84,7 @@ class PayRankList extends React.Component {
             yx&&this.props.form.setFieldsValue({yx2: `${yx}`});
             serverId&&this.props.form.setFieldsValue({serverId2: `${serverId}`});
 
-            if(serverId&&yx){//如果请求数据齐全则请求后天数据
+            if (serverId && yx) {//如果请求数据齐全则请求后天数据
                 this.requestSearch(serverId, yx);
             }
         }
@@ -94,8 +95,6 @@ class PayRankList extends React.Component {
          this.setState({yxList:yxList});
         });
     }
-
-
 
     stringifyData=(data)=>{
         let dataStr = '玩家'+'\t'+'充值\n';
@@ -119,7 +118,6 @@ class PayRankList extends React.Component {
         message.info("表格内容已复制");
     }
 
-
     /**
      * 获取用户充值数据
      */
@@ -128,11 +126,12 @@ class PayRankList extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let {serverId, yx} = this.state;
-                this.requestSearch(serverId, yx);
+                if (serverId && yx) {
+                    this.requestSearch(serverId, yx);
+                }
             }
         });
     }
-
     
     requestSearch=(serverId, yx)=>{
         let querystring = `serverId=${serverId}&yx=${yx}`
@@ -146,7 +145,6 @@ class PayRankList extends React.Component {
             })
         })
     }
-
 
     onRadioChange = (e)=>{  //选择输入状态
         this.setState({inputMethod:e.target.value},()=>{
