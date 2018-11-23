@@ -29,6 +29,7 @@ module.exports = {
       '/root': {
         changeOrigin: true,
         target: 'http://116.62.233.28:5011/',
+        // target: 'http://10.223.5.211:5011/',
       }
     }
   },

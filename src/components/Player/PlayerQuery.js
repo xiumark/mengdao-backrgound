@@ -8,6 +8,21 @@ import { getServiceList, getYxList } from '../../api/service';
 /**
  * 测试用
  */
+
+const flex = {
+    display:"flex",
+};
+const buttonAddStyle = {
+    margin: '10px',
+    marginLeft:'0px',
+    width: '80px',
+};
+
+const EditableCell = ({ value,onClick}) => (
+    <div style={flex}>
+        <button id="add" style={buttonAddStyle} onClick = {e =>onClick(e)}>{(!value||value>=0)?'否':'是'}</button>
+    </div>
+  );
 class PlayerQuery extends React.Component {
     state = {
         key: 1,
@@ -29,6 +44,7 @@ class PlayerQuery extends React.Component {
             //     playerLv: 13,
             //     playerName: '玩家3',
             //     vipLv: 0,
+            //     identityInfo, <0 指导员
             // },
         ],
         serviceList: [
@@ -37,6 +53,7 @@ class PlayerQuery extends React.Component {
             {yx:'渠道2', serverId: "90002", serverName: "sg_90002", serverState: 0 }
         ],
 
+        serverId:'',
         filteredServiceList: [
             {yx:'渠道1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
             {yx:'渠道1', serverId: "2", serverName: "sg_dev", serverState: 0 },
@@ -136,7 +153,35 @@ class PlayerQuery extends React.Component {
             dataIndex: 'uniqId',
             key: 'uniqId',
         },
+        {
+            title: '是否指导员',
+            dataIndex: 'identityInfo',
+            key: 'identityInfo',
+            width: 100,
+            render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'identityInfo'),
+        },
+
     ];
+
+    
+
+    renderColumns(textValue, tableItem, column) {
+        return (
+          <EditableCell
+            value={textValue}
+            onClick ={(event) => this.handleClick(event, tableItem, column)}
+          />
+        );
+    }
+
+
+
+    handleClick(event, tableItem, column){
+        this.requestGuide(tableItem.yx,tableItem.serverId,tableItem.playerName)
+
+    }
+
+
 
     componentDidMount() {
         getServiceList((res) => {
@@ -160,6 +205,30 @@ class PlayerQuery extends React.Component {
     }
 
 
+
+    requestGuide=(yx, serverId, name)=>{
+        const querystring = `yx=${yx}&serverId=${this.state.serverId}&playerName=${name}`
+        let url = "/root/modifyPlayerIdentity.action"
+        let method = 'POST'
+        let successmsg = '设置成功'
+        let modifyPlayerData = null;
+        this.state.playerData.forEach(item=>{
+            if (item.playerName == name) {
+                modifyPlayerData = item;
+            }
+        });
+
+        apiFetch(url, method, querystring, successmsg, (res) => {
+            //更新界面
+            // playerId:角色Id
+            // playerName:角色名
+            // identityInfo:身份信息
+            modifyPlayerData.identityInfo = res.data.identityInfo;
+            this.setState({playerData:this.state.playerData});
+        })
+    }
+
+
     handleSubmit = (e) => {  //查询玩家信息
         // console.log('e:', e.target.id)   //playerName,userIdyx,playerId
         let queryId=e.target.id
@@ -176,10 +245,12 @@ class PlayerQuery extends React.Component {
                     querystring = `playerId=3&serverId=${serverId}&yx=${yx}&playerName=${playerId}`;
                 }
 
+                
                 let url = "/root/playerInfo.action"
                 let method = 'POST'
                 let successmsg = '获取玩家数据成功'
                 apiFetchError(url, method, querystring, successmsg, (res) => {
+                    this.setState({serverId,serverId});
                     let { playerData, key } = this.state;
                     playerData = [];   //清除自定义数据
                     let resDataArray = res.data.playerList;
