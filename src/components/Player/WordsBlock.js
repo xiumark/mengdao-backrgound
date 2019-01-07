@@ -5,6 +5,7 @@ const Option = Select.Option;
 import './index.less';
 import { apiFetch, apiFetchNomsg } from '../../api/api'
 import { getServiceList, getYxList } from '../../api/service'
+import {QueryType} from './BanAndLift';
 /**
  * 测试用
  */
@@ -39,7 +40,7 @@ class WordsBlock extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName, reason='', duration='' ,yx} = values;
-            let querystring = `serverId=${serverId}&yx=${yx}&playerName=${playerName}&reason=${reason}&duration=${duration}`
+            let querystring = `playerId=${QueryType.PLAYERNAME}&serverId=${serverId}&yx=${yx}&playerName=${playerName}&reason=${reason}&duration=${duration}`
             let url = "/root/banChat.action"
             let method = 'POST';
             let successmsg = (reason!==''&&duration!=='')?'禁言成功':'请填写原因和期限';
@@ -53,7 +54,7 @@ class WordsBlock extends React.Component {
         // e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName, yx} = values;
-            let querystring = `yx=${yx}&serverId=${serverId}&playerName=${playerName}`
+            let querystring = `playerId=${QueryType.PLAYERNAME}&yx=${yx}&serverId=${serverId}&playerName=${playerName}`
             let url = "/root/playerInfo.action"
             let method = 'POST'
             let successmsg = undefined
@@ -94,7 +95,7 @@ class WordsBlock extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { serverId, playerName, reason='', duration='',yx } = values;
-                let querystring = `serverId=${serverId}&playerName=${playerName}&yx=${yx}`
+                let querystring = `playerId=${QueryType.PLAYERNAME}&serverId=${serverId}&playerName=${playerName}&yx=${yx}`
                 let url = "/root/unbanChat.action"
                 let method = 'POST'
                 let successmsg = '解除禁言成功'
