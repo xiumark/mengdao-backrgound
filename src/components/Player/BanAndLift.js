@@ -59,7 +59,7 @@ class BanAndLift extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { playerName, serverId, reason='', duration='',yx } = values;
-            let querystring = `playerName=${playerName}&serverId=${serverId}&yx=${yx}&reason=${reason}&duration=${duration}`
+            let querystring = `playerId=${QueryType.PLAYERNAME}&playerName=${playerName}&serverId=${serverId}&yx=${yx}&reason=${reason}&duration=${duration}`
             let url = "/root/banUser.action"
             let method = 'POST'
             let successmsg = (reason!==''&&duration!=='')?'封禁成功':'请填写原因和期限'
@@ -73,7 +73,7 @@ class BanAndLift extends React.Component {
         // e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { serverId, playerName, yx} = values;
-            let querystring = `serverId=${serverId}&playerName=${playerName}&yx=${yx}`
+            let querystring = `playerId=${QueryType.PLAYERNAME}&serverId=${serverId}&playerName=${playerName}&yx=${yx}`
             let url = "/root/playerInfo.action"
             let method = 'POST'
             // let successmsg = '查询成功'
@@ -92,7 +92,7 @@ class BanAndLift extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { playerName, serverId ,reason, duration, yx} = values;
-                let querystring = `playerName=${playerName}&serverId=${serverId}&yx=${yx}`
+                let querystring = `playerId=${QueryType.PLAYERNAME}&playerName=${playerName}&serverId=${serverId}&yx=${yx}`
                 let url = "/root/unbanUser.action"
                 let method = 'POST'
                 let successmsg ='解除封禁成功'
@@ -232,3 +232,9 @@ class BanAndLift extends React.Component {
 //     duration:React.PropTypes.number.isRequired,
 // }
 export default Form.create()(BanAndLift);
+
+export const  QueryType = {
+    PLAYERID: 3,   //通过玩家id查询
+    USERID:2,     //通过角色id查询
+    PLAYERNAME: 1  //通过玩家名查询
+}

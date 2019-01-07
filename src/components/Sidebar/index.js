@@ -6,6 +6,7 @@ import { Menu, Icon } from 'antd';
 import Logo from '../Logo';
 import Logger from '../../utils/Logger';
 import items from 'menu.js';  // 由于webpack中的设置, 不用写完整路径
+import sideBar from 'sideBarManager.js';   //侧边栏显示管理
 import globalConfig from 'config.js';
 import './index.less';
 import { sidebarCollapseCreator } from '../../redux/Sidebar.js';
@@ -54,17 +55,36 @@ class Sidebar extends React.PureComponent {
     //依照authlist对item进行过滤，获取符合条件的用户权限列表
     // console.log("sidebarauthList:", this.props.authList);//成功获取
     let {authList} = this.props;
+    let isAnounceOpen = 0;   //发送公告开启标识
+    let anounceChild;        //公告中的发送公告
     for( let i = 0;i<items.length;i++){
       let child = items[i].child;
       let filteredChild = []; //权限单项菜单
       for(let j = 0;j<child.length;j++){
-        if(authList.indexOf(child[j].authIndex)>-1){
-          filteredChild.push(child[j])
+        //发送公告显示判断(对应authindex=10/8,当两者都显示的时候才显示公告管理页签)
+        if(child[j].authIndex==10||child[j].authIndex==8){
+          if(authList.indexOf(child[j].authIndex)>-1){
+            isAnounceOpen++
+          }
+          let k = j;
+          if(child.authIndex==10){
+            anounceChild =child[k];  //公告页签
+          }
+          if(isAnounceOpen==2){
+            filteredChild.push(anounceChild)
+          }
+        }else{
+          if(authList.indexOf(child[j].authIndex)>-1){
+            filteredChild.push(child[j])
+          }
         }
       }
       // console.log("filteredChild:", filteredChild);
       items[i].child = filteredChild;
     }
+
+    // console.log("filterediitems:",items);
+    
 
     // 菜单项是从配置中读取的, parse过程还是有点复杂的
     // map函数很好用

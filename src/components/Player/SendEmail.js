@@ -311,8 +311,7 @@ class SendEmail extends React.Component {
                     giftPackageItemsData.push(tableItem);
                     key = key + 1;
                 }
-                this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[]}, () => {
-                    // console.log("getPackageItemList():giftPackageItemsData ready", giftPackageItemsData);
+                this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
                 });
             }).catch(err => {
                 message.error(err.message ? err.message : '未知错误');

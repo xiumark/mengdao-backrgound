@@ -54,7 +54,9 @@ class AddUser extends React.Component {
                     tableItem.authName = data.authName;
                     authListDataItems.push(tableItem);
                 }
-                this.setState({ authListData: authListDataItems })
+                this.setState({ authListData: authListDataItems },()=>{
+                    // console.log("authListDataItems:",authListDataItems)
+                })
             })
     }
 

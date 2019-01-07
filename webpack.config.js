@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const globalConfig = require('./src/config.js');
 
+// const G = window?window.g:null;    //配置的静态数据
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // 将babel-loader的配置独立出来, 因为webpack的限制: http://stackoverflow.com/questions/33117136/how-to-add-a-query-to-a-webpack-loader-with-multiple-loaders
@@ -29,6 +30,8 @@ module.exports = {
       '/root': {
         changeOrigin: true,
         target: 'http://116.62.233.28:5011/',
+        // target: 'http://47.52.248.48:2702/',
+        // target:G?G.url:'http://116.62.233.28:5011/',
         // target: 'http://10.223.5.211:5011/',
       }
     }
