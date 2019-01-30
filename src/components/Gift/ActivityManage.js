@@ -250,7 +250,6 @@ class ActivityManage extends React.Component {
         }
     }
 
-
     checkEditActMethod=(e)=>{
         this.setState({editMethod:e.target.value,successList:[],errorList:[]});
     }
