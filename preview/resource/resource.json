@@ -1,0 +1,11 @@
+{"groups":[
+{"keys":"chooseServer_fui,chooseServer_atlas0",
+"name":"chooseServer"}],
+"resources":[
+{"name":"chooseServer_atlas0",
+"type":"image",
+"url":"chooseServer_atlas0.png?v=17f4eae988ee4be27ad0c3f15b76c784"},
+{"name":"chooseServer_fui",
+"type":"bin",
+"url":"chooseServer.fui?v=1f3d44a327acddda1e4abac6a1736c0e"}
+]}

@@ -40,7 +40,7 @@ class AddUser extends React.Component {
         let querystring = ''
         let url = "/root/getAuthList.action"
         let method = 'POST'
-        let successmsg = '请求用户权限成功'
+        let successmsg = '成功获取权限列表'
         apiFetch(url, method, querystring, successmsg,
             (res) => {
                 let { authListData } = this.state;
@@ -64,9 +64,12 @@ class AddUser extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { userName, password, email, auths } = values;
+                let { userName, password, email, auths,authGroupId } = values;
                 let md5password = hex_md5(password);
-                let querystring = `userName=${userName}&password=${md5password}&email=${email}&auths=${auths}`
+                if(!auths){
+                    auths='';
+                }
+                let querystring = `userName=${userName}&password=${md5password}&email=${email}&auths=${auths}&authGroupId=${authGroupId?authGroupId:''}`
                 let url = "/root/createUser.action"
                 let method = "POST"
                 let successmsg = '用户创建成功'
@@ -80,11 +83,11 @@ class AddUser extends React.Component {
         const { authListData } = this.state;
         const formItemLayout = {
             labelCol: {
-                xs: { span: 6 },
-                sm: { span: 6 },
+                xs: { span: 8 },
+                sm: { span: 8 },
             },
             wrapperCol: {
-                xs: { span: 6 },
+                xs: { span: 8 },
                 sm: { span: 14 },
             },
         };
@@ -133,9 +136,16 @@ class AddUser extends React.Component {
                             </FormItem>
                             <FormItem {...formItemLayout} label={"用户权限"} >
                                 {getFieldDecorator('auths', {
-                                    rules: [{ required: true, message: '请输入用户权限Id' }],
+                                    rules: [{ required: false, message: '请输入用户权限Id' }],
                                 })(
                                     <Input placeholder="用户权限Id（用冒号隔开）" />
+                                )}
+                            </FormItem>
+                            <FormItem {...formItemLayout} label={"用户权限组"} >
+                                {getFieldDecorator('authGroupId', {
+                                    rules: [{ required: false, message: '请输入用户权限组Id' }],
+                                })(
+                                    <Input placeholder="输入用户权限组Id" />
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout} >

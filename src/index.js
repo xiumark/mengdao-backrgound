@@ -41,6 +41,19 @@ import LtvReport from './components/GameReportForms/LtvReport';
 import OnlineTimeData from './components/GameReportForms/OnlineTimeData';
 
 import ActivityManage from './components/Gift/ActivityManage';
+
+import AuthManage from './components/User/AuthManage';          //权限管理
+import AuthGroupManage from './components/User/AuthGroupManage';//权限组管理
+import NoticeManage from './components/Gift/NoticeManage';      //公告管理
+import SendTextEmail from './components/Player/SendTextEmail';      //发送文字邮件
+
+
+import ServerPageNotice from './components/ServerManagement/ServerPageNotice';      //发送文字邮件
+import ServerPageState from './components/ServerManagement/ServerPageState';      //发送文字邮件
+import ServerPageWhiteList from './components/ServerManagement/ServerPageWhiteList';      //发送文字邮件
+
+
+
 //import DBTable from './components/DBTable';
 import Login from '../src/components/Login';
 
@@ -66,6 +79,9 @@ const routes = (
         <Route path="userManagement">
           <Route path="addUser" component={AddUser} />
           <Route path="editUser" component={EditUser} />
+          <Route path="authManage" component={AuthManage} />
+          <Route path="authGroupManage" component={AuthGroupManage} />
+          
           <Route path="passwordReset" component={PasswordReset} />
           <Route path="thawAccount" component={ThawAccount} />
           <Route path="deleteUser" component={DeleteUser} />
@@ -87,17 +103,24 @@ const routes = (
           <Route path="wordsBlock" component={WordsBlock} />
           <Route path="banAndLift" component={BanAndLift} />
           <Route path="recharge" component={Recharge} />
-          <Route path="email" component={SendEmail} />
+          <Route path="sendEmail" component={SendEmail} />
+          <Route path="sendTextEmail" component={SendTextEmail} />
         </Route>
         <Route path="gameManagement">
-          <Route path="announcementManagement" component={Announcements} />
-          <Route path="gift" component={GiftPackage} />
+          <Route path="announcementManagement" component={Announcements} />{/* 发送公告 */}
+          <Route path="noticeManage" component={NoticeManage} />{/* 管理公告 */}
+          <Route path="giftPackage" component={GiftPackage} />
           <Route path="giftCode" component={GiftCode} />
           <Route path="giftCard" component={GiftCard} />
-          <Route path="giftCard" component={GiftCard} />
+          {/* <Route path="giftCard" component={GiftCard} /> */}
           <Route path="giftCreate" component={GiftCreate} />
           <Route path="activityManage" component={ActivityManage} />
           <Route path="expireTimeChange" component={ExpireTimeChange} />
+        </Route>
+        <Route path="serverManagement">
+          <Route path="serverPageNotice" component={ServerPageNotice} />
+          <Route path="serverPageState" component={ServerPageState} />
+          <Route path="serverPageWhiteList" component={ServerPageWhiteList} />
         </Route>
         <Route path="gameReportForms">
           <Route path="orderListInTime" component={OrderListInTime} />

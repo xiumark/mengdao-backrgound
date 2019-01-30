@@ -1,0 +1,11 @@
+{
+	"list":[
+		"libs/promise.min.js",
+		"libs/egret.min.js",
+		"libs/egret.web.min.js",
+		"libs/assetsmanager.min.js",
+		"libs/fairygui.min.js",
+		"libs/rawinflate.min.js",
+		"libs/Main.min.js"
+	]
+}

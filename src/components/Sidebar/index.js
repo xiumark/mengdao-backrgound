@@ -62,17 +62,24 @@ class Sidebar extends React.PureComponent {
       let filteredChild = []; //权限单项菜单
       for(let j = 0;j<child.length;j++){
         //发送公告显示判断(对应authindex=10/8,当两者都显示的时候才显示公告管理页签)
-        if(child[j].authIndex==10||child[j].authIndex==8){
-          if(authList.indexOf(child[j].authIndex)>-1){
-            isAnounceOpen++
-          }
-          let k = j;
-          if(child.authIndex==10){
-            anounceChild =child[k];  //公告页签
-          }
-          if(isAnounceOpen==2){
-            filteredChild.push(anounceChild)
-          }
+        // if(child[j].authIndex==10||child[j].authIndex==8){
+          // if(authList.indexOf(child[j].authIndex)>-1){
+          //   isAnounceOpen++
+          // }
+          // let k = j;
+          if(child[j].authIndex==10){
+            anounceChild =child[j];  //公告页签
+            if(authList.indexOf(10)&&authList.indexOf(8)){
+              filteredChild.push(anounceChild)
+            }
+          // }
+          // if(isAnounceOpen==2){
+          //   filteredChild.push(anounceChild)
+          // }
+
+          // if(authList.indexOf(10)&&authList.indexOf(8)&&anounceChild){
+          //   filteredChild.push(anounceChild)
+          // }
         }else{
           if(authList.indexOf(child[j].authIndex)>-1){
             filteredChild.push(child[j])

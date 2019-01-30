@@ -20,6 +20,16 @@ const sidebarMenu = [
         authIndex:'1',
         // icon: 'play-circle',   // 二级三级菜单也可以带图标
       },
+      {
+        key: 'AuthManage',
+        name: '权限管理',
+        authIndex:'26',            //====26=====================================待更新
+      },
+      {
+        key: 'AuthGroupManage',
+        name:'权限组管理',
+        authIndex:'26',            //=========26================================待更新
+      },
       // {
       //   key: 'getAuthList',
       //   name: '获取权限列表',
@@ -118,9 +128,14 @@ const sidebarMenu = [
             authIndex:'7',
           },
           {
-            key: 'email',
+            key: 'sendEmail',
             name: '发送邮件',
             authIndex:'11',
+          },
+          {
+            key: 'sendTextEmail',
+            name: '发送文字邮件',
+            authIndex:'27',
           },
         ],
       },
@@ -130,11 +145,16 @@ const sidebarMenu = [
         child: [
           {
             key: 'announcementManagement',
-            name: '公告管理',
+            name: '发送公告',
             authIndex:'10',
           },
           {
-            key: 'gift',
+            key: 'noticeManage',
+            name: '公告管理',
+            authIndex:'10',//---------------------------------------权限待完善--------//
+          },
+          {
+            key: 'giftPackage',
             name: '礼包管理',
             authIndex:'4',
           },
@@ -164,7 +184,28 @@ const sidebarMenu = [
           },
         ],
       },
-            {
+      {
+        key: 'serverManagement', 
+        name: '游戏服管理',
+        child: [
+          {
+            key: 'serverPageNotice',
+            name: '选服页公告',    //服务器更新升级公告
+            authIndex:'30',
+          },
+          {
+            key: 'serverPageState',
+            name: '游戏服',   //获取和修改游戏服状态
+            authIndex:'28',
+          },
+          {
+            key: 'serverPageWhiteList',
+            name: '白名单',
+            authIndex:'31',
+          },
+        ],
+      },
+      {
         key: 'gameReportForms',  // 最多只能到三级导航
         name: '游戏报表',
         child: [

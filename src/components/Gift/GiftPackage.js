@@ -123,17 +123,17 @@ class GiftPackage extends React.Component {
         });
 
         //根据缓存，填充表单数据
-        let {sendGiftYx, sendGiftServerId, sendGiftGiftType, sendGiftPlayerName,
-             sendGiftGiftContent, sendGiftDuration, sendGiftTitle}=localStorage;
-        let yx, serverId, giftType, playerName, giftContent, duration, title;
-        yx=sendGiftYx; 
-        serverId=sendGiftServerId;
-        giftType=sendGiftGiftType; 
-        playerName=sendGiftPlayerName;
-        giftContent=sendGiftGiftContent;
-        duration=sendGiftDuration;
-        title=sendGiftTitle;
-        this.setInputValue(yx, serverId, giftType, playerName, giftContent, duration, title);
+        // let {sendGiftYx, sendGiftServerId, sendGiftGiftType, sendGiftPlayerName,
+        //      sendGiftGiftContent, sendGiftDuration, sendGiftTitle}=localStorage;
+        // let yx, serverId, giftType, playerName, giftContent, duration, title;
+        // yx=sendGiftYx; 
+        // serverId=sendGiftServerId;
+        // giftType=sendGiftGiftType; 
+        // playerName=sendGiftPlayerName;
+        // giftContent=sendGiftGiftContent;
+        // duration=sendGiftDuration;
+        // title=sendGiftTitle;
+        // this.setInputValue(yx, serverId, giftType, playerName, giftContent, duration, title);
     }
 
     setInputValue=(yx, serverId, giftType, playerName, giftContent, duration, title)=>{
@@ -259,20 +259,24 @@ class GiftPackage extends React.Component {
                     .then(res => {
                         let { giftPackageItemsData, key } = this.state;
                         giftPackageItemsData = [];
-                        let items = res.items;
+                        let items = res.data.items;
                         if (!items) {
-                            throw new Error('获取礼包信息失败')
+                            // throw new Error('获取礼包信息失败')
+                            message.info("礼包信息为空")
+                            this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
+                            })
+                        }else{
+                            message.info("成功获取礼包信息")
+                            key = 1;
+                            for (let i = 0; i < items.length; i++) {
+                                let data = items[i]
+                                let tableItem = Object.assign(data, { key: key ,num:1});
+                                giftPackageItemsData.push(tableItem);
+                                key = key + 1;
+                            }
+                            this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
+                            })
                         }
-                        message.info("成功获取礼包信息")
-                        key = 1;
-                        for (let i = 0; i < items.length; i++) {
-                            let data = items[i]
-                            let tableItem = Object.assign(data, { key: key ,num:1});
-                            giftPackageItemsData.push(tableItem);
-                            key = key + 1;
-                        }
-                        this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
-                        })
                     }).catch(err => {
                         message.error(err.message ? err.message : '未知错误');
                         this.setState({ giftPackageItemsData:[]});
@@ -294,19 +298,23 @@ class GiftPackage extends React.Component {
                     handledStr = this.format(itemStr,itemNum);
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
-                
+
                 let {yx, serverId, giftType, playerName, giftContent, duration, title } = values;
                 this.requestSearch(yx, serverId, giftType, playerName, giftContent, duration, title);
             }
         });
     }
+        //giftContent:{type:1,name:'',wildCard:''}
+        // let str1 =  giftContentStr.split(':')[0]
+        // let str2 =  giftContentStr.split(':')[3]
+        // let str =str1+':'+str2;
 
     requestSearch=(yx, serverId, giftType, playerName, giftContent, duration, title)=>{
         const querystring = `yx=${yx}&serverId=${serverId}&giftType=${giftType}&playerName=${playerName}&giftContent=${giftContent}&duration=${duration}&title=${title}`
         let url = "/root/sendGift.action"
         let method = 'POST'
         let successmsg = '成功发送礼包'
-        
+
         apiFetch(url, method, querystring, successmsg, (res) => {
             //请求成功后设置缓存
             setSendGiftData(yx, serverId, giftType, playerName, giftContent, duration, title);
@@ -374,7 +382,7 @@ class GiftPackage extends React.Component {
                                     ],
                                 })(
                                     <Select placeholder="选择服务器名称" onChange={(value)=>this.onServerChange(value)}>
-                                        {serviceList.map((item, index) => {
+                                        {filteredServiceList.map((item, index) => {
                                             return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
                                         })}
                                     </Select>

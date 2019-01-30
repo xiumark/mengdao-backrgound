@@ -4,10 +4,8 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
 import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
-/**
- * 测试用
- */
+import { getServiceList, getYxList, requestSendPureMail } from '../../api/service';
+
 const buttonStyle = {
     margin: '10px',
     marginLeft:'0px',
@@ -18,18 +16,6 @@ const buttonAddStyle = {
     marginLeft:'0px',
     width: '80px',
 };
-// const buttonContetStyle={
-//     width: '35px',
-//     height: '30px',
-//     border: '0px',
-//     marginLeft: '5px',
-//     paddingTop: '-2px',
-//     backgroundColor: 'rgb(255,255,255)',
-//     color: 'rgb(255, 25, 174)',
-// }
-const pStyle={
-    paddingTop: '6px',
-}
 
 const flex = {
     display:"flex",
@@ -54,7 +40,6 @@ class SendEmail extends React.Component {
             giftPackageItemsData: [
                 // { key: '0', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
                 // { key: '1', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-                // { key: '2', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
             ],
             serviceList: [
                 {yx:'渠道1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
@@ -75,14 +60,12 @@ class SendEmail extends React.Component {
             giftContentData: [
                 // { key: '1', num:1,type: 1, name: "元宝", wildCard: "sysDiamond:2:1000:{0}:0:0:0" },
                 // { key: '2', num:1,type: 1, name: "银币", wildCard: "resource:2:1000:{0}:1:0:0" },
-                // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-                // { key: '3', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
-                // { key: '4', num:1,type: 1, name: "虎符", wildCard: "resource:2:1000:{0}:2:0:0" },
             ],
             mailTypeList:[
                 {mailType:'1',name:'个人邮件', key:1},
                 {mailType:'2',name:'单服邮件', key:2}
             ],
+            mailType:'1',
             isNotYxAllserver:true,
             isPlayerNameEditable:false,
             yxValue:'',
@@ -116,25 +99,21 @@ class SendEmail extends React.Component {
         this.renderColumns = this.renderColumns.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
-        this.format = this.format.bind(this);
-        this.onServerChange = this.onServerChange.bind(this);
         this.onMailTypeChange = this.onMailTypeChange.bind(this);
     }
 
     componentDidMount() {
         getServiceList((res) => {
             this.getYxList(res);
-            // res.unshift(newelement1);
             this.setState({ serviceList: res, filteredServiceList: res});
         })
     }
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
-        const{serviceList, yxValue} = this.state;
+        const{serviceList} = this.state;
         let filteredServiceList = serviceList.filter((item, index)=>{
             return item.yx===value;
         });
-        // console.log(":")
         this.setState({yxValue:value});
         if(filteredServiceList[0].serverId!=="等待置为空"){
             filteredServiceList.unshift({yx:'555', serverId: "等待置为空", serverName: "该渠道上所有服", serverState: 0 });
@@ -148,27 +127,13 @@ class SendEmail extends React.Component {
        });
     }
 
-
-    handleSubmit = (e) => { //发送邮件
+    //发送邮件,发送文本邮件
+    handleSubmit = (e) => { 
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                const {giftContentData} =this.state;
-                let giftContentStr = '';
-                for (let i=0;i<giftContentData.length;i++){
-                    let itemStr=giftContentData[i].wildCard;
-
-                    let handledStr = '';
-                    let itemNum = new Array()
-                    itemNum[0] = giftContentData[i].num;
-                    handledStr = this.format(itemStr,itemNum);
-                    giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
-                }
-
-                let { mailType, serverId,yx, playerName, attachmenet, mailContent, duration, title, attachmenet2} = values;
-                if(attachmenet2!=null){
-                    giftContentStr=giftContentStr+';'+attachmenet2
-                }
+                let { serverId,yx, playerName, mailContent, duration, title} = values;
+                let {mailType} = this.state;
                 if (serverId=='等待置为空'){//yx全服模式serverId为空，playerName为空
                     serverId='';
                     playerName='';
@@ -179,17 +144,7 @@ class SendEmail extends React.Component {
                     let playerNameArray = playerName.split('，');
                     playerNameStr = playerNameArray.join(',');
                 }
-                
-                // console.log("playerNameStr0:", playerNameStr0.trim());
-                // let playerNameStr=playerNameStr0.replace(" ", "");
-                // console.log("playerNameStr:", playerNameStr);
-                let querystring = `mailType=${mailType}&serverId=${serverId}&yx=${yx}&playerName=${playerNameStr}&attachmenet=${giftContentStr}&mailContent=${mailContent}&duration=${duration}&title=${title}`
-                let url = "/root/sendMail.action"
-                let method = 'POST'
-                let successmsg = '发送邮件成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-
-                })
+                requestSendPureMail( mailType, serverId, yx, playerNameStr, mailContent, duration, title)
             }
         });
     }
@@ -197,7 +152,6 @@ class SendEmail extends React.Component {
     renderColumns(textValue, tableItem, column) {
         return (
           <EditableCell
-            // editable={tableItem.editable}
             editable={true}
             value={textValue}
             onChange={(event) => this.handleChange(event, tableItem, column)}
@@ -209,7 +163,6 @@ class SendEmail extends React.Component {
     handleChange(event,tableItem, column){//一个令人疑惑的巨大BUG，这个以及下一个函数内部不能放入console，否则不能打包。其他的地方却不受任何影响，很奇怪
         const {giftPackageItemsData} = this.state;
         let key = tableItem.key;
-        // console.log('handleChange():eventvalue:',event.target.value)
         giftPackageItemsData[key-1].num = event.target.value;
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
@@ -217,7 +170,6 @@ class SendEmail extends React.Component {
         let id = event.target.id;
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
-        // console.log("handleClick():tableItem.num:",tableItem.num);
         if(id==='decrece'){
             giftPackageItemsData[key-1].num = tableItem.num-1>0?tableItem.num-1:1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
@@ -225,7 +177,6 @@ class SendEmail extends React.Component {
             giftPackageItemsData[key-1].num = tableItem.num+1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='add'){
-            //向giftContentData添加数据
             const {giftContentData} = this.state;
             let filteredGiftContentData = giftContentData.filter((item)=>{
                 return item.key != key
@@ -235,35 +186,11 @@ class SendEmail extends React.Component {
         }
     }
 
-    format(pattern, params){
-        let lastIndex = -1;
-        
-        let result = "";
-        let ifTake = true;
-        for (let i = 0; i < pattern.length; i++) {
-          if (pattern.charAt(i) == '{') {
-             ifTake = false;
-          } else if (pattern.charAt(i) == '}') {
-             ifTake = true;
-             lastIndex = lastIndex + 1;
-             result = result + params[lastIndex];
-          } else if (ifTake) {
-             result = result + pattern.charAt(i);
-          }
-        }
-         
-        return result;
-    }
-
-    onServerChange(v){
-        // console.log("onServerChange()");
-        this.getPackageItemList(v);
-    }
     onMailTypeChange(v){
         if(v==1){
-            this.setState({isPersonal: true});
+            this.setState({isPersonal: true,mailType:'1'});
         }else{
-            this.setState({isPersonal: false});
+            this.setState({isPersonal: false,mailType:'2'});
         }
     }
         
@@ -272,9 +199,7 @@ class SendEmail extends React.Component {
         if(value=='等待置为空'){
             value='';
             this.props.form.setFieldsValue({playerName:'',mailType:'2'})
-            const{mailTypeList} = this.state;
             this.setState({mailTypeList:[{mailType:'2',name:'单服邮件', key:2}],isPlayerNameEditable:true, isPersonal:false});
-            //将邮件变为单服邮件
         }else{
             this.setState({mailTypeList:[{mailType:'1',name:'个人邮件', key:1},{mailType:'2',name:'单服邮件', key:2}],isPlayerNameEditable:false})
         };
@@ -298,13 +223,11 @@ class SendEmail extends React.Component {
             .then(res => {
                 let { giftPackageItemsData, key } = this.state;
                 giftPackageItemsData = [];
-                // let items = res.items;
                 let items = res.data.items;
                 if (!items) {
                     throw new Error('获取礼包信息失败')
                 }
                 message.info("成功获取礼包信息")
-                // console.log("getPackageItemList()");
                 key = 1;
                 for (let i = 0; i < items.length; i++) {
                     let data = items[i]
@@ -320,23 +243,14 @@ class SendEmail extends React.Component {
             })
     }
 
-    buttonDeleteClick=(item)=>{
-        let key = item.key;
-        const {giftContentData} = this.state;
-        let newList = giftContentData.filter((item, index)=>{
-            return item.key!==key
-        })
-        this.setState({giftContentData:newList});
-    }
-
     render() {
         const { getFieldDecorator } = this.props.form;
-        const {filteredServiceList, yxList,isNotYxAllserver, mailTypeList, isPlayerNameEditable} = this.state;
-        const {isPersonal, serviceList, giftContentData, giftPackageItemsData } = this.state;
+        const {filteredServiceList, yxList, mailTypeList, isPlayerNameEditable} = this.state;
+        const {isPersonal } = this.state;
         const formItemLayout = {
             labelCol: {
-                xs: { span: 6 },
-                sm: { span: 6 },
+                xs: { span: 8 },
+                sm: { span: 8 },
             },
             wrapperCol: {
                 xs: { span: 20 },
@@ -347,7 +261,7 @@ class SendEmail extends React.Component {
             wrapperCol: {
                 xs: {
                     span: 24,
-                    offset: 0,
+                    offset: 6,
                 },
                 sm: {
                     span: 14,
@@ -357,8 +271,7 @@ class SendEmail extends React.Component {
         };
         return <div>
             <Card title="发送邮件" style={{}}>
-                {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
-                <Form onSubmit={this.handleSubmit} id="email">
+                <Form id="email">
                     <Row>
                         <Col sm={8} md={8} xs={24}>
                             <FormItem {...formItemLayout} label="渠道" >
@@ -380,7 +293,7 @@ class SendEmail extends React.Component {
                                         { required: true, message: '请选择服务器名称' },
                                     ],
                                 })(
-                                    <Select placeholder="选择服务器名称" onChange={(value)=>this.onServerChange(value)}>
+                                    <Select placeholder="选择服务器名称">
                                         {filteredServiceList.map((item, index) => {
                                             return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
                                         })}
@@ -388,7 +301,7 @@ class SendEmail extends React.Component {
                                 )}
                             </FormItem>
                             <FormItem {...formItemLayout} label="邮件类型" >
-                                {getFieldDecorator('mailType', {
+                                {getFieldDecorator('mailTyspe', {
                                     rules: [
                                         { required: true, message: '请选择邮件类型' },
                                     ],
@@ -397,8 +310,6 @@ class SendEmail extends React.Component {
                                         {mailTypeList.map((item, index)=>{
                                             return <Option value={item.mailType} key = {item.key}>{item.name}</Option>
                                         })}
-                                        {/* <Option value="1" intialValue={isNotYxAllserver?'':'1'}>个人邮件</Option> */}
-                                        {/* <Option value="2">单服邮件</Option> */}
                                     </Select>
                                 )}
                             </FormItem>
@@ -419,31 +330,7 @@ class SendEmail extends React.Component {
                                 )}
                             </FormItem>
                         </Col>
-                        <Col sm={8} md={8} xs={24}>
-                            <FormItem {...formItemLayout} label={"附件内容"} >
-                                {getFieldDecorator('attachmenet', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
-                                })(
-                                    <div className="gift-content" style={{ minHeight: 160, width: "120%", border: 'solid 1px #d9d9d9'}} placeholder="请输入附件内容">
-                                    {giftContentData.map((item, index)=>{
-                                        let data = item
-                                        return <div style={flex} key={item.key}>
-                                        <p style={pStyle}>{`${item.name} 数量:${item.num}`}</p>
-                                        <a className="btn-delete"  onClick = {(event)=>this.buttonDeleteClick(item)}>X</a>
-                                        </div>
-                                    })}
-                                    </div>
-                                )}
-                            </FormItem>
-                            <FormItem {...formItemLayout} label={"附件内容2"} id="attachmenet2" >
-                                {getFieldDecorator('attachmenet2', {
-                                   rules: [{ required: false, message: '' }],
-                                })(
-                                    <Input placeholder="附件内容"/>
-                                )}
-                            </FormItem>
-                        </Col>
-                        <Col sm={8} md={8} xs={24}>
+                        <Col sm={16} md={16} xs={24}>
                             <FormItem {...formItemLayout} label={"邮件名称"} >
                                 {getFieldDecorator('title', {
                                     rules: [{ required: true, message: '请输入邮件名称!' }],
@@ -461,24 +348,19 @@ class SendEmail extends React.Component {
                         </Col>
                     </Row>
                     <Row>
-                        {/* <Col md={12}> */}
-                            {/* <FormItem {...tailFormItemLayout}>
-                                <Button type="primary" htmlType="button" onClick={this.getPackageItemList}>获取附件信息列表</Button>
-                            </FormItem> */}
-                        {/* </Col> */}
-                        {/* <Col md={12}> */}
                     <FormItem {...tailFormItemLayout} >
-                        <Button type="primary" htmlType="submit">发送邮件</Button>
+                        <Button type="primary" htmlType="submit" id="textMail" style={{ marginLeft: 20}} onClick={this.handleSubmit}>发送文字邮件</Button>
                     </FormItem>
-                        {/* </Col> */}
                     </Row>
                 </Form>
-            </Card>
-            <Card>
-                <Table pagination={{ pageSize: 15 }} columns={this.columns} dataSource={giftPackageItemsData} size={'small'} />
             </Card>
         </div >;
     }
 }
 
 export default Form.create()(SendEmail);
+
+const  MailType = {
+    MAIL: 'mail',   //邮件
+    TEXTMAIL:'textMail',     //文本邮件
+}

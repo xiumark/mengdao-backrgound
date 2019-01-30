@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!--Global site tag (gtag.js) - Google Analytics-->
+    <!--<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115610241-1"></script>-->
+    <!--<script>-->
+    <!--window.dataLayer = window.dataLayer || [];-->
+    <!--window.gtag = function (){dataLayer.push(arguments);}-->
+    <!--</script>-->
+    <meta charset="utf-8">
+    <title>公告预览</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0,minimal-ui"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="true"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <meta name="360-fullscreen" content="true"/>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT">
+    <style>
+        html, body {
+            -ms-touch-action: none;
+            background: #000000;
+            padding: 0;
+            border: 0;
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+<div id="game_frame" style="margin: auto;position:absolute;width: 100%;height: 100%">
+    <div id='game' style="margin: auto;width: 100%;height: 100%;" class="egret-player"
+         data-entry-class="Main"
+         data-orientation="auto"
+         data-scale-mode="noScale"
+         data-frame-rate="30"
+         data-content-width="810"
+         data-content-height="1281"
+         data-show-paint-rect="true"
+         data-multi-fingered="1"
+         data-show-fps="false" data-show-log="false"
+         data-show-fps-style="x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9">
+    </div>
+</div>
+
+<script>
+    var loadScript = function (list, callback) {
+        var loaded = 0;
+        var loadNext = function () {
+            loadSingleScript(list[loaded], function () {
+                loaded++;
+                if (loaded >= list.length) {
+                    callback();
+                }
+                else {
+                    loadNext();
+                }
+            })
+        };
+        loadNext();
+        window.sgSetLoadingProcess(loaded / list.length);
+    };
+
+    var loadSingleScript = function (src, callback) {
+        var s = document.createElement('script');
+        s.async = false;
+        s.src = src + '?v=' + Math.random();
+        s.addEventListener('load', function () {
+            s.removeEventListener('load', arguments.callee, false);
+            s.parentNode.removeChild(s);
+            callback();
+        }, false);
+        document.body.appendChild(s);
+    };
+
+    var gameRun = false;
+    var sgLoadingGame = function (version,callback) {
+        sgShowLoading();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', version+'manifest.json?v=' + Math.random(), true);
+        xhr.addEventListener("load", function () {
+            var manifest = JSON.parse(xhr.response);
+            let list = window.common_manifest.initial.concat(manifest.initial).concat(manifest.game);
+            window.sgSetLoadingTxt('請稍候...');
+            loadScript(list, function () {
+                if (callback) callback();
+            })
+        });
+        xhr.send(null);
+    }
+
+
+    var startLoading = function () {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'manifest.json?v=' + Math.random(), true);
+        xhr.addEventListener("load", function () {
+            var manifest = JSON.parse(xhr.response);
+            var list = manifest.list;
+            loadScript(list, function () {
+                /**
+                 * {
+             * "renderMode":, //引擎渲染模式，"canvas" 或者 "webgl"
+             * "audioType": 0 //使用的音频类型，0:默认，2:web audio，3:audio
+             * "antialias": //WebGL模式下是否开启抗锯齿，true:开启，false:关闭，默认为false
+             * "retina": //是否基于devicePixelRatio缩放画布
+             * }
+                 **/
+                gameRun = true;
+                egret.runEgret({renderMode: "webgl", retina: true, audioType: 0});
+            });
+        });
+        xhr.send(null);
+    }
+    startLoading();
+</script>
+</body>
+</html>

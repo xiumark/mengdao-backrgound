@@ -266,20 +266,23 @@ class GiftCreate extends React.Component {
                     .then(res => {
                         let { giftPackageItemsData, key } = this.state;
                         giftPackageItemsData = [];
-                        let items = res.items;
+                        let items = res.data.items;
                         if (!items) {
                             throw new Error('获取礼包信息失败')
+                            message.info("礼包信息为空")
+                        }else{
+                            message.info("成功获取礼包信息")
+                            key = 1;
+                            for (let i = 0; i < items.length; i++) {
+                                let data = items[i]
+                                let tableItem = Object.assign(data, { key: key ,num:1});
+                                giftPackageItemsData.push(tableItem);
+                                key = key + 1;
+                            }
+                            this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
+                            })
                         }
-                        message.info("成功获取礼包信息")
-                        key = 1;
-                        for (let i = 0; i < items.length; i++) {
-                            let data = items[i]
-                            let tableItem = Object.assign(data, { key: key ,num:1});
-                            giftPackageItemsData.push(tableItem);
-                            key = key + 1;
-                        }
-                        this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
-                        })
+                        
                     }).catch(err => {
                         message.error(err.message ? err.message : '未知错误');
                         this.setState({ giftPackageItemsData:[]});
