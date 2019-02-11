@@ -46,11 +46,12 @@ import AuthManage from './components/User/AuthManage';          //权限管理
 import AuthGroupManage from './components/User/AuthGroupManage';//权限组管理
 import NoticeManage from './components/Gift/NoticeManage';      //公告管理
 import SendTextEmail from './components/Player/SendTextEmail';      //发送文字邮件
+import SendSysDiamond from './components/Player/SendSysDiamond';      //发送元宝
 
 
-import ServerPageNotice from './components/ServerManagement/ServerPageNotice';      //发送文字邮件
-import ServerPageState from './components/ServerManagement/ServerPageState';      //发送文字邮件
-import ServerPageWhiteList from './components/ServerManagement/ServerPageWhiteList';      //发送文字邮件
+import ServerPageNotice from './components/ServerManagement/ServerPageNotice';     
+import ServerPageState from './components/ServerManagement/ServerPageState';     
+import ServerPageWhiteList from './components/ServerManagement/ServerPageWhiteList';
 
 
 
@@ -104,6 +105,7 @@ const routes = (
           <Route path="banAndLift" component={BanAndLift} />
           <Route path="recharge" component={Recharge} />
           <Route path="sendEmail" component={SendEmail} />
+          <Route path="sendSysDiamond" component={SendSysDiamond} />
           <Route path="sendTextEmail" component={SendTextEmail} />
         </Route>
         <Route path="gameManagement">

@@ -133,6 +133,11 @@ const sidebarMenu = [
             authIndex:'11',
           },
           {
+            key: 'sendSysDiamond',
+            name: '发送元宝',
+            authIndex:'11',
+          },
+          {
             key: 'sendTextEmail',
             name: '发送文字邮件',
             authIndex:'27',

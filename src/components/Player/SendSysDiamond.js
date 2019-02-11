@@ -45,7 +45,7 @@ const EditableCell = ({ editable, value, onChange, onClick}) => (
   );
 
 
-class SendEmail extends React.Component {
+class SendSysDiamond extends React.Component {
     constructor(props){
         super(props);
         this.state = {
@@ -303,15 +303,17 @@ class SendEmail extends React.Component {
                     throw new Error('获取礼包信息失败')
                 }
                 message.info("成功获取礼包信息")
+
                 // console.log("getPackageItemList()");
                 key = 1;
                 for (let i = 0; i < items.length; i++) {
                     let data = items[i]
-                    if(data.name!='元宝'){
+                    if(data.name=='元宝'){
                         let tableItem = Object.assign(data, { key: key ,num:1});
                         giftPackageItemsData.push(tableItem);
                         key = key + 1;
                     }
+                    
                 }
                 this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
                 });
@@ -356,7 +358,7 @@ class SendEmail extends React.Component {
             },
         };
         return <div>
-            <Card title="发送邮件" style={{}}>
+            <Card title="发送元宝" style={{}}>
                 {/* <Form layout="inline" onSubmit={this.handleSubmit}> */}
                 <Form id="email">
                     <Row>
@@ -468,10 +470,10 @@ class SendEmail extends React.Component {
                         {/* </Col> */}
                         {/* <Col md={12}> */}
                     <FormItem {...tailFormItemLayout} >
-                        {!isPersonal&&<Popconfirm placement="topLeft" title={'确认给该服全体发送该邮件？'} onConfirm={this.handleSubmit} okText="确认" cancelText="取消">
-                            <Button type="primary" htmlType="submit">发送单服邮件</Button>
+                        {!isPersonal&&<Popconfirm placement="topLeft" title={'确认给该服全体发送元宝？'} onConfirm={this.handleSubmit} okText="确认" cancelText="取消">
+                            <Button type="primary" htmlType="submit">发送单服元宝</Button>
                         </Popconfirm>}
-                        {!!isPersonal&&<Button type="primary" htmlType="submit" onClick={this.handleSubmit}>发送个人邮件</Button>}
+                        {!!isPersonal&&<Button type="primary" htmlType="submit" onClick={this.handleSubmit}>发送个人元宝</Button>}
                     </FormItem>
                         {/* </Col> */}
                     </Row>
@@ -484,4 +486,4 @@ class SendEmail extends React.Component {
     }
 }
 
-export default Form.create()(SendEmail);
+export default Form.create()(SendSysDiamond);

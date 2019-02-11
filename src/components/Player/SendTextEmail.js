@@ -231,9 +231,11 @@ class SendEmail extends React.Component {
                 key = 1;
                 for (let i = 0; i < items.length; i++) {
                     let data = items[i]
-                    let tableItem = Object.assign(data, { key: key ,num:1});
-                    giftPackageItemsData.push(tableItem);
-                    key = key + 1;
+                    if(data.name!='元宝'){
+                        let tableItem = Object.assign(data, { key: key ,num:1});
+                        giftPackageItemsData.push(tableItem);
+                        key = key + 1;
+                    }
                 }
                 this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
                 });
