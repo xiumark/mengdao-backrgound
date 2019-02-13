@@ -281,6 +281,8 @@ export function removeActivityAllServers(yx,activityId,minOpenTime,maxOpenTime,c
     })
 }
 
+
+/**显示消息**/
 export function showMsg(state, list, successmsg, losemsg) {
     if (state != 1) {
         message.info(losemsg);
@@ -291,6 +293,7 @@ export function showMsg(state, list, successmsg, losemsg) {
     }
 }
 
+/**成功获取数据**/
 export function isSucc(list) {
     for (let i = 0; i < list.length; i++) {
         if (list[i].succ == false) {
@@ -299,3 +302,19 @@ export function isSucc(list) {
     }
     return true;
 }
+
+
+
+// //请求运营日报
+// export function getDayReport(yx, serverId,startDayStr, endDayStr){
+//     let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}`;
+//     let url = "/root/getDayReport.action";
+//     let method = 'POST';
+//     let successmsg = '查询成功';
+//     apiFetch(url, method, querystring, successmsg, (res) => {
+//         let dayReports = res.data.dayReports;
+//         this.setState({dayReports:dayReports});
+//          //请求成功后设置localStorage
+//          setDayReportStorage(yx, serverId,startDayStr, endDayStr);
+//     });
+// }

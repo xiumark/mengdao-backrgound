@@ -28,6 +28,9 @@ class DayReport extends React.Component {
     componentDidMount() {
         getServiceList((res) => {
             this.getYxList(res);
+            let serviceList = res;
+            let yx = res[0].yx;
+            serviceList.unshift({yx: yx, serverId: 0, serverName: "该渠道所有服", serverState: 2})
             this.setState({ serviceList: res});
         })
         let {dayReportYx, dayReportServerId, dayReportStartDay, dayReportEndDay}=localStorage;
@@ -84,7 +87,7 @@ class DayReport extends React.Component {
 
     copyClick=(e)=>{
         let {dayReports} = this.state;
-        this.stringifyData(dayReports);
+        // this.stringifyData(dayReports);
 
         let tableStr =this.stringifyData(dayReports);
         
@@ -113,6 +116,7 @@ class DayReport extends React.Component {
         });
     }
 
+    //请求运营日报
     requestSearch=(yx, serverId,startDayStr, endDayStr)=>{
         let { dayReports } = this.state;
         let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}`;
