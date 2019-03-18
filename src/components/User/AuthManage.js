@@ -3,30 +3,15 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
-/**
- * 测试用
- */
-const buttonStyle = {
-    margin: '10px',
-    marginLeft:'0px',
-    width: '40px',
-  };
+import { getServiceList, getYxList, getAuthGroupList, modityUserAuthGroup } from '../../api/service';
+
+
 const buttonAddStyle = {
     margin: '10px',
     marginLeft:'0px',
     width: '80px',
 };
-// const buttonContetStyle={
-//     width: '35px',
-//     height: '30px',
-//     border: '0px',
-//     marginLeft: '5px',
-//     paddingTop: '-2px',
-//     backgroundColor: 'rgb(255,255,255)',
-//     color: 'rgb(255, 25, 174)',
-// }
+
 const pStyle={
     paddingTop: '6px',
 }
@@ -87,10 +72,6 @@ class AuthManage extends React.Component {
             isPlayerNameEditable:false,
             yxValue:'',
             playerName:'',
-
-
-
-
 
             authGroupData:[       //权限组列表
                 // {authGroupId: 49, authGroupName: "5684", authIds: "1;2;4;"},
@@ -177,15 +158,19 @@ class AuthManage extends React.Component {
     }
 
     getAuthGroupData=()=>{
-        let querystring;
-        let  url = "/root/getAuthGroupList.action"
-        let successmsg = '获取权限组列表';
-        let method = 'POST';
-        apiFetch(url, method, null, successmsg,(res)=>{
-            let {authGroupData} = this.state;
-            let authGroupList = res.data.authGroupInfo;
-            this.setState({authGroupData:authGroupList});
-        });//请求后台
+        getAuthGroupList((list)=>{
+            this.setState({authGroupData:list});
+        })
+
+        // let querystring;
+        // let  url = "/root/getAuthGroupList.action"
+        // let successmsg = '获取权限组列表';
+        // let method = 'POST';
+        // apiFetch(url, method, null, successmsg,(res)=>{
+        //     let {authGroupData} = this.state;
+        //     let authGroupList = res.data.authGroupInfo;
+        //     this.setState({authGroupData:authGroupList});
+        // });//请求后台
     }
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
@@ -213,24 +198,14 @@ class AuthManage extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const {authGroupToUpdate} =this.state;
-                // let giftContentStr = '';
-                // for (let i=0;i<authGroupToUpdate.length;i++){
-                //     let itemStr=authGroupToUpdate[i].wildCard;
-
-                //     let handledStr = '';
-                //     let itemNum = new Array()
-                //     itemNum[0] = authGroupToUpdate[i].num;
-                //     handledStr = this.format(itemStr,itemNum);
-                //     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
-                // }
                 let authGroupId = authGroupToUpdate.length>0?authGroupToUpdate[0].authGroupId:'';
                 let { userName} = values;
-                let querystring = `userName=${userName}&authGroupId=${authGroupId}`;
-                let url = "/root/modityUserAuthGroup.action";
-                let method = 'POST';
-                let successmsg ='修改成功';
-
-                apiFetch(url, method, querystring, successmsg);//请求后台
+                modityUserAuthGroup(userName, authGroupId);
+                // let querystring = `userName=${userName}&authGroupId=${authGroupId}`;
+                // let url = "/root/modityUserAuthGroup.action";
+                // let method = 'POST';
+                // let successmsg ='修改成功';
+                // apiFetch(url, method, querystring, successmsg);//请求后台
             }
         });
     }

@@ -1,13 +1,10 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table, Popconfirm,Modal } from 'antd';
+import { Card, Form, Select, Button, Row, Col, Input, Table, Popconfirm } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
-/**
- * 测试用
- */
+import { getServiceList, getYxList, getItems, sendMail } from '../../api/service';
+
 const buttonStyle = {
     margin: '10px',
     marginLeft:'0px',
@@ -178,17 +175,7 @@ class SendSysDiamond extends React.Component {
                     let playerNameArray = playerName.split('，');
                     playerNameStr = playerNameArray.join(',');
                 }
-                
-                // console.log("playerNameStr0:", playerNameStr0.trim());
-                // let playerNameStr=playerNameStr0.replace(" ", "");
-                // console.log("playerNameStr:", playerNameStr);
-                let querystring = `mailType=${mailType}&serverId=${serverId}&yx=${yx}&playerName=${playerNameStr}&attachmenet=${giftContentStr}&mailContent=${mailContent}&duration=${duration}&title=${title}`
-                let url = "/root/sendMail.action"
-                let method = 'POST'
-                let successmsg = '发送邮件成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-
-                })
+                sendMail(mailType, serverId, yx, playerNameStr, giftContentStr, mailContent, duration, title);
             }
         });
     }
@@ -208,7 +195,6 @@ class SendSysDiamond extends React.Component {
     handleChange(event,tableItem, column){//一个令人疑惑的巨大BUG，这个以及下一个函数内部不能放入console，否则不能打包。其他的地方却不受任何影响，很奇怪
         const {giftPackageItemsData} = this.state;
         let key = tableItem.key;
-        // console.log('handleChange():eventvalue:',event.target.value)
         giftPackageItemsData[key-1].num = event.target.value;
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
@@ -216,7 +202,6 @@ class SendSysDiamond extends React.Component {
         let id = event.target.id;
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
-        // console.log("handleClick():tableItem.num:",tableItem.num);
         if(id==='decrece'){
             giftPackageItemsData[key-1].num = tableItem.num-1>0?tableItem.num-1:1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
@@ -255,7 +240,6 @@ class SendSysDiamond extends React.Component {
     }
 
     onServerChange(v){
-        // console.log("onServerChange()");
         this.getPackageItemList(v);
     }
     onMailTypeChange(v){
@@ -279,48 +263,69 @@ class SendSysDiamond extends React.Component {
         };
         let  serverId  = value;
         const {yxValue} = this.state;
-        const querystring = `serverId=${serverId}&yx=${yxValue}`;
-        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        fetch(`/root/getItems.action`, {
-            credentials: 'include', //发送本地缓存数据
-            method: 'POST',
-            headers: {
-                headers
-            },
-            body: querystring
-        }).then(res => {
-            if (res.status !== 200) {
-                throw new Error('获取礼包信息失败')
-            }
-            return res.json()
-        })
-            .then(res => {
-                let { giftPackageItemsData, key } = this.state;
-                giftPackageItemsData = [];
-                // let items = res.items;
-                let items = res.data.items;
-                if (!items) {
-                    throw new Error('获取礼包信息失败')
-                }
-                message.info("成功获取礼包信息")
 
-                // console.log("getPackageItemList()");
-                key = 1;
-                for (let i = 0; i < items.length; i++) {
-                    let data = items[i]
-                    if(data.name=='元宝'){
-                        let tableItem = Object.assign(data, { key: key ,num:1});
-                        giftPackageItemsData.push(tableItem);
-                        key = key + 1;
-                    }
-                    
+
+        getItems(serverId,yxValue,(list)=>{
+            let giftPackageItemsData=[];
+            for (let i = 0; i < list.length; i++) {
+                let data = list[i]
+                // if(data.name =='元宝'){
+                    if(data.wildCard.split(':')[0]=='sysDiamond'){
+                    // data.wildCard.split(':')[0]=='sysDiamond'
+                    let tableItem = Object.assign(data, {num:1});
+                    giftPackageItemsData.push(tableItem);
+                    // key = key + 1;
                 }
-                this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
-                });
-            }).catch(err => {
-                message.error(err.message ? err.message : '未知错误');
-                this.setState({ giftPackageItemsData: []});
-            })
+            }
+            this.setState({ giftPackageItemsData: giftPackageItemsData}, () => {
+            });
+            // this.setState({ giftPackageItemsData: list });
+        })
+
+
+
+        // const querystring = `serverId=${serverId}&yx=${yxValue}`;
+        // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+        // fetch(`/root/getItems.action`, {
+        //     credentials: 'include', //发送本地缓存数据
+        //     method: 'POST',
+        //     headers: {
+        //         headers
+        //     },
+        //     body: querystring
+        // }).then(res => {
+        //     if (res.status !== 200) {
+        //         throw new Error('获取礼包信息失败')
+        //     }
+        //     return res.json()
+        // })
+        //     .then(res => {
+        //         let { giftPackageItemsData, key } = this.state;
+        //         giftPackageItemsData = [];
+        //         // let items = res.items;
+        //         let items = res.data.items;
+        //         if (!items) {
+        //             throw new Error('获取礼包信息失败')
+        //         }
+        //         message.info("成功获取礼包信息")
+
+        //         // console.log("getPackageItemList()");
+        //         key = 1;
+        //         for (let i = 0; i < items.length; i++) {
+        //             let data = items[i]
+        //             if(data.name=='元宝'){
+        //                 let tableItem = Object.assign(data, { key: key ,num:1});
+        //                 giftPackageItemsData.push(tableItem);
+        //                 key = key + 1;
+        //             }
+                    
+        //         }
+        //         this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
+        //         });
+        //     }).catch(err => {
+        //         message.error(err.message ? err.message : '未知错误');
+        //         this.setState({ giftPackageItemsData: []});
+        //     })
     }
 
     buttonDeleteClick=(item)=>{

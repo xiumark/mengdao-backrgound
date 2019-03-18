@@ -15,9 +15,7 @@ import { Input } from 'antd';
 
 import { Tree } from 'antd';
 const TreeNode = Tree.TreeNode;
-/**
- * 测试用
- */
+
 class EditUser extends React.Component {
     state = {
         value1: 1,

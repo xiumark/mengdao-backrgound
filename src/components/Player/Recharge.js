@@ -1,13 +1,10 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Select, Button, Row, Col, Input } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
-/**
- * 测试用
- */
+import { getServiceList, getYxList, repay } from '../../api/service';
+
 class Rrecharge extends React.Component {
     state = {
         serviceList: [
@@ -50,21 +47,14 @@ class Rrecharge extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                // console.log('从表单中获取的数据是: ', values);
                 let { serverId, playerName, orderId, yx } = values;
-                //serverId可不填
-                const querystring = `serverId=${serverId}&playerName=${playerName}&yx=${yx}&orderId=${orderId}`
-                let url = "/root/repay.action"
-                let method = 'POST'
-                let successmsg = '补单成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-
-                })
+                //补单
+                repay(serverId, playerName, orderId, yx);
             }
         });
     }
     render() {
-        const {filteredServiceList, yxList} = this.state;
+        const { yxList} = this.state;
         const { getFieldDecorator } = this.props.form;
         const { serviceList } = this.state;
         const formItemLayout = {
@@ -121,13 +111,6 @@ class Rrecharge extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>
-                            {/* <FormItem {...formItemLayout} label={"服务器Id"} >
-                                {getFieldDecorator('serverId', {
-                                    rules: [{ required: true, message: '请输入服务器Id' }],
-                                })(
-                                    <Input placeholder="请输入服务器Id" />
-                                )}
-                            </FormItem> */}
                             <FormItem {...formItemLayout} label={"角色名"}>
                                 {getFieldDecorator('playerName', {
                                     rules: [{ required: true, message: '请输入角色名' }],

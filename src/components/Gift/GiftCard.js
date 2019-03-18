@@ -1,11 +1,8 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Button, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
-const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { constants } from 'zlib';
-// import { getServiceList } from '../../api/service'
+import { generateGiftCode,getGiftCodeContents } from '../../api/service';
 /**
  * 礼品卡
  */
@@ -14,29 +11,29 @@ class GiftCard extends React.Component {
         isPersonal:false,
         vid:'',
         giftCode: [
-            {
-                batch:"758",
-                canRepeat:true,
-                createTime:"2018-04-13 20:33:06",
-                expireTime:"2018-04-14 07:52:06",
-                giftContent:"sysDiamond:2:1000:1:0:0:0",
-                vid:1,
-                children: [{
-                    batch:"758",
-                    canRepeat:true,
-                    createTime:"2018-04-13 20:33:06",
-                    expireTime:"2018-04-14 07:52:06",
-                    giftContent:"sysDiamond:2:1000:1:0:0:0",
-                    vid:11,
-                  }, {
-                    batch:"758",
-                    canRepeat:true,
-                    createTime:"2018-04-13 20:33:06",
-                    expireTime:"2018-04-14 07:52:06",
-                    giftContent:"sysDiamond:2:1000:1:0:0:0",
-                    vid:12,
-                  }],
-            },
+            // {
+            //     // batch:"758",
+            //     // canRepeat:true,
+            //     // createTime:"2018-04-13 20:33:06",
+            //     // expireTime:"2018-04-14 07:52:06",
+            //     // giftContent:"sysDiamond:2:1000:1:0:0:0",
+            //     // vid:1,
+            //     // children: [{
+            //     //     batch:"758",
+            //     //     canRepeat:true,
+            //     //     createTime:"2018-04-13 20:33:06",
+            //     //     expireTime:"2018-04-14 07:52:06",
+            //     //     giftContent:"sysDiamond:2:1000:1:0:0:0",
+            //     //     vid:11,
+            //     //   }, {
+            //     //     batch:"758",
+            //     //     canRepeat:true,
+            //     //     createTime:"2018-04-13 20:33:06",
+            //     //     expireTime:"2018-04-14 07:52:06",
+            //     //     giftContent:"sysDiamond:2:1000:1:0:0:0",
+            //     //     vid:12,
+            //     //   }],
+            // },
         ],
         cardWidth: '',
     }
@@ -57,19 +54,12 @@ class GiftCard extends React.Component {
      */
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(['vidname','num'],(err, values) => {
             if (!err) {
                 let { vidname, num, scope} = values;
                 let {giftName,giftVid} = this.state;
-                let querystring = `vid=${giftVid}&num=${num}&scope=${scope}`
-                let url = "/root/generateGiftCode.action"
-                let method = 'POST'
-                let successmsg = '成功生成礼品码'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    // let { giftCode } = this.state;
-                    // giftCode = res.data.giftCode.split(";");
-                    // this.setState({ giftCode: giftCode })
-                })
+                //生成礼品码
+                generateGiftCode(giftVid, num, scope);
             }
         });
     }
@@ -95,29 +85,24 @@ class GiftCard extends React.Component {
                 }
             }
         }
-        // console.log("batchArray:", batchArray);
         return batchArray;
     }
     /** 
      * 获取可选礼品列表
      */
     getGiftCodeContents = (e) => {
-                let url = "/root/getGiftCodeContents.action"
-                let method = 'POST'
-                let successmsg = '礼品获取成功'
-                let querystring=''
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    let { giftCode } = this.state;
-                    giftCode = res.data.contentList.map((item,index)=>{
-                        item.canRepeat = item.canRepeat?'可以':'不可';
-                        item.downloadUrl = item.canDownload?item.downloadUrl:''
-                        return item;
-                    });
+        getGiftCodeContents((list)=>{
+            let { giftCode } = this.state;
+            giftCode = list.map((item,index)=>{
+                item.canRepeat = item.canRepeat?'可以':'不可';
+                item.downloadUrl = item.canDownload?item.downloadUrl:''
+                return item;
+            });
 
-                    let newGiftCode=this.handleBatch(giftCode); //数据处理
-                    this.setState({ giftCode: newGiftCode }, ()=>{
-                    })
-                });
+            let newGiftCode=this.handleBatch(giftCode); //数据处理
+            this.setState({ giftCode: newGiftCode }, ()=>{
+            })
+        });
     }
 
     render() {

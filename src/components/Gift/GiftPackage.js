@@ -1,10 +1,9 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Select, Button, Row, Col, Input, Table } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList, getItems, sendGift } from '../../api/service';
 import { isNotExpired, setSendGiftData } from '../../utils/cache';
 
 const buttonStyle = {
@@ -17,15 +16,6 @@ const buttonAddStyle = {
     marginLeft:'0px',
     width: '80px',
 };
-// const buttonContetStyle={
-//     width: '35px',
-//     height: '30px',
-//     border: '0px',
-//     marginLeft: '5px',
-//     paddingTop: '-2px',
-//     backgroundColor: 'rgb(255,255,255)',
-//     color: 'rgb(255, 25, 174)',
-// }
 const pStyle={
     paddingTop: '6px',
 }
@@ -195,7 +185,6 @@ class GiftPackage extends React.Component {
             giftPackageItemsData[key-1].num = tableItem.num+1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='add'){
-            //向giftContentData添加数据
             const {giftContentData} = this.state;
             let filteredGiftContentData = giftContentData.filter((item)=>{
                 return item.key != key
@@ -241,51 +230,60 @@ class GiftPackage extends React.Component {
     }
 
     getPackageItemList = (yx,serverId) => { //获取礼包信息列表
-                const querystring = `yx=${yx}&serverId=${serverId}`
-                let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-                fetch(`/root/getItems.action`, {
-                    credentials: 'include', //发送本地缓存数据
-                    method: 'POST',
-                    headers: {
-                        headers
-                    },
-                    body: querystring
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw new Error('获取礼包信息失败')
-                    }
-                    return res.json()
-                })
-                    .then(res => {
-                        let { giftPackageItemsData, key } = this.state;
-                        giftPackageItemsData = [];
-                        let items = res.data.items;
-                        if (!items) {
-                            // throw new Error('获取礼包信息失败')
-                            message.info("礼包信息为空")
-                            this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
-                            })
-                        }else{
-                            message.info("成功获取礼包信息")
-                            key = 1;
-                            for (let i = 0; i < items.length; i++) {
-                                let data = items[i]
-                                let tableItem = Object.assign(data, { key: key ,num:1});
-                                giftPackageItemsData.push(tableItem);
-                                key = key + 1;
-                            }
-                            this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
-                            })
-                        }
-                    }).catch(err => {
-                        message.error(err.message ? err.message : '未知错误');
-                        this.setState({ giftPackageItemsData:[]});
-                    })
+        getItems(serverId,yx,(list)=>{
+            let giftPackageItemsData=[];
+            for (let i = 0; i < list.length; i++) {
+                let data = list[i]
+                let tableItem = Object.assign(data, {num:1});
+                giftPackageItemsData.push(tableItem);
+            }
+            this.setState({ giftPackageItemsData: giftPackageItemsData}, () => {
+            });
+        });
+        // const querystring = `yx=${yx}&serverId=${serverId}`
+        // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+        // fetch(`/root/getItems.action`, {
+        //     credentials: 'include', //发送本地缓存数据
+        //     method: 'POST',
+        //     headers: {
+        //         headers
+        //     },
+        //     body: querystring
+        // }).then(res => {
+        //     if (res.status !== 200) {
+        //         throw new Error('获取礼包信息失败')
+        //     }
+        //     return res.json()
+        // })
+        //     .then(res => {
+        //         let { giftPackageItemsData, key } = this.state;
+        //         giftPackageItemsData = [];
+        //         let items = res.data.items;
+        //         if (!items) {
+        //             // throw new Error('获取礼包信息失败')
+        //             message.info("礼包信息为空")
+        //             this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
+        //             })
+        //         }else{
+        //             message.info("成功获取礼包信息")
+        //             key = 1;
+        //             for (let i = 0; i < items.length; i++) {
+        //                 let data = items[i]
+        //                 let tableItem = Object.assign(data, { key: key ,num:1});
+        //                 giftPackageItemsData.push(tableItem);
+        //                 key = key + 1;
+        //             }
+        //             this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 ,giftContentData:[] }, () => {
+        //             })
+        //         }
+        //     }).catch(err => {
+        //         message.error(err.message ? err.message : '未知错误');
+        //         this.setState({ giftPackageItemsData:[]});
+        //     })
     }
 
     handleSubmit = (e) => {//发送礼包
         e.preventDefault();
-        
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 const {giftContentData}=this.state;
@@ -298,27 +296,18 @@ class GiftPackage extends React.Component {
                     handledStr = this.format(itemStr,itemNum);
                     giftContentStr = giftContentStr===''?giftContentStr + handledStr:giftContentStr +';'+ handledStr;
                 }
-
                 let {yx, serverId, giftType, playerName, giftContent, duration, title } = values;
                 this.requestSearch(yx, serverId, giftType, playerName, giftContent, duration, title);
             }
         });
     }
-        //giftContent:{type:1,name:'',wildCard:''}
-        // let str1 =  giftContentStr.split(':')[0]
-        // let str2 =  giftContentStr.split(':')[3]
-        // let str =str1+':'+str2;
+
 
     requestSearch=(yx, serverId, giftType, playerName, giftContent, duration, title)=>{
-        const querystring = `yx=${yx}&serverId=${serverId}&giftType=${giftType}&playerName=${playerName}&giftContent=${giftContent}&duration=${duration}&title=${title}`
-        let url = "/root/sendGift.action"
-        let method = 'POST'
-        let successmsg = '成功发送礼包'
-
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            //请求成功后设置缓存
+        //发送礼包
+        sendGift(yx, serverId, giftType, playerName, giftContent, duration, title,()=>{
             setSendGiftData(yx, serverId, giftType, playerName, giftContent, duration, title);
-        })
+        });
     }
 
     buttonDeleteClick=(item)=>{

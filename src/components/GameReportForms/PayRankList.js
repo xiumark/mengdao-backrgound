@@ -3,12 +3,9 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio } fr
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList,getPayRankList } from '../../api/service';
 import { isNotExpired, setRankListStorage } from '../../utils/cache';
-import moment from 'moment';
 /**
  * 充值排行榜
  */
@@ -134,13 +131,8 @@ class PayRankList extends React.Component {
     }
     
     requestSearch=(serverId, yx)=>{
-        let querystring = `serverId=${serverId}&yx=${yx}`
-        let {rankList} = this.state;
-        let url = "/root/getPayRankList.action"
-        let method = 'POST'
-        let successmsg = '用户充值数据获取成功'
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            this.setState({rankList:res.data.rankList},()=>{
+        getPayRankList(serverId, yx,(list)=>{
+            this.setState({rankList:list},()=>{
                 setRankListStorage(this.state.yx, this.state.serverId);
             })
         })

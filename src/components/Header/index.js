@@ -17,8 +17,6 @@ const logger = Logger.getLogger('Header');
  */
 class Header extends React.PureComponent {
 
-  // parse菜单的过程和sidebar组件差不多, copy&paste
-
   transFormMenuItem(obj, paths) {
     const parentPath = paths.join('/');
     logger.debug('transform %o to path %s', obj, parentPath);
@@ -33,7 +31,6 @@ class Header extends React.PureComponent {
 
   componentWillMount() {
     const paths = [];
-
     // 这一项菜单是必须有的, 不需要在配置文件里配置
     const logoutMenuItem = <MenuItem key="logout">
       <Icon type="logout"/>
@@ -48,7 +45,6 @@ class Header extends React.PureComponent {
       }}>注销</Link>
     </MenuItem>;
 
-    // header右侧必须是用户菜单
     let userMenuItems = null;
 
     const menu = headerMenu.map((level1) => {
@@ -121,13 +117,9 @@ class Header extends React.PureComponent {
     this.userMenu = userMenu;
   }
 
-  // FIXME: 这里其实有个bug, 如果菜单名称很长可能会导致overflow, 出现滚动条
-  // 暂时无法解决..., 怎么调css都不对
-
   render() {
     return (
       <div className="ant-layout-header">
-        {/*定义header中的菜单, 从右向左依次是注销/用户菜单/其他自定义菜单*/}
         <Menu className="header-menu" mode="horizontal">
           {this.userMenu}
           {this.menu}

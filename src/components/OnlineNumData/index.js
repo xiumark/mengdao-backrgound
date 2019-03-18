@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker } from 'antd';
-const FormItem = Form.Item;
-const Option = Select.Option;
-
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList, getOnlineNumData } from '../../api/service';
 import LineArea from './Components/LineArea';
 import './index.less';
 import { isNotExpired, setOlineStorage } from '../../utils/cache';
 import moment from 'moment';
+const FormItem = Form.Item;
+const Option = Select.Option;
 
 class OnlineNumData extends React.Component {
     constructor(props) {
@@ -96,18 +94,24 @@ class OnlineNumData extends React.Component {
     }
 
     requestSearch=(yx, serverId, startTime, endTime)=>{
-        let { onlineNumList } = this.state;
-            let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}`;
-            let url = "/root/getOnlineNumData.action";
-            let method = 'POST';
-            let successmsg = '查询成功';
-            apiFetch(url, method, querystring, successmsg, (res) => {
-                let onlineNumList = res.data.onlineNumList;
-                this.setState({onlineNumList:onlineNumList});
-
-            //请求成功后设置localStorage
+        //查询指定时间段的在线人数
+        getOnlineNumData(yx, serverId, startTime, endTime,(list)=>{
+            let onlineNumList = list;
+            this.setState({onlineNumList:onlineNumList});
             setOlineStorage(yx, serverId, startTime, endTime);
-            });
+        });
+
+
+        // let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}`;
+        // let url = "/root/getOnlineNumData.action";
+        // let method = 'POST';
+        // let successmsg = '查询成功';
+        // apiFetch(url, method, querystring, successmsg, (res) => {
+        //     let onlineNumList = res.data.onlineNumList;
+        //     this.setState({onlineNumList:onlineNumList});
+        //     //请求成功后设置localStorage
+        //     setOlineStorage(yx, serverId, startTime, endTime);
+        // });
     }
 
     render() {

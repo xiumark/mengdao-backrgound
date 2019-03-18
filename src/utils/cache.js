@@ -253,3 +253,33 @@ export function setActivityManageData(activityManageYx, activityManageServerId){
     activityManageYx&&(localStorage.activityManageYx = activityManageYx);
     activityManageServerId&&(localStorage.activityManageServerId=activityManageServerId);
 }
+
+
+
+/**
+ * 设置缓存
+ * 通用的设置缓存的方法
+ * @param paramList  要缓存的参数以及对应的组成的数组 [[key1,value1],[key2,value2]]
+ */
+export function setCacheData(paramList){
+    paramList.map((item)=>{
+        localStorage.item[0] = item[1]; 
+    });
+}
+
+/**
+ * 给表单设置缓存
+ * @param  paramList 这里存储键值对，表单项的名称：对应的值 [[key1,value1],[key2,value2]]
+ * @param props 上下文传入的props
+ */
+export function setInputValue(paramList,props,cb){
+    let expireTime =localStorage.expireTime;  //获取过期时间
+    if(isNotExpired(expireTime)){
+        paramList.map((item)=>{
+            let key = item[0];
+            let value = item[1];
+            key&&props.form.setFieldsValue({key: `${value}`});
+        });
+        cb&&cb();
+    }
+}

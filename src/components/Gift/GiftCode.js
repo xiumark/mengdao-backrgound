@@ -1,13 +1,10 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Select, Button, Row, Col, Input } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList } from '../../api/service'
-/**
- * 测试用
- */
+import { getServiceList, getGiftCode } from '../../api/service'
+
 class GiftCode extends React.Component {
     state = {
         giftCode: [],
@@ -35,12 +32,7 @@ class GiftCode extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 let { giftCodeType, serverId, yx, num, giftContent, duration } = values;
-                //serverId可不填
-                let querystring = `giftCodeType=${giftCodeType}&serverId=${serverId}&yx=${yx}&num=${num}&giftContent=${giftContent}&duration=${duration}`
-                let url = "/root/getGiftCode.action"
-                let method = 'POST'
-                let successmsg = '礼品码获取成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
+                getGiftCode(giftCodeType, serverId, yx, num, giftContent, duration,(res)=>{
                     let { giftCode } = this.state;
                     giftCode = res.data.giftCode.split(";");
                     this.setState({ giftCode: giftCode })
@@ -51,7 +43,7 @@ class GiftCode extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { giftCode, cardWidth, serviceList } = this.state;
+        const { giftCode, serviceList } = this.state;
         let middle = Math.ceil(giftCode.length / 2);
         // Math.ceil(5/2)
         let leftContent = [];

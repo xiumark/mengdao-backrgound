@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio, DatePicker, TimePicker, Popconfirm  } from 'antd';
 import './index.less';
-import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList, createActivity,removeActivity,getAllActivityIds, getCurActiveActivities,createActivityAllServers,removeActivityAllServers } from '../../api/service';
 import { formatTimeByType,TIME_FORMAT_TYPE } from '../../api/lib';
 import moment from 'moment';
@@ -261,7 +260,6 @@ class ActivityManage extends React.Component {
             serverId&&this.props.form.setFieldsValue({serverId: `${serverId}`});
             if(yx&&serverId){
                 this.getAllAndCurActiveActivityIds(yx,serverId);  //获取可配置和已配置的活动信息
-                // this.getCurActiveActivities(yx,serverId);  //获取已配置的活动信息
                 this.setState({yx:yx,serverId:serverId}); 
             }
         }
@@ -294,8 +292,6 @@ class ActivityManage extends React.Component {
         let {yx} = this.state;
         this.setState({serverId:serverId},()=>{
         this.getAllAndCurActiveActivityIds(yx,serverId);  //获取可配置和已配置的活动信息
-        // this.getAllActivityIds(yx,serverId);
-        // this.getCurActiveActivities(yx,serverId);
     })
     }
 
@@ -475,19 +471,10 @@ class ActivityManage extends React.Component {
             //重新请求后台数据,更新已配置活动数据
             this.getAllAndCurActiveActivityIds(yx, serverId);
         })
-
-        // const querystring = `yx=${yx}&serverId=${serverId}&activityId=${activityId}`
-        // let url = "/root/removeActivity.action"
-        // let method = 'POST'
-        // let successmsg = '成功删除活动'
-        // apiFetch(url, method, querystring, successmsg, (res) => {
-        //     //重新请求后台数据,更新已配置活动数据
-        //     this.getCurActiveActivities(yx, serverId);
-        // })
     }
 
     render() {
-        const {filteredServiceList, yxList, allActivityIdsItemsData, curActiveActivitiesItemsData,successList,errorList, isCreate,isAllServer,editMethod} = this.state;
+        const {filteredServiceList, yxList, allActivityIdsItemsData, curActiveActivitiesItemsData,successList,errorList,isAllServer,editMethod} = this.state;
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -497,18 +484,6 @@ class ActivityManage extends React.Component {
             wrapperCol: {
                 xs: { span: 24 },
                 sm: { span: 14 },
-            },
-        };
-        const tailFormItemLayout = {
-            wrapperCol: {
-                xs: {
-                    span: 24,
-                    offset: 0,
-                },
-                sm: {
-                    span: 14,
-                    offset: 6,
-                },
             },
         };
 

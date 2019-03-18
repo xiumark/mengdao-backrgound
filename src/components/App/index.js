@@ -10,7 +10,7 @@ import Login from '../Login';
 import Breadcrumb from '../Breadcrumb';
 import Welcome from '../Welcome';
 import './index.less';
-import globalConfig from 'config.js';
+import globalConfig from '../../config.js';
 import ajax from '../../utils/ajax';
 import Logger from '../../utils/Logger';
 import sidebarMenu, { headerMenu } from '../../menu.js';
@@ -24,7 +24,6 @@ const logger = Logger.getLogger('App');
  * 定义整个页面的布局
  */
 class App extends React.Component {
-
 
   // 登录逻辑:
   // 1. 初始化时, 先尝试获取已登录的用户, 因为可能还留着上次登录的cookie
@@ -44,11 +43,9 @@ class App extends React.Component {
    * tab模式是指添加以tab的显示方式
    */
   componentWillMount() {
-    // 如果不是tab模式直接返回
     if (globalConfig.tabMode.enable !== true) {
       return;
     }
-
     this.tabTitleMap = this.parseTabTitle();
     this.updateTab(this.props);
   }
@@ -82,7 +79,6 @@ class App extends React.Component {
     let hide = null;
     if (!this.props.login) {
       hide = message.loading('正在获取用户信息...', 0);
-
       try {
         hide();
         // 先从本地cookie里获取sessionId,若能获取到,且没有过期
@@ -126,7 +122,7 @@ class App extends React.Component {
     // 如果服务端说没有登录, 就要跳转到sso或者login组件
     if (globalConfig.isSSO() && !globalConfig.debug) {
       // debug模式不支持调试单点登录
-      // 因为没有单点登录的地址啊...跳不回来
+      // 因为没有单点登录的地址
       logger.debug('not login, redirect to SSO login page');
       const redirect = encodeURIComponent(window.location.href);
       window.location.href = `${globalConfig.login.sso}${redirect}`;
@@ -311,7 +307,6 @@ class App extends React.Component {
         }
       }
     }
-    // debugger;
 
     if (!this.props.login || (!loginState)) {
       return <Login />;

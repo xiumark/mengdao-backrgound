@@ -44,6 +44,7 @@ import ActivityManage from './components/Gift/ActivityManage';
 
 import AuthManage from './components/User/AuthManage';          //权限管理
 import AuthGroupManage from './components/User/AuthGroupManage';//权限组管理
+import Safety from './components/User/Safety';//权限组管理
 import NoticeManage from './components/Gift/NoticeManage';      //公告管理
 import SendTextEmail from './components/Player/SendTextEmail';      //发送文字邮件
 import SendSysDiamond from './components/Player/SendSysDiamond';      //发送元宝
@@ -53,10 +54,7 @@ import ServerPageNotice from './components/ServerManagement/ServerPageNotice';
 import ServerPageState from './components/ServerManagement/ServerPageState';     
 import ServerPageWhiteList from './components/ServerManagement/ServerPageWhiteList';
 
-
-
-//import DBTable from './components/DBTable';
-import Login from '../src/components/Login';
+import ComponentTest from './components/User/ComponentTest';//通用组件的测试
 
 // 将DBTable组件做成动态路由, 减小bundle size
 // 注意不要再import DBTable了, 不然就没意义了
@@ -79,13 +77,15 @@ const routes = (
       <Route path="/" component={App}>
         <Route path="userManagement">
           <Route path="addUser" component={AddUser} />
-          <Route path="editUser" component={EditUser} />
           <Route path="authManage" component={AuthManage} />
           <Route path="authGroupManage" component={AuthGroupManage} />
+          <Route path="safety" component={Safety} />
+          <Route path="componentTest" component={ComponentTest} />
           
-          <Route path="passwordReset" component={PasswordReset} />
-          <Route path="thawAccount" component={ThawAccount} />
-          <Route path="deleteUser" component={DeleteUser} />
+          {/* <Route path="editUser" component={EditUser} /> */}
+          {/* <Route path="passwordReset" component={PasswordReset} /> */}
+          {/* <Route path="thawAccount" component={ThawAccount} /> */}
+          {/* <Route path="deleteUser" component={DeleteUser} /> */}
         </Route>
         {/* <Route path="operationManagement">
           <Route path="operator">
@@ -141,7 +141,6 @@ const routes = (
         <Route path="*" component={Error} />
       </Route>
       <Route path="logout" component={Hello} />
-
     </Router>
   </Provider>
 );

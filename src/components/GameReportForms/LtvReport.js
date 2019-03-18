@@ -5,8 +5,7 @@ const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList, getLtvReport } from '../../api/service';
 import { isNotExpired, setLtvReportStorage } from '../../utils/cache';
 import moment from 'moment';
 /**
@@ -109,17 +108,11 @@ class LtvReport extends React.Component {
     }
 
     requestSearch=(yx, serverId,startDayStr, endDayStr,type)=>{
-        let { ltvReports } = this.state;
-        let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}&type=${type}`;
-        let url = "/root/getLtvReport.action";
-        let method = 'POST';
-        let successmsg = '查询成功';
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            let ltvReports = res.data.ltvReports;
-            this.setState({ltvReports:ltvReports});
+        getLtvReport(yx, serverId,startDayStr, endDayStr,type,(list)=>{
+            this.setState({ltvReports:list});
             //请求成功后设置localStorage
             setLtvReportStorage(yx, serverId, startDayStr, endDayStr, type);
-        });
+        },undefined);
     }
 
     onServerChange=(value)=>{

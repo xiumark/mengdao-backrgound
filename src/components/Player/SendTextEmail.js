@@ -3,7 +3,6 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList, requestSendPureMail } from '../../api/service';
 
 const buttonStyle = {
@@ -192,57 +191,6 @@ class SendEmail extends React.Component {
         }else{
             this.setState({isPersonal: false,mailType:'2'});
         }
-    }
-        
-    getPackageItemList = (v) => { //获取礼包信息列表
-        let value = v;
-        if(value=='等待置为空'){
-            value='';
-            this.props.form.setFieldsValue({playerName:'',mailType:'2'})
-            this.setState({mailTypeList:[{mailType:'2',name:'单服邮件', key:2}],isPlayerNameEditable:true, isPersonal:false});
-        }else{
-            this.setState({mailTypeList:[{mailType:'1',name:'个人邮件', key:1},{mailType:'2',name:'单服邮件', key:2}],isPlayerNameEditable:false})
-        };
-        let  serverId  = value;
-        const {yxValue} = this.state;
-        const querystring = `serverId=${serverId}&yx=${yxValue}`;
-        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        fetch(`/root/getItems.action`, {
-            credentials: 'include', //发送本地缓存数据
-            method: 'POST',
-            headers: {
-                headers
-            },
-            body: querystring
-        }).then(res => {
-            if (res.status !== 200) {
-                throw new Error('获取礼包信息失败')
-            }
-            return res.json()
-        })
-            .then(res => {
-                let { giftPackageItemsData, key } = this.state;
-                giftPackageItemsData = [];
-                let items = res.data.items;
-                if (!items) {
-                    throw new Error('获取礼包信息失败')
-                }
-                message.info("成功获取礼包信息")
-                key = 1;
-                for (let i = 0; i < items.length; i++) {
-                    let data = items[i]
-                    if(data.name!='元宝'){
-                        let tableItem = Object.assign(data, { key: key ,num:1});
-                        giftPackageItemsData.push(tableItem);
-                        key = key + 1;
-                    }
-                }
-                this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
-                });
-            }).catch(err => {
-                message.error(err.message ? err.message : '未知错误');
-                this.setState({ giftPackageItemsData: []});
-            })
     }
 
     render() {

@@ -1,12 +1,8 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Button, message, Row, Col, Input } from 'antd';
 const FormItem = Form.Item;
-const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-/**
- * 测试用
- */
+
 class RoleContainer extends React.Component {
     state = {
         value1: 1,

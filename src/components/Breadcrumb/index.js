@@ -8,7 +8,7 @@ const Item = Breadcrumb.Item;
 const logger = Logger.getLogger('Breadcrumb');
 
 /**
- * 定义面包屑导航, 由于和已有的组件重名, 所以改个类名
+ * 定义面包屑导航
  */
 class Bread extends React.PureComponent {
 

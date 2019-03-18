@@ -1,13 +1,10 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table, Popconfirm,Modal } from 'antd';
+import { Card, Form, Select, Button, Row, Col, Input, Table, Popconfirm } from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
-/**
- * 测试用
- */
+import { getServiceList, getYxList, getItems, sendMail } from '../../api/service';
+
 const buttonStyle = {
     margin: '10px',
     marginLeft:'0px',
@@ -178,17 +175,7 @@ class SendEmail extends React.Component {
                     let playerNameArray = playerName.split('，');
                     playerNameStr = playerNameArray.join(',');
                 }
-                
-                // console.log("playerNameStr0:", playerNameStr0.trim());
-                // let playerNameStr=playerNameStr0.replace(" ", "");
-                // console.log("playerNameStr:", playerNameStr);
-                let querystring = `mailType=${mailType}&serverId=${serverId}&yx=${yx}&playerName=${playerNameStr}&attachmenet=${giftContentStr}&mailContent=${mailContent}&duration=${duration}&title=${title}`
-                let url = "/root/sendMail.action"
-                let method = 'POST'
-                let successmsg = '发送邮件成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-
-                })
+                sendMail(mailType, serverId, yx, playerNameStr, giftContentStr, mailContent, duration, title);
             }
         });
     }
@@ -279,46 +266,60 @@ class SendEmail extends React.Component {
         };
         let  serverId  = value;
         const {yxValue} = this.state;
-        const querystring = `serverId=${serverId}&yx=${yxValue}`;
-        let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        fetch(`/root/getItems.action`, {
-            credentials: 'include', //发送本地缓存数据
-            method: 'POST',
-            headers: {
-                headers
-            },
-            body: querystring
-        }).then(res => {
-            if (res.status !== 200) {
-                throw new Error('获取礼包信息失败')
+        getItems(serverId,yxValue,(list)=>{
+            let giftPackageItemsData=[];
+            for (let i = 0; i < list.length; i++) {
+                let data = list[i]
+                // if(data.name!='元宝'){
+                    if(data.wildCard.split(':')[0]!=='sysDiamond'){
+                    let tableItem = Object.assign(data, {num:1});
+                    giftPackageItemsData.push(tableItem);
+                    // key = key + 1;
+                }
             }
-            return res.json()
+            this.setState({ giftPackageItemsData: giftPackageItemsData}, () => {
+            });
+            // this.setState({ giftPackageItemsData: list });
         })
-            .then(res => {
-                let { giftPackageItemsData, key } = this.state;
-                giftPackageItemsData = [];
-                // let items = res.items;
-                let items = res.data.items;
-                if (!items) {
-                    throw new Error('获取礼包信息失败')
-                }
-                message.info("成功获取礼包信息")
-                // console.log("getPackageItemList()");
-                key = 1;
-                for (let i = 0; i < items.length; i++) {
-                    let data = items[i]
-                    if(data.name!='元宝'){
-                        let tableItem = Object.assign(data, { key: key ,num:1});
-                        giftPackageItemsData.push(tableItem);
-                        key = key + 1;
-                    }
-                }
-                this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
-                });
-            }).catch(err => {
-                message.error(err.message ? err.message : '未知错误');
-                this.setState({ giftPackageItemsData: []});
-            })
+
+        // const querystring = `serverId=${serverId}&yx=${yxValue}`;
+        // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+        // fetch(`/root/getItems.action`, {
+        //     credentials: 'include', //发送本地缓存数据
+        //     method: 'POST',
+        //     headers: {
+        //         headers
+        //     },
+        //     body: querystring
+        // }).then(res => {
+        //     if (res.status !== 200) {
+        //         throw new Error('获取礼包信息失败')
+        //     }
+        //     return res.json()
+        // })
+        //     .then(res => {
+        //         let { giftPackageItemsData, key } = this.state;
+        //         giftPackageItemsData = [];
+        //         let items = res.data.items;
+        //         if (!items) {
+        //             throw new Error('获取礼包信息失败')
+        //         }
+        //         message.info("成功获取礼包信息")
+        //         key = 1;
+        //         for (let i = 0; i < items.length; i++) {
+        //             let data = items[i]
+        //             if(data.name!='元宝'){
+        //                 let tableItem = Object.assign(data, { key: key ,num:1});
+        //                 giftPackageItemsData.push(tableItem);
+        //                 key = key + 1;
+        //             }
+        //         }
+        //         this.setState({ giftPackageItemsData: giftPackageItemsData, key: key + 1 }, () => {
+        //         });
+        //     }).catch(err => {
+        //         message.error(err.message ? err.message : '未知错误');
+        //         this.setState({ giftPackageItemsData: []});
+        //     })
     }
 
     buttonDeleteClick=(item)=>{

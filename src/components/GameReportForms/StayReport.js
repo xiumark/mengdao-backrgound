@@ -5,8 +5,7 @@ const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList,getStayReport } from '../../api/service';
 import { isNotExpired, setStayReportStorage } from '../../utils/cache';
 import moment from 'moment';
 
@@ -109,17 +108,22 @@ class StayReport extends React.Component {
     }
 
     requestSearch=(yx, serverId,startDayStr, endDayStr, type)=>{
-        let { stayReports } = this.state;
-        let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}&type=${type}`;
-        let url = "/root/getStayReport.action";
-        let method = 'POST';
-        let successmsg = '查询成功';
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            let stayReports = res.data.stayReports;
-            this.setState({stayReports:stayReports});
+        getStayReport(yx, serverId,startDayStr, endDayStr, type,(list)=>{
+            this.setState({stayReports:list});
             //请求成功后设置localStorage
             setStayReportStorage(yx, serverId, startDayStr, endDayStr, type);
-        });
+        })
+
+        // let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}&type=${type}`;
+        // let url = "/root/getStayReport.action";
+        // let method = 'POST';
+        // let successmsg = '查询成功';
+        // apiFetch(url, method, querystring, successmsg, (res) => {
+        //     let stayReports = res.data.stayReports;
+        //     this.setState({stayReports:stayReports});
+        //     //请求成功后设置localStorage
+        //     setStayReportStorage(yx, serverId, startDayStr, endDayStr, type);
+        // });
     }
 
     onServerChange=(value)=>{

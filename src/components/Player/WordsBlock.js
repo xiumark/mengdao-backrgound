@@ -1,14 +1,11 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Select, Button, Row, Col, Input, Radio } from 'antd';
+const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch, apiFetchNomsg } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service'
-import {QueryType} from './BanAndLift';
-/**
- * 测试用
- */
+import { getServiceList, getYxList, getPlayerInfo, QueryType, banChat,unbanChat } from '../../api/service'
+
 class WordsBlock extends React.Component {
     state = {
         value1: 1,
@@ -30,7 +27,8 @@ class WordsBlock extends React.Component {
         ],
         isSilenced:false,
         reason:'',
-        endTime:''
+        endTime:'',
+        handleTypeState:'1',    //查询方式
     }
 
     /**
@@ -38,32 +36,24 @@ class WordsBlock extends React.Component {
      */
     silence = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(['serverId','yx','playerName','reason','duration'],(err, values) => {
             let { serverId, playerName, reason='', duration='' ,yx} = values;
-            let querystring = `playerId=${QueryType.PLAYERNAME}&serverId=${serverId}&yx=${yx}&playerName=${playerName}&reason=${reason}&duration=${duration}`
-            let url = "/root/banChat.action"
-            let method = 'POST';
-            let successmsg = (reason!==''&&duration!=='')?'禁言成功':'请填写原因和期限';
-            apiFetch(url, method, querystring, successmsg, (res) => {
-                this.queryState(e);
-            })
+            banChat(serverId, playerName, reason, duration ,yx,()=>{
+                this.queryState();
+            });
         })
     }
 
-    queryState=(e)=>{
-        // e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+    queryState=()=>{
+        this.props.form.validateFields(['serverId','yx','playerName'],(err, values) => {
             let { serverId, playerName, yx} = values;
-            let querystring = `playerId=${QueryType.PLAYERNAME}&yx=${yx}&serverId=${serverId}&playerName=${playerName}`
-            let url = "/root/playerInfo.action"
-            let method = 'POST'
-            let successmsg = undefined
-            apiFetchNomsg(url, method, querystring, successmsg, (res) => {
-                let silenceInfo = res.data.playerList[0].silenceInfo;
-                this.setState({isSilenced:silenceInfo.isSilenced, reason:silenceInfo.reason, endTime:silenceInfo.endTime});
-            });
+            getPlayerInfo('playerName', serverId, playerName, undefined, yx, QueryType.PLAYERNAME,(list)=>{
+                if(list&&list[0]&&list[0].silenceInfo){
+                    let silenceInfo = list[0].silenceInfo;
+                    this.setState({isSilenced:silenceInfo.isSilenced, reason:silenceInfo.reason, endTime:silenceInfo.endTime});
+                }
+            },true);  
         })
-
     }
 
     componentDidMount() {
@@ -92,23 +82,24 @@ class WordsBlock extends React.Component {
      */
     unSilence = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(['serverId', 'playerName' ,'yx'],(err, values) => {
             if (!err) {
-                let { serverId, playerName, reason='', duration='',yx } = values;
-                let querystring = `playerId=${QueryType.PLAYERNAME}&serverId=${serverId}&playerName=${playerName}&yx=${yx}`
-                let url = "/root/unbanChat.action"
-                let method = 'POST'
-                let successmsg = '解除禁言成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    this.queryState(e);
-                })
+                let { serverId, playerName, yx } = values;
+                    unbanChat(serverId, playerName ,yx,()=>{
+                    this.queryState();
+                });
             }
         });
     }
+
+    //处理单选框
+    checkChange = (e)=>{
+        this.setState({handleTypeState:e.target.value});
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
-        const {filteredServiceList, yxList} = this.state;
-        const { serviceList, isSilenced,reason,endTime } = this.state;
+        const {filteredServiceList, yxList, isSilenced, reason, endTime, handleTypeState } = this.state;
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -137,6 +128,23 @@ class WordsBlock extends React.Component {
                     <Card >
                         {/* <Form layout="inline" onSubmit={this.unSilence}> */}
                         <Form  style={{ minHeight:302, width: "100%" }}>
+                            <FormItem
+                                {...formItemLayout}
+                                label="操作类型"
+                                >
+                                {getFieldDecorator('queryType', {
+                                    initialValue: '1' ,
+                                    rules: [
+                                        { required: true, message: '请选择查询方式' },
+                                    ],
+                                })(
+                                    <RadioGroup onChange={this.checkChange}>
+                                        <Radio value="1">查询状态</Radio>
+                                        <Radio value="2">解除禁言</Radio>
+                                        <Radio value="3">禁言</Radio>
+                                    </RadioGroup>
+                                )}
+                            </FormItem>
                             <FormItem {...formItemLayout} label="渠道" >
                                 {getFieldDecorator('yx', {
                                     rules: [
@@ -170,34 +178,36 @@ class WordsBlock extends React.Component {
                                     <Input placeholder="请输入角色名" />
                                 )}
                             </FormItem>
+                            {this.state.handleTypeState==HandleType.SILENCE&&
                             <FormItem {...formItemLayout} label={"封禁原因"}>
                             {getFieldDecorator('reason', {
-                                // rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
+                                rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
                             })(
                                 <Input placeholder="请输入封禁原因" />
                             )}
-                            </FormItem>
+                            </FormItem>}
+                            {this.state.handleTypeState==HandleType.SILENCE&&
                             <FormItem {...formItemLayout} label={"封禁时间"}>
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                    rules: [{ required: true, message: '请输入滚动次数' }],
                                 })(
                                     <Input placeholder="请输入封禁时间（分钟）" />
                                 )}
-                            </FormItem>
+                            </FormItem>}
                             <Row>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" htmlType="submit"  onClick={this.queryState}>查询状态</Button>
+                                        <Button type="primary" htmlType="submit" disabled={(this.state.handleTypeState!=HandleType.QUERY_STATE)} onClick={this.queryState}>查询状态</Button>
                                     </FormItem>
                                 </Col>  
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" disabled={!isSilenced} htmlType="submit" onClick={this.unSilence} >解除禁言</Button>
+                                        <Button type="primary" disabled={(this.state.handleTypeState!=HandleType.UNSILENCE)} htmlType="submit" onClick={this.unSilence} >解除禁言</Button>
                                     </FormItem>
                                 </Col>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" htmlType="submit" disabled={isSilenced} onClick={this.silence}>禁言</Button>
+                                        <Button type="primary" htmlType="submit" disabled={(this.state.handleTypeState!=HandleType.SILENCE)} onClick={this.silence}>禁言</Button>
                                     </FormItem>
                                 </Col>
                             </Row>
@@ -231,3 +241,10 @@ class WordsBlock extends React.Component {
     }
 }
 export default Form.create()(WordsBlock);
+
+
+const HandleType = {
+    QUERY_STATE:'1',//查询状态
+    UNSILENCE:'2',  //解除禁言
+    SILENCE:'3',    //禁言
+}

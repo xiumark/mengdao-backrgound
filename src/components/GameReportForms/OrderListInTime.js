@@ -5,8 +5,7 @@ const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList,getOrderListInTime } from '../../api/service';
 import { isNotExpired, setOrderListStorage } from '../../utils/cache';
 import moment from 'moment';
 /**
@@ -148,15 +147,11 @@ class OrderListInTime extends React.Component {
      * @param containType:0:成功订单；1：全部订单；2：失败订单
     */
     requestSearch=(yx, serverId, startTime, endTime, currPage, numPerPage, containType)=>{
-        let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}&currPage=${currPage}&numPerPage=${numPerPage}&containFail=1`
-        let url = "/root/getOrderListInTime.action"
-        let method = 'POST'
-        let successmsg = '查询成功';
-        let sucList=[];
-        let failList = [];
-        let allList = [];
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            let orderList = res.data.orderList;
+        getOrderListInTime(yx, serverId, startTime, endTime, currPage, numPerPage,(list)=>{
+            let sucList=[];
+            let failList = [];
+            let allList = [];
+            let orderList = list;
             for(let i=0;i<orderList.length;i++){
                 switch(orderList[i].state){
                     //新建（错误）
@@ -196,7 +191,7 @@ class OrderListInTime extends React.Component {
                 break;
             }
             //请求成功后设置localStorage
-            if(res.data.orderList.length!==0){
+            if(list.length!==0){
                 setOrderListStorage(yx, serverId, startTime, endTime, currPage, numPerPage, containType);
             }
         })

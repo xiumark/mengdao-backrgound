@@ -1,13 +1,11 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'antd';
+import { Card, Form, Select, Button, Row, Col, Input,Radio } from 'antd';
+import './index.less';
+import { getServiceList, getYxList, QueryType, getPlayerInfo, unbanUser, banUser } from '../../api/service';
 const FormItem = Form.Item;
 const Option = Select.Option;
-import './index.less';
-import { apiFetch, apiFetchNomsg } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
-/**
- * 测试用
- */
+const RadioGroup = Radio.Group;
+
 class BanAndLift extends React.Component {
     state = {
         value1: 1,
@@ -29,7 +27,8 @@ class BanAndLift extends React.Component {
         ],
         isBlocked:false,
         reason:'',
-        endTime:''
+        endTime:'',
+        handleTypeState:'1',
     }
 
     componentDidMount() {
@@ -57,30 +56,27 @@ class BanAndLift extends React.Component {
      */
     block = (e) => { //获取权限列表
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            let { playerName, serverId, reason='', duration='',yx } = values;
-            let querystring = `playerId=${QueryType.PLAYERNAME}&playerName=${playerName}&serverId=${serverId}&yx=${yx}&reason=${reason}&duration=${duration}`
-            let url = "/root/banUser.action"
-            let method = 'POST'
-            let successmsg = (reason!==''&&duration!=='')?'封禁成功':'请填写原因和期限'
-            apiFetch(url, method, querystring, successmsg, (res) => {
-                this.queryState(e);
-            })
+        this.props.form.validateFields(['serverId','yx','playerName','reason','duration'],(err, values) => {
+            if (!err) {
+                let { playerName, serverId, reason='', duration='',yx } = values;
+                banUser(playerName, serverId, reason, duration,yx,()=>{
+                    this.queryState();
+                })
+            }
         })
     }
 
-    queryState=(e,successmsg)=>{
-        // e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            let { serverId, playerName, yx} = values;
-            let querystring = `playerId=${QueryType.PLAYERNAME}&serverId=${serverId}&playerName=${playerName}&yx=${yx}`
-            let url = "/root/playerInfo.action"
-            let method = 'POST'
-            // let successmsg = '查询成功'
-            apiFetchNomsg(url, method, querystring, successmsg, (res) => {
-                let blockInfo = res.data.playerList[0].blockInfo;
-                this.setState({isBlocked:blockInfo.isBlocked, reason:blockInfo.reason, endTime:blockInfo.endTime});
-            });
+    queryState=()=>{
+        this.props.form.validateFields(['serverId','yx','playerName'],(err, values) => {
+            if (!err) {
+                let { serverId , yx, playerName} = values;
+                getPlayerInfo('playerName', serverId, playerName, undefined, yx, QueryType.PLAYERNAME,(list)=>{
+                    if(list&&list[0]&&list[0].silenceInfo){
+                        let silenceInfo = list[0].silenceInfo;
+                        this.setState({isSilenced:silenceInfo.isSilenced, reason:silenceInfo.reason, endTime:silenceInfo.endTime});
+                    }
+                },true);  //不需要展示提示消息
+            }
         })
     }
 
@@ -89,18 +85,19 @@ class BanAndLift extends React.Component {
      */
     unBlock = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(['serverId','yx','playerName'],(err, values) => {
             if (!err) {
-                let { playerName, serverId ,reason, duration, yx} = values;
-                let querystring = `playerId=${QueryType.PLAYERNAME}&playerName=${playerName}&serverId=${serverId}&yx=${yx}`
-                let url = "/root/unbanUser.action"
-                let method = 'POST'
-                let successmsg ='解除封禁成功'
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    this.queryState(e);
+                let { serverId , yx, playerName} = values;
+                unbanUser(playerName, serverId,yx,()=>{
+                    this.queryState();
                 })
             }
         });
+    }
+
+    //处理单选框
+    checkChange = (e)=>{
+        this.setState({handleTypeState:e.target.value});
     }
     render() {
         const {filteredServiceList, yxList} = this.state;
@@ -132,8 +129,24 @@ class BanAndLift extends React.Component {
             <Row>
                 <Col className="gutter-row" md={12}>
                     <Card >
-                        {/* <Form layout="inline" onSubmit={this.unBlock}> */}
                         <Form  style={{ minHeight:302, width: "100%" }}>
+                            <FormItem
+                                {...formItemLayout}
+                                label="操作类型"
+                                >
+                                {getFieldDecorator('queryType', {
+                                    initialValue: '1' ,
+                                    rules: [
+                                        { required: true, message: '请选择查询方式' },
+                                    ],
+                                })(
+                                    <RadioGroup onChange={this.checkChange}>
+                                        <Radio value="1">查询状态</Radio>
+                                        <Radio value="2">解除封禁</Radio>
+                                        <Radio value="3">封禁</Radio>
+                                    </RadioGroup>
+                                )}
+                            </FormItem>
                             <FormItem {...formItemLayout} label="渠道" >
                                     {getFieldDecorator('yx', {
                                         rules: [
@@ -167,34 +180,36 @@ class BanAndLift extends React.Component {
                                     <Input placeholder="请输入角色名" />
                                 )}
                             </FormItem>
+                            {this.state.handleTypeState==HandleType.BLOCK&&
                             <FormItem {...formItemLayout} label={"封禁原因"}>
                                 {getFieldDecorator('reason', {
-                                    // rules: [{ required: true, message: '请输入封禁原因' }],
+                                    rules: [{ required: true, message: '请输入封禁原因' }],
                                 })(
                                     <Input placeholder="请输入封禁原因" />
                                 )}
-                            </FormItem>
+                            </FormItem>}
+                            {this.state.handleTypeState==HandleType.BLOCK&&
                             <FormItem {...formItemLayout} label={"封禁时间"}>
                                 {getFieldDecorator('duration', {
-                                    // rules: [{ required: true, message: '请输入封禁时间' }],
+                                    rules: [{ required: true, message: '请输入封禁时间' }],
                                 })(
                                     <Input placeholder="请输入封禁时间（分钟）" />
                                 )}
-                            </FormItem>
+                            </FormItem>}
                             <Row>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" htmlType="submit" onClick={this.queryState}>查询状态</Button>
+                                        <Button type="primary" htmlType="submit" disabled={(this.state.handleTypeState!=HandleType.QUERY_STATE)} onClick={this.queryState}>查询状态</Button>
                                     </FormItem>
                                 </Col>  
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" disabled={!isBlocked} htmlType="submit" onClick={this.unBlock} >解除封禁</Button>
+                                        <Button type="primary" disabled={!isBlocked} htmlType="submit" disabled={(this.state.handleTypeState!=HandleType.UNBLOCK)} onClick={this.unBlock} >解除封禁</Button>
                                     </FormItem>
                                 </Col>
                                 <Col sm={8} md={8}>
                                     <FormItem {...tailFormItemLayout}>
-                                        <Button type="primary" htmlType="submit" disabled={isBlocked} onClick={this.block}>封禁</Button>
+                                        <Button type="primary" htmlType="submit" disabled={isBlocked} disabled={(this.state.handleTypeState!=HandleType.BLOCK)} onClick={this.block}>封禁</Button>
                                     </FormItem>
                                 </Col>
                             </Row>
@@ -205,7 +220,7 @@ class BanAndLift extends React.Component {
                     <Card title='角色状态:'>
                         <FormItem {...formItemLayout}>
                                 {getFieldDecorator('mailContent', {
-                                    // rules: [{ required: true, message: '请输入滚动次数' }],
+                                    // rules: [{ required: true, message: '' }],
                                 })(
                                     <div style={{ minHeight:230, width: "100%" }} placeholder="显示角色状态" >
                                         <div>
@@ -233,8 +248,14 @@ class BanAndLift extends React.Component {
 // }
 export default Form.create()(BanAndLift);
 
-export const  QueryType = {
-    PLAYERID: 3,   //通过玩家id查询
-    USERID:2,     //通过角色id查询
-    PLAYERNAME: 1  //通过玩家名查询
+// export const  QueryType = {
+//     PLAYERNAME: 1,  //通过玩家名查询
+//     USERID:2,     //通过角色id查询
+//     PLAYERID: 3,   //通过玩家id查询
+// }
+
+const HandleType = {
+    QUERY_STATE:'1',//查询状态
+    UNBLOCK:'2',  //解除禁言
+    BLOCK:'3',    //禁言
 }

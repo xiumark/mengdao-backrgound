@@ -3,11 +3,8 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList,getAuthList } from '../../api/service';
-/**
- * 测试用
- */
+import { getServiceList, getYxList, getAuthList, handleAuthGroup,AuthManageType,getAuthGroupList } from '../../api/service';
+
 const buttonStyle = {
     margin: '10px',
     marginLeft:'0px',
@@ -73,15 +70,11 @@ class AuthGroupManage extends React.Component {
             yxValue:'',
             playerName:'',
 
-           
-            
             authGroupData:[       //权限组列表
                 // {authGroupId: 49, authGroupName: "5684", authIds: "1;2;4;"},
                 // {authGroupId: 50, authGroupName: "5684", authIds: "1;2;4;"},
 
             ],
-
-
 
             allAuthListData:[
                 // {authId: 11, authName: "发送邮件"},
@@ -94,7 +87,6 @@ class AuthGroupManage extends React.Component {
                 // {authId: 17, authName: "发送邮件"},
             ],
             key:'',
-
         };
         this.columns = [
 
@@ -161,13 +153,14 @@ class AuthGroupManage extends React.Component {
 
     //获取权限组列表
     getAuthGroupData=()=>{
-        let  url = "/root/getAuthGroupList.action"
-        let successmsg = '刷新权限组列表';
-        let method = 'POST';
-        apiFetch(url, method, null, successmsg,(res)=>{
-            let authGroupList = res.data.authGroupInfo;
-            this.setState({authGroupData:authGroupList});
-        });
+        setTimeout(()=>{
+            getAuthGroupList((list)=>{
+                this.setState({authGroupData:list});
+                // if(this.state.key==AuthManageType.DELETE){
+                    this.props.form.setFieldsValue({authGroupId:'',authGroupName:'',authList:[]});
+                // }
+            });
+        },500,this)
     }
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
@@ -220,33 +213,36 @@ class AuthGroupManage extends React.Component {
     }
 
     handleAuthGroup = (e,key) => { 
+        this.setState({key:key})
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { authGroupName, authGroupId,auths} = values;
+                let { authGroupName, authGroupId} = values;
                 let authStr = this.getAuthStr();
-                let querystring;
-                let url;
-                let successmsg;
-                let method = 'POST'
-                if(key==AuthManageType.CREATE){      //创建权限组
-                    querystring = `authGroupName=${authGroupName}&auths=${authStr}`;
-                    url = "/root/createAuthGroup.action"
-                    successmsg = '创建成功';
-                }else if(key==AuthManageType.MODIFY){//修改权限组
-                    querystring = `authGroupId=${authGroupId}&auths=${authStr}`;
-                    url = "/root/modifyAuthGroup.action"
-                    successmsg = '修改成功';
-                }else if(key==AuthManageType.DELETE){//删除权限组
-                    querystring = `authGroupId=${authGroupId}`;
-                    url = "/root/deleteAuthGroup.action"
-                    successmsg = '删除成功';
-                }
-                this.setState({key:key})
-
-                apiFetch(url, method, querystring, successmsg,()=>{
+                handleAuthGroup(key,authGroupName, authGroupId,authStr,()=>{
                     this.getAuthGroupData();
                 });
+
+                // let querystring;
+                // let url;
+                // let successmsg;
+                // let method = 'POST'
+                // if(key==AuthManageType.CREATE){      //创建权限组
+                //     querystring = `authGroupName=${authGroupName}&auths=${authStr}`;
+                //     url = "/root/createAuthGroup.action"
+                //     successmsg = '创建成功';
+                // }else if(key==AuthManageType.MODIFY){//修改权限组
+                //     querystring = `authGroupId=${authGroupId}&auths=${authStr}`;
+                //     url = "/root/modifyAuthGroup.action"
+                //     successmsg = '修改成功';
+                // }else if(key==AuthManageType.DELETE){//删除权限组
+                //     querystring = `authGroupId=${authGroupId}`;
+                //     url = "/root/deleteAuthGroup.action"
+                //     successmsg = '删除成功';
+                // }
+                // apiFetch(url, method, querystring, successmsg,()=>{
+                //     this.getAuthGroupData();
+                // });
             }
         });
     }
@@ -439,8 +435,8 @@ class AuthGroupManage extends React.Component {
 export default Form.create()(AuthGroupManage);
 
 
-const  AuthManageType = {
-    CREATE: '创建',    //创建权限组
-    MODIFY: '修改',    //修改权限组
-    DELETE: '删除',    //删除权限组
-}
+// export const  AuthManageType = {
+//     CREATE: '创建',    //创建权限组
+//     MODIFY: '修改',    //修改权限组
+//     DELETE: '删除',    //删除权限组
+// }

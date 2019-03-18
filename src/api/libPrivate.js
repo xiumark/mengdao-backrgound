@@ -1,8 +1,8 @@
 import moment from 'moment';
 /**
- * 工具库
- * 
+ * 工具库，针对该项目的私有工具库
  */
+
 
 /**
  * 局格式化后台返回的数据,设置key
@@ -60,4 +60,5 @@ export const  TIME_FORMAT_TYPE = {
     BEFORE_FIVE: 0,   //格式化到：04:59:59
     FIVE: 1,    //格式化到：05:00:00
 }
+
 

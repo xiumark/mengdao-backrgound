@@ -15,14 +15,12 @@ const logger = Logger.getLogger('Login');
  * 定义Login组件
  */
 class Login extends React.PureComponent {
-  // login样式: https://colorlib.com/wp/html5-and-css3-login-forms/
 
   state = {
-    userName: 'admin',  // 当前输入的用户名
+    userName: 'admin',                             // 当前输入的用户名
     password: 'a384b6463fc216a5f8ecb6670f86456a',  // 当前输入的密码
-    command: 'login', // post 一起传入的参数
-    requesting: false, // 当前是否正在请求服务端接口
-    // authList:'',
+    command: 'login',                              // post 一起传入的参数
+    requesting: false,                             // 当前是否正在请求服务端接口
   };
 
 
@@ -41,7 +39,6 @@ class Login extends React.PureComponent {
   // 登陆请求回调处理
   handleAfterLogin = (json, param) => {
     let authList = json.data.auths&&json.data.auths.split(':');   //权限标识列表：1,2,3,4...23
-    // authList=['1','2','3','4','5','6','7','8','9'];//测试数据
     let { login } = this.props;
     let state = json.state;
     let requesting = this.state.requesting;
@@ -75,14 +72,11 @@ class Login extends React.PureComponent {
   }
 
   /**
-   * 处理表单的submit事件
-   *
-   * @param e
+   * 请求登录
    */
-  handleSubmit = (e) => {  // async可以配合箭头函数
-    e.preventDefault();  // 这个很重要, 防止跳转
+  handleSubmit = (e) => {
+    e.preventDefault();                    // 这个很重要, 防止跳转
     this.setState({ requesting: true });
-
     // 显示正在验证文字,且在请求回来之前,一直显示
     message.loading('正在验证...', 0);
     const userName = this.state.userName;
@@ -97,11 +91,6 @@ class Login extends React.PureComponent {
         password: password,
         command: command
       };
-      // fetch('/root/gateway.action?command=login&userName=admin&password=8df63d1f54b38da0e10db1e3de95be63')
-      // .then(res=>res.json())
-      // .then(res=>{
-      //   console.log(res)
-      // })
       ajax.login(userName, password, command, this.handleAfterLogin, param, this.handleAfterLoginFail, param);
     } catch (exception) {
       message.error(`网络请求出错: ${exception.message}`);

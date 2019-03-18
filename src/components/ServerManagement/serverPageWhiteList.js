@@ -1,8 +1,7 @@
 import React from 'react';
 import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio, DatePicker, TimePicker, Popconfirm  } from 'antd';
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList,getUserWhite,setUserWhite } from '../../api/service';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import { isNotExpired } from '../../utils/cache';
@@ -121,12 +120,7 @@ class serverPageWhiteList extends React.Component {
     
     //请求获取白名单列表
     getAllUserWhiteData=(yx)=>{
-        const querystring = `yx=${yx}`
-        let url = "/root/getUserWhite.action"
-        let method = 'POST'
-        let successmsg = '成功获得游戏服列表'
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            let list = res.data.whiteList;
+        getUserWhite(yx,(list)=>{
             let objList=[];
             if(list&&list.length>0){
                 for(let i=0;i<list.length;i++){
@@ -150,11 +144,7 @@ class serverPageWhiteList extends React.Component {
     }
 
     requestSetUserWhite=(yx, uid)=>{
-        const querystring = `yx=${yx?yx:''}&uid=${uid?uid:''}`
-        let url = "/root/setUserWhite.action"
-        let method = 'POST'
-        let successmsg = '成功设置游戏状态'
-        apiFetch(url, method, querystring, successmsg, (res) => {
+        setUserWhite(yx,uid,()=>{
             this.onGetUserWhite();   //刷新页面
         })
     }

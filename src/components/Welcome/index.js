@@ -10,13 +10,12 @@ class Welcome extends React.PureComponent {
     return (
       <div>
         <h1 className="welcome-text">
-          <a target="_blank" href="http:www.baidu.com">welcome</a>
+          <a target="_blank" href="http:www.baidu.com">敬请期待</a>
           <br />
         </h1>
       </div>
     );
   }
-
 }
 
 export default Welcome;

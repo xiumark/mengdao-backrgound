@@ -3,8 +3,7 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList, getOnlineTimeData } from '../../api/service';
 import { isNotExpired, setOnlineTimeData } from '../../utils/cache';
 import moment from 'moment';
 /**
@@ -84,17 +83,11 @@ class OnlineTimeData extends React.Component {
     }
 
     requestSearch=(yx, serverId,startDayStr, endDayStr)=>{
-        let { onlineTimeReports } = this.state;
-        let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startDayStr}&endTime=${endDayStr}`;
-        let url = "/root/getOnlineTimeData.action";
-        let method = 'POST';
-        let successmsg = '查询成功';
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            let onlineTimeReports = res.data.onlineTimeReports;
-            this.setState({onlineTimeReports:onlineTimeReports});
+        getOnlineTimeData(yx, serverId,startDayStr, endDayStr,(list)=>{
+            this.setState({onlineTimeReports:list});
             //请求成功后设置localStorage
             setOnlineTimeData(yx, serverId,startDayStr, endDayStr);
-        });
+        })
     }
 
     onServerChange=(value)=>{
@@ -104,7 +97,6 @@ class OnlineTimeData extends React.Component {
     onYxChange=(value)=>{
         this.setState({yx:value})
     }
-
 
     stringifyData=(data)=>{
         let dataStr = '日期'+'\t'+'登陆人数'+'\t'+'总在线时长(秒)'+'\t'+'总在线时长'+'\t'+'平均在线时长(秒)'+'\t'+'平均在线时长'+'\n';

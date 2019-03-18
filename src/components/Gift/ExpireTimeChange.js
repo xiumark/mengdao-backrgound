@@ -1,15 +1,7 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker, TimePicker, Popconfirm } from 'antd';
-const FormItem = Form.Item;
-const Option = Select.Option;
+import { Card, Form, Table, DatePicker } from 'antd';
 import './index.less';
-import { apiFetch,apiFetchNomsg } from '../../api/api'
-import { constants } from 'zlib';
-// import { getServiceList } from '../../api/service'
-/**
- * 
- */
-
+import {  getGiftCodeContents, changeGiftCodeExpireTime } from '../../api/service'
 
 const EditableCell = ({ editable, value, onChange }) => (
     <div>
@@ -39,29 +31,29 @@ class ExpireTimeChange extends React.Component {
         isPersonal:false,
         vid:'',
         giftCode: [
-            {
-                batch:"758",
-                canRepeat:true,
-                createTime:"2018-04-13 20:33:06",
-                expireTime:"2018-04-14 07:52:06",
-                giftContent:"sysDiamond:2:1000:1:0:0:0",
-                vid:1,
-                children: [{
-                    batch:"758",
-                    canRepeat:true,
-                    createTime:"2018-04-13 20:33:06",
-                    expireTime:"2018-04-14 07:52:06",
-                    giftContent:"sysDiamond:2:1000:1:0:0:0",
-                    vid:11,
-                  }, {
-                    batch:"758",
-                    canRepeat:true,
-                    createTime:"2018-04-13 20:33:06",
-                    expireTime:"2018-04-14 07:52:06",
-                    giftContent:"sysDiamond:2:1000:1:0:0:0",
-                    vid:12,
-                  }],
-            },
+            // {
+                // batch:"758",
+                // canRepeat:true,
+                // createTime:"2018-04-13 20:33:06",
+                // expireTime:"2018-04-14 07:52:06",
+                // giftContent:"sysDiamond:2:1000:1:0:0:0",
+                // vid:1,
+                // children: [{
+                //     batch:"758",
+                //     canRepeat:true,
+                //     createTime:"2018-04-13 20:33:06",
+                //     expireTime:"2018-04-14 07:52:06",
+                //     giftContent:"sysDiamond:2:1000:1:0:0:0",
+                //     vid:11,
+                //   }, {
+                //     batch:"758",
+                //     canRepeat:true,
+                //     createTime:"2018-04-13 20:33:06",
+                //     expireTime:"2018-04-14 07:52:06",
+                //     giftContent:"sysDiamond:2:1000:1:0:0:0",
+                //     vid:12,
+                //   }],
+            // },
         ],
         newGiftCode:[],
         cardWidth: '',
@@ -69,8 +61,6 @@ class ExpireTimeChange extends React.Component {
     componentWillMount() {
         this.getGiftCodeContents();
     }
-
-
 
     renderColumns=(text, record, column)=> {
         return (
@@ -84,9 +74,7 @@ class ExpireTimeChange extends React.Component {
 
     handleChange=(value, key, column)=> {
         value=value.format('YYYY-MM-DD HH:mm:ss');
-        const {vidTochange,expireTimeTochange} = this.state;
         this.setState({vidTochange:key,expireTimeTochange:value});
-        // this.changeGiftCodeExpireTime(key,value)
     }
 
     onClick = (item)=>{
@@ -113,7 +101,7 @@ class ExpireTimeChange extends React.Component {
             delete target.editable;
             this.setState({ giftCode: giftCode });
         }
-        this.changeGiftCodeExpireTime(vidTochange,expireTimeTochange)
+        this.requestChangeGiftCodeExpireTime(vidTochange,expireTimeTochange)
     }
 
     cancel=(key)=> {
@@ -152,34 +140,23 @@ class ExpireTimeChange extends React.Component {
      * 获取可选礼品列表
      */
     getGiftCodeContents = (e) => {
-                let url = "/root/getGiftCodeContents.action"
-                let method = 'POST'
-                let successmsg = '礼品获取成功'
-                let querystring=''
-                apiFetch(url, method, querystring, successmsg, (res) => {
-                    let { giftCode } = this.state;
-                    giftCode = res.data.contentList.map((item,index)=>{
-                        item.canRepeat = item.canRepeat?'可以':'不可';
-                        item.downloadUrl = item.canDownload?item.downloadUrl:''
-                        return item;
-                    });
-
-                    let newGiftCode=this.handleBatch(giftCode); //数据处理
-                    this.setState({ giftCode: newGiftCode }, ()=>{
-                    })
-                });
+        getGiftCodeContents((list)=>{
+            let { giftCode } = this.state;
+            giftCode = list.map((item,index)=>{
+                item.canRepeat = item.canRepeat?'可以':'不可';
+                item.downloadUrl = item.canDownload?item.downloadUrl:''
+                return item;
+            });
+            let newGiftCode = this.handleBatch(giftCode); //数据处理
+            this.setState({ giftCode: newGiftCode }, ()=>{
+            })
+        })
     }
 
-    changeGiftCodeExpireTime=(vid,expireTime)=>{
-        const{giftCode} = this.state;
-        //vid duration
-        let url = "/root/changeGiftCodeExpireTime.action"
-            let method = 'POST'
-            let successmsg = '过期时间修改成功'
-            const querystring =`vid=${vid}&expireTime=${expireTime}`
-            apiFetch(url, method, querystring, successmsg, (res) => {
-                this.getGiftCodeContents()
-            });
+    requestChangeGiftCodeExpireTime=(vid,expireTime)=>{
+        changeGiftCodeExpireTime(vid,expireTime,()=>{
+            this.getGiftCodeContents()
+        })
     }
 
     render() {

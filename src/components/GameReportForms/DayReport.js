@@ -3,8 +3,7 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table, DatePicker
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList, getDayReport } from '../../api/service';
 import { isNotExpired,setDayReportStorage } from '../../utils/cache';
 import moment from 'moment';
 /**
@@ -18,7 +17,28 @@ class DayReport extends React.Component {
             {yx: "ab", serverId: 20000, serverName: "sg_banshu2", serverState: 1},
             {yx: "ab", serverId: 30000, serverName: "sg_banshu3", serverState: 0},
         ],
-        dayReports:[],  //运营日报数据
+        dayReports:[
+            {
+                "dayStr": "2018-04-21",            // 日期
+                "registerNum": 0,                  // 注册数
+                "createRoleNum": 0,                // 创角数
+                "createRoleRatio": "0%",           // 创角率
+                "activeRoleNum": 0,                // 活跃玩家数
+                "maxOnlineNum": 0,                 // 最高在线人数
+                "maxOnlineTime": "2018-04-22 18:26:42", // 最高在线时刻
+                "payTimes": 0,                     // 付费次数
+                "roleNumPayed": 0,                 // 付费人数
+                "paySum": 0,                       // 付费总额(元)
+                "activePayRatio": "0%",            // 活跃玩家付费率
+                "payArpu": "0",                    // 付费玩家ARPU值
+                "activeArpu": "0",                 // 活跃玩家ARPU值
+                "newRoleNumPayed": 0,              // 新增付费玩家数
+                "newRolePaySum": 0,                // 新增玩家付费总额(元)
+                "newRolePayRatio": "0%",           //  新增玩家付费率
+                "newRoleArpu": "0",                // 新增玩家ARPU值
+                "oldRoleArpu": "0"                 // 老玩家ARPU值
+            }
+        ],  //运营日报数据
         serverId:'',
         yx:''
     }
@@ -118,16 +138,10 @@ class DayReport extends React.Component {
 
     //请求运营日报
     requestSearch=(yx, serverId,startDayStr, endDayStr)=>{
-        let { dayReports } = this.state;
-        let querystring = `yx=${yx}&serverId=${serverId}&startDayStr=${startDayStr}&endDayStr=${endDayStr}`;
-        let url = "/root/getDayReport.action";
-        let method = 'POST';
-        let successmsg = '查询成功';
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            let dayReports = res.data.dayReports;
-            this.setState({dayReports:dayReports});
-             //请求成功后设置localStorage
-             setDayReportStorage(yx, serverId,startDayStr, endDayStr);
+        getDayReport(yx, serverId,startDayStr, endDayStr,(list)=>{
+            this.setState({dayReports:list});
+            //请求成功后设置localStorage
+            setDayReportStorage(yx, serverId,startDayStr, endDayStr);
         });
     }
 

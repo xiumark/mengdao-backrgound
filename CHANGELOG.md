@@ -1,4 +1,4 @@
-## 1.4.0
+<!-- ## 1.4.0
 
 * 新增“TAB模式”, 可以平行显示多个菜单项了, 参考[DEMO](http://jiangxy.github.io/react-antd-admin/tabMode)
     * 使用TAB模式有一些注意事项, 相关说明见[关于TAB模式](docs/TabMode.md)
@@ -63,6 +63,4 @@
 * 侧边栏可以折叠了，子菜单也支持图标
 * header菜单可以配置
 * 修复Login组件样式上的一些问题
-* antd升级到2.6.1；react/babel的版本也升级了下；引入redux
-
-详见[DEMO](http://jiangxy.github.io/react-antd-admin)
+* antd升级到2.6.1；react/babel的版本也升级了下；引入redux -->

@@ -3,8 +3,7 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList, getAllNoticeList } from '../../api/service';
+import { getServiceList, getYxList, getAllNoticeList, modifyNotice, deleteNotice } from '../../api/service';
 
 const buttonAddStyle = {
     margin: '10px',
@@ -129,21 +128,28 @@ class NoticeManage extends React.Component {
                 let querystring;
                 let url;
                 if(key==NoticeType.MODIFY){   //修改公告
-                    querystring = `yx=${yxValue}&serverId=${serverId}&noticeId=${noticeId}&content=${content}`;
-                    url = "/root/modifyNotice.action"
+                    modifyNotice(yxValue,serverId,noticeId,content,()=>{
+                        this.getAllNoticeList();
+                    });
+                    // querystring = `yx=${yxValue}&serverId=${serverId}&noticeId=${noticeId}&content=${content}`;
+                    // url = "/root/modifyNotice.action"
                 }else if(key==NoticeType.DELETE){//删除公告;
-                    querystring =  `yx=${yxValue}&serverId=${serverId}&noticeId=${noticeId}`;
-                    url = "/root/deleteNotice.action"
-                }
-                let method = 'POST'
-                let successmsg = e.target.id==NoticeType.MAIL?'修改成功':'删除成功';
-
-                apiFetch(url, method, querystring, successmsg,()=>{
-                    if(key==NoticeType.DELETE){
+                    deleteNotice(yxValue,serverId,noticeId,()=>{
                         this.props.form.setFieldsValue({noticeId:'',content:''});
-                    }
-                    this.getAllNoticeList();
-                });//请求后台
+                        this.getAllNoticeList();
+                    });
+                    // querystring =  `yx=${yxValue}&serverId=${serverId}&noticeId=${noticeId}`;
+                    // url = "/root/deleteNotice.action"
+                }
+                // let method = 'POST'
+                // let successmsg = e.target.id==NoticeType.MAIL?'修改成功':'删除成功';
+
+                // apiFetch(url, method, querystring, successmsg,()=>{
+                //     if(key==NoticeType.DELETE){
+                //         this.props.form.setFieldsValue({noticeId:'',content:''});
+                //     }
+                //     this.getAllNoticeList();
+                // });//请求后台
             }
         });
     }
@@ -183,54 +189,6 @@ class NoticeManage extends React.Component {
         getAllNoticeList(serverId,yxValue,(list)=>{
             this.setState({ allNoticeList: list});
         })
-
-        // const {yxValue,serverId} = this.state;
-        // const querystring = `serverId=${serverId}&yx=${yxValue}`;
-        // let headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
-        // let url = '/root/getAllNotices.action';
-        // let method = 'POST'
-        // let successmsg = '获取公告信息';
-
-        // apiFetch(url, method, querystring, successmsg,(res)=>{
-            
-        // });//请求后台
-
-        // fetch(`/root/getAllNotices.action`, {
-        //     credentials: 'include', //发送本地缓存数据
-        //     method: 'POST',
-        //     headers: {
-        //         headers
-        //     },
-        //     body: querystring
-        // }).then(res => {
-        //     if (res.status !== 200) {
-        //         throw new Error('获取公告信息失败')
-        //     }
-        //     return res.json()
-        // })
-        //     .then(res => {
-        //         let { allNoticeList, key } = this.state;
-        //         allNoticeList = [];
-        //         let items = res.data.notices;
-        //         if (!items) {
-        //             message.info("公告信息为空")
-        //             this.setState({ allNoticeList: [] }, () => {
-        //             });
-        //         }else{
-        //             key = 1;
-        //             for (let i = 0; i < items.length; i++) {
-        //                 let data = items[i]
-        //                 let tableItem = Object.assign(data, { key: key});
-        //                 allNoticeList.push(tableItem);
-        //                 key = key + 1;
-        //             }
-        //             this.setState({ allNoticeList: allNoticeList, key: key + 1 }, () => {
-        //             });
-        //         }
-        //     }).catch(err => {
-        //         message.error(err.message ? err.message : '未知错误');
-        //         this.setState({ allNoticeList: []});
-        //     })
     }
 
     buttonDeleteClick=(item)=>{

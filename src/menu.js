@@ -16,20 +16,30 @@ const sidebarMenu = [
     child: [
       {
         key: 'addUser',
-        name: '新增用户',
+        name: '用户管理',
         authIndex:'1',
         // icon: 'play-circle',   // 二级三级菜单也可以带图标
       },
-      {
-        key: 'AuthManage',
-        name: '权限管理',
-        authIndex:'26',            //====26=====================================待更新
-      },
+      // {
+      //   key: 'AuthManage',
+      //   name: '权限管理',
+      //   authIndex:'26',            //====26=====================================待更新
+      // },
       {
         key: 'AuthGroupManage',
         name:'权限组管理',
         authIndex:'26',            //=========26================================待更新
       },
+      {
+        key: 'safety',
+        name:'安全中心',            //修改密码（使用用户管理的权限）
+        authIndex:'1',            
+      },
+      // {
+      //   key: 'componentTest',
+      //   name:'组件封装测试',            //创建一个通用组件的测试容器
+      //   authIndex:'1',            
+      // },
       // {
       //   key: 'getAuthList',
       //   name: '获取权限列表',
@@ -41,7 +51,7 @@ const sidebarMenu = [
       // },
       // {
       //   key: 'passwordReset',
-      //   name: '重置密码',
+      //   name: '重置密码',   //34
       //   // icon: 'bulb',
       // },
       // {

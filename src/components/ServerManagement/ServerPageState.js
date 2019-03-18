@@ -1,12 +1,10 @@
 import React from 'react';
-import { Card, Form, Select, Button, message, Row, Col, Input, Table, Radio, DatePicker, TimePicker, Popconfirm  } from 'antd';
+import { Card, Form, Select, Button, message, Row, Col, Table, Radio } from 'antd';
 import './index.less';
-import { apiFetch } from '../../api/api'
 import { getServiceList, getYxList, getAllServerStateData, requestSetServerState } from '../../api/service';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
-import { setActivityManageData } from '../../utils/cache';
 
 class ServerPageState extends React.Component {
     constructor(props){
@@ -30,12 +28,17 @@ class ServerPageState extends React.Component {
             yx:'',
             serverId:'',
             allServerStateData: [//游戏服状态信息
+                {yx:'渠道1', serverId:"1", serverName:"sg_banshu1",  serverState:1,},
+                {yx:'渠道2', serverId:"2", serverName:"sg_banshu2",  serverState:2,},
+                {yx:'渠道3', serverId:"3", serverName:"sg_banshu3",  serverState:3,},
+                {yx:'渠道4', serverId:"4", serverName:"sg_banshu4",  serverState:4,},
             ],
             serverStateToChange:
             {
             },
         };
 
+        /**游戏服状态显示 */
         this.columnsAll = [
             {
                 title: '渠道',
@@ -53,29 +56,68 @@ class ServerPageState extends React.Component {
                 key: 'serverName',
             },
             {
-                title: '区服状态',
+                title: '区服状态标识',
                 dataIndex: 'serverState',
-                key: 'serverState',
+                key:'serverState',
+                width: '15%',
+                render: (textValue, tableItem) => this.renderServerState(textValue, tableItem, 'serverState'),
             },
             {
                 title: '操作',
                 dataIndex: 'handle',
                 key:'handle',
-                width: '25%',
-                render: (textValue, tableItem) => this.renderColumns(textValue, tableItem, 'handle'),
+                width: '35%',
+                render: (textValue, tableItem) => this.renderHandleType(textValue, tableItem, 'handle'),
             },
         ];
-        this.renderColumns = this.renderColumns.bind(this);
+        this.renderHandleType = this.renderHandleType.bind(this);
         this.chooseServerState = this.chooseServerState.bind(this);
         this.onServerChange = this.onServerChange.bind(this);
-        this.checkChange = this.checkChange.bind(this);
+    }
+    
+    //渲染单服操作选项
+    renderHandleType(textValue, tableItem, column) {
+        return (
+            <div>
+                <RadioGroup onChange={(event)=>this.checkSingleStateChange(event, tableItem, column)} value={tableItem.serverState+''}>
+                    <Radio value="1">新服</Radio>
+                    <Radio value="2">火爆</Radio>
+                    <Radio value="3">维护</Radio>
+                    <Radio value="4">关闭</Radio>
+                </RadioGroup>
+            </div>
+        );
     }
 
-
-    renderColumns(textValue, tableItem, column) {
+    //用颜色和文本标识状态
+    renderServerState(textValue, tableItem, column) {
         return (
-            <div><button onClick ={(event) => this.chooseServerState(event, tableItem, column)}>选择本服</button></div>
+            <div>
+                <button style={{backgroundColor:this.getServerStateColor(tableItem.serverState), minWidth:'60'}} onClick ={(event) => this.chooseServerState(event, tableItem, column)}>{this.getServerStateText(tableItem.serverState)}</button>
+            </div>
         );
+    }
+
+    getServerStateColor = (serverState)=>{
+        if((serverState==ServerState.HOT)){     //火爆
+            return ServerStateColor.HOT;
+        }else if(serverState==ServerState.NEW){ //新服
+            return ServerStateColor.NEW;
+        }else{                                  //维护||关闭
+            return ServerStateColor.MAINTENANCE;
+        }
+    }
+    
+    getServerStateText = (serverState)=>{
+        if((serverState==ServerState.HOT)){             //火爆
+            return '火爆';
+        }else if(serverState==ServerState.NEW){         //新服
+            return '新服';
+        }else if(serverState==ServerState.MAINTENANCE){ //维护
+            return '维护';
+        }else if(serverState==ServerState.CLOSE){       //关闭
+            return '关闭';
+        }
     }
 
     componentDidMount() {
@@ -85,11 +127,18 @@ class ServerPageState extends React.Component {
         })
     }
 
-    checkChange(e){
+    //全服状态操作
+    checkYxStateChange=(e)=>{
         this.props.form.setFieldsValue({
             serverState:e.target.value
           });
-        this.setState({serverState:e.target.value});   //时间模式
+        this.setState({serverState:e.target.value});  
+    }
+
+    //单服状态修改
+    checkSingleStateChange=(event, tableItem, column)=>{
+        let v = event.target.value;
+        this.requestSetServerState(tableItem.yx, tableItem.serverId, v);
     }
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
@@ -136,9 +185,8 @@ class ServerPageState extends React.Component {
         });
     }
 
-
-    //设置区服状态
-    onSetServerState=(e)=>{
+    //设置全渠道区服状态
+    onSetYxServerState=(e)=>{
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -147,14 +195,12 @@ class ServerPageState extends React.Component {
             }
         });
     }
-
+    
     requestSetServerState=(yx, serverId, serverState)=>{
         requestSetServerState(yx, serverId, serverState,()=>{
             this.onGetClick();
         })
     }
-
-
 
     render() {
         const {filteredServiceList, yxList, allServerStateData, serverState} = this.state;
@@ -184,8 +230,8 @@ class ServerPageState extends React.Component {
 
         return <div>
             <Row>
-                <Col className="gutter-row" md={12}>
-                    <Card title="活动开启">
+                <Col className="gutter-row" md={8}>
+                    <Card title="全服操作">
                         <Form id="serverPageState">
                             <Row>
                                 <Col className="gutter-row">
@@ -202,29 +248,18 @@ class ServerPageState extends React.Component {
                                             </Select>
                                         )}
                                     </FormItem>
-                                    <FormItem {...formItemLayout} label="服务器名称" >
-                                        {getFieldDecorator('serverId', {
-                                            rules: [
-                                                { required: true, message: '请选择服务器名称' },
-                                            ],
-                                        })(
-                                            <Select placeholder="请选择服务器名称" onChange={(value)=>this.onServerChange(value)}>
-                                                {filteredServiceList.map((item, index) => {
-                                                    return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
-                                                })}
-                                            </Select>
-                                        )}
-                                    </FormItem>
                                     <FormItem
                                         {...formItemLayout}
-                                        label="游戏服状态"
+                                        label="操作方式"
                                         >
-                                        {getFieldDecorator('serverState')(
-                                            <RadioGroup onChange={this.checkChange}>
-                                            <Radio value="1">新服</Radio>
-                                            <Radio value="2">火爆</Radio>
-                                            <Radio value="3">维护</Radio>
-                                            <Radio value="4">关闭</Radio>
+                                        {getFieldDecorator('serverState', {
+                                            rules: [
+                                                { required: true, message: '请选操作方式' },
+                                            ],
+                                        })(
+                                            <RadioGroup onChange={this.checkYxStateChange}>
+                                            <Radio value="1">一键火爆</Radio>
+                                            <Radio value="2">一键维护</Radio>
                                             </RadioGroup>
                                         )}
                                     </FormItem>
@@ -232,15 +267,15 @@ class ServerPageState extends React.Component {
                             </Row>
                             <Row>
                                 <FormItem {...tailFormItemLayout} >
-                                    <Button type="primary" htmlType="submit" onClick = {this.onSetServerState}>修改状态</Button>
+                                    <Button type="primary" htmlType="submit" onClick = {this.onSetYxServerState}>确认</Button>
                                 </FormItem>
                             </Row>
                         </Form>
                     </Card>
                 </Col>
-                <Col md={12}>
-                    <Card title="游戏服状态">
-                        <Button type="primary"  style={{ marginBottom: 20}} onClick = {this.onGetClick}>获取游戏服</Button>
+                <Col md={16}>
+                    <Card title="单服操作">
+                        {/* <Button type="primary"  style={{ marginBottom: 20}} onClick = {this.onGetClick}>获取游戏服</Button> */}
                         <Table pagination={{ pageSize: 10 }} columns={this.columnsAll} dataSource={allServerStateData} size={'small'} />
                     </Card>
                 </Col>
@@ -249,3 +284,20 @@ class ServerPageState extends React.Component {
     }
 }
 export default Form.create()(ServerPageState);
+
+
+//1新服2火爆3维护4关闭
+const ServerState = {
+    NEW:'1',            //新服
+    HOT:'2',            //火爆
+    MAINTENANCE:'3',    //维护
+    CLOSE:'4',          //关闭
+}
+
+//不同状态的颜色显示
+const ServerStateColor = {
+    NEW:'#75E356',            //新服(推荐)
+    HOT:'#FF6600',            //火爆
+    MAINTENANCE:'#999999',    //维护
+    CLOSE:'#999999',          //关闭
+}

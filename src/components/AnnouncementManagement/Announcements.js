@@ -3,11 +3,11 @@ import { Card, Form, Select, Button, message, Row, Col, Input, Table } from 'ant
 const FormItem = Form.Item;
 const Option = Select.Option;
 import './index.less';
-import { apiFetch } from '../../api/api'
-import { getServiceList, getYxList } from '../../api/service';
+import { getServiceList, getYxList, sendNotice, setUpdateNotice } from '../../api/service';
 import { isNotExpired, setAnnouncementData } from '../../utils/cache';
+
 /**
- * 测试用
+ *发送公告和更新公告
  */
 class Announcements extends React.Component {
     state = {
@@ -75,18 +75,12 @@ class Announcements extends React.Component {
        });
     }
 
-    
     handleButtonClick = (e) => { //更新公告内容
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let { content } = values;
-        })
-        let querystring = `content=${content.value}`
-        let url = "/root/setUpdateNotice.action"
-        let method = 'POST'
-        let successmsg = '更新公告内容成功'
-        apiFetch(url, method, querystring, successmsg, (res) => {
-
+             //更新公告
+            setUpdateNotice(content);                         
         })
     }
 
@@ -102,14 +96,9 @@ class Announcements extends React.Component {
     }
 
     requestSearch=(yx, serverId, noticeType, duration, times, content)=>{
-        let querystring = `yx=${yx}&serverId=${serverId}&noticeType=${noticeType}&duration=${duration}&times=${times}&content=${content}`
-        let url = "/root/sendNotice.action"
-        let method = 'POST'
-        let successmsg = '发送公告成功'
-        apiFetch(url, method, querystring, successmsg, (res) => {
-            //数据请求成功后设置缓存
+        sendNotice(yx, serverId, noticeType, duration, times, content,()=>{
             setAnnouncementData(yx, serverId, noticeType, duration, times, content);
-        })
+        });
     }
 
     render() {
@@ -181,14 +170,6 @@ class Announcements extends React.Component {
                                     </Select>
                                 )}
                             </FormItem>
-
-                            {/* <FormItem {...formItemLayout} label={"服务器Id"}>
-                                {getFieldDecorator('serverId', {
-                                    // rules: [{ required: true, message: '请输入服务器Id' }],
-                                })(
-                                    <Input placeholder="服务器Id" />
-                                )}
-                            </FormItem> */}
                             <FormItem {...formItemLayout} label={"公告持续时间"}>
                                 {getFieldDecorator('duration', {
                                     rules: [{ required: true, message: '请输入公告持续时间（分钟）' }],
