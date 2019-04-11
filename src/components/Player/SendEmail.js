@@ -196,7 +196,7 @@ class SendEmail extends React.Component {
         const {giftPackageItemsData} = this.state;
         let key = tableItem.key;
         // console.log('handleChange():eventvalue:',event.target.value)
-        giftPackageItemsData[key-1].num = event.target.value;
+        giftPackageItemsData[key].num = event.target.value;
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
     handleClick(event, tableItem, column){
@@ -205,10 +205,10 @@ class SendEmail extends React.Component {
         const {giftPackageItemsData} = this.state;
         // console.log("handleClick():tableItem.num:",tableItem.num);
         if(id==='decrece'){
-            giftPackageItemsData[key-1].num = tableItem.num-1>0?tableItem.num-1:1;
+            giftPackageItemsData[key].num = parseInt(tableItem.num)-1>0?parseInt(tableItem.num)-1:1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='increce'){
-            giftPackageItemsData[key-1].num = tableItem.num+1;
+            giftPackageItemsData[key].num = parseInt(tableItem.num)+1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='add'){
             //向giftContentData添加数据
@@ -268,13 +268,14 @@ class SendEmail extends React.Component {
         const {yxValue} = this.state;
         getItems(serverId,yxValue,(list)=>{
             let giftPackageItemsData=[];
+            let key = 0;
             for (let i = 0; i < list.length; i++) {
                 let data = list[i]
                 // if(data.name!='元宝'){
-                    if(data.wildCard.split(':')[0]!=='sysDiamond'){
-                    let tableItem = Object.assign(data, {num:1});
+                    if((data.wildCard.split(':')[0]!=='sysDiamond')&&(data.wildCard.split(':')[0]!=='gov')){
+                    let tableItem = Object.assign(data, {num:1},{key:key});   //重写key
                     giftPackageItemsData.push(tableItem);
-                    // key = key + 1;
+                    key++;
                 }
             }
             this.setState({ giftPackageItemsData: giftPackageItemsData}, () => {

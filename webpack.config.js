@@ -29,12 +29,11 @@ module.exports = {
     proxy: {
       '/root': {
         changeOrigin: true,
-        // target: 'http://116.62.233.28:5011/',       //线上服
-        // target: 'http://10.223.5.199:3011/',     //吴凡服
-        target: 'http://47.110.255.12:5857/',    //阿里云测试后台   
-        // target: 'http://47.52.248.48:2702/',     //怪猫繁体服
-        // target:G?G.url:'http://116.62.233.28:5011/',
-        // target: 'http://10.223.5.211:5011/',
+        // target: 'http://116.62.233.28:5011/',            // 线上服
+        target: 'http://10.223.5.199:3011/',             // 吴凡服
+        // target: 'http://47.110.255.12:5857/',               // 阿里云测试后台   
+        // target: 'http://login.sgyzc.hantangxintong.com/',   // 爱微游后台服务端
+        // target: 'http://47.52.248.48:2702/',             // 怪猫繁体服
       }
     }
   },

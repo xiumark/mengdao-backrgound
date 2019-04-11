@@ -166,7 +166,7 @@ const sidebarMenu = [
           {
             key: 'noticeManage',
             name: '公告管理',
-            authIndex:'10',//---------------------------------------权限待完善--------//
+            authIndex:'10',//---------------------------------------权限待完善--------//     10:设置跟更新公告
           },
           {
             key: 'giftPackage',
@@ -248,7 +248,7 @@ const sidebarMenu = [
           {
             key: 'stayReport',
             name: '留存统计',
-            authIndex:'21',
+            authIndex:'22',
           },
           {
             key: 'ltvReport',

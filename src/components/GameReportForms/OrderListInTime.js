@@ -42,10 +42,11 @@ class OrderListInTime extends React.Component {
     componentDidMount() {
         this.props.form.setFieldsValue({
             // currPage: '1',
-            numPerPage:'10000'
+            numPerPage:'10000',
         });
         getServiceList((res) => {
             this.getYxList(res);
+            res.unshift({yx: "", serverId: 0, serverName: "该渠道所有服", serverState: 0});
             this.setState({ serviceList: res});
         })
 
@@ -73,10 +74,9 @@ class OrderListInTime extends React.Component {
 
             //如果请求数据完整，则请求后台数据，并且显示
             if(yx&&serverId&&startTime&&endTime&&numPerPage&&containType){
-                let currPage = undefined;
                 // startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
                 // endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
-                this.requestSearch(yx, serverId, startTime, endTime, currPage, numPerPage, containType);
+                this.requestSearch(yx, serverId, startTime, endTime, numPerPage, containType);
             }
         }
     }
@@ -98,10 +98,11 @@ class OrderListInTime extends React.Component {
 
 
     stringifyData=(data)=>{
-        let dataStr = '角色编号'+'\t'+'创建时间'+'\t'+'充值成功时间'+'\t'+'人民币'+'\t'+'平台订单号'+'\t'+'商品编号'+'\t'+'订单状态\n';
+        let dataStr = '所在区服'+'\t'+'角色编号'+'\t'+'创建时间'+'\t'+'充值成功时间'+'\t'+'人民币'+'\t'+'平台订单号'+'\t'+'商品编号'+'\t'+'订单状态\n';
         for(let i =0;i<data.length;i++){
             let item = data[i]
-            dataStr =dataStr+`${item.playerId}`
+            dataStr =dataStr+`${item.serverId}`
+                    +'\t'+`${item.playerId}`
                     +'\t'+`${item.createTime}`
                     +'\t'+`${item.succTime}`
                     +'\t'+`${item.money}`
@@ -133,10 +134,10 @@ class OrderListInTime extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { yx, serverId, startTime, endTime, currPage, numPerPage, containType} = values;
+                let { yx, serverId, startTime, endTime, numPerPage, containType} = values;
                 startTime=startTime.format('YYYY-MM-DD HH:mm:ss');
                 endTime=endTime.format('YYYY-MM-DD HH:mm:ss');
-                this.requestSearch(yx, serverId, startTime, endTime, currPage, numPerPage, containType);
+                this.requestSearch(yx, serverId, startTime, endTime, numPerPage, containType);
             }
         });
     }
@@ -146,8 +147,8 @@ class OrderListInTime extends React.Component {
      * 默认获取全部数据（1）
      * @param containType:0:成功订单；1：全部订单；2：失败订单
     */
-    requestSearch=(yx, serverId, startTime, endTime, currPage, numPerPage, containType)=>{
-        getOrderListInTime(yx, serverId, startTime, endTime, currPage, numPerPage,(list)=>{
+    requestSearch=(yx, serverId, startTime, endTime, numPerPage, containType)=>{
+        getOrderListInTime(yx, serverId, startTime, endTime, '1', numPerPage,(list)=>{   //currPage = 1 
             let sucList=[];
             let failList = [];
             let allList = [];
@@ -192,7 +193,7 @@ class OrderListInTime extends React.Component {
             }
             //请求成功后设置localStorage
             if(list.length!==0){
-                setOrderListStorage(yx, serverId, startTime, endTime, currPage, numPerPage, containType);
+                setOrderListStorage(yx, serverId, startTime, endTime, numPerPage, containType);
             }
         })
     }
@@ -231,7 +232,11 @@ class OrderListInTime extends React.Component {
                 },
             },
         };
-        const columns = [{
+        const columns = [
+            {
+                title: '区服',
+                dataIndex: 'serverId',
+          },{
             title: '角色编号',
             dataIndex: 'playerId',
           }, {

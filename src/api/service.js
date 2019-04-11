@@ -132,7 +132,7 @@ export function getAllUpdateNotice(yx,cb){
 
 
 //获取服务状态列表数据
-export function getAllServerStateData(yx,serverId,cb){
+export function getServerStateDataByYxAndServerId(yx,serverId,cb){
     const querystring = `yx=${yx}&serverId=${serverId}`
     let url = "/root/getServerState.action"
     let method = 'POST'
@@ -177,7 +177,7 @@ export function requestSendPureMail(mailType, serverId, yx, playerNameStr, mailC
 
 //发送文字邮件
 export function getAllNoticeList(serverId,yxValue,cb){
-    let querystring = `serverId=${serverId}&yxValue=${yxValue}`
+    let querystring = `serverId=${serverId}&yx=${yxValue}`
     let url = "/root/getAllNotices.action";
     let method = 'POST';
     let successmsg ='获取公告信息';
@@ -503,6 +503,19 @@ export function modityUserAuthGroup(userName, authGroupId){
     }, undefined);
 }
 
+/**
+ * 修改玩家所属的权限组列表
+ */ 
+export function changePlayerName(yx, serverId, beforePlayerName, afterPlayerName){ 
+    let querystring = `yx=${yx}&serverId=${serverId}&beforePlayerName=${beforePlayerName}&afterPlayerName=${afterPlayerName}`;
+    let url = "/root/changePlayerName.action";
+    let method = 'POST';
+    let successmsg ='修改成功';
+    let losemsg = undefined;
+    apiFetchWithSuccessAndLoseMsg(url, method='POST', querystring, successmsg,losemsg,(res) => {
+
+    }, undefined);
+}
 /**
  * 修改玩家所属的权限组列表
  */ 
@@ -858,7 +871,7 @@ export function deleteNotice(yxValue,serverId,noticeId,cb){
 /**
  * 查询指定时间段的在线人数
  */ 
-export function getOnlineNumData(yxValue,serverId,noticeId,cb){ 
+export function getOnlineNumData(yx, serverId, startTime, endTime, cb){ 
     let querystring = `yx=${yx}&serverId=${serverId}&startTime=${startTime}&endTime=${endTime}`;
     let url = "/root/getOnlineNumData.action";
     let method = 'POST';

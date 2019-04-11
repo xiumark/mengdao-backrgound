@@ -174,7 +174,7 @@ class SendEmail extends React.Component {
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='increce'){
             giftPackageItemsData[key-1].num = tableItem.num+1;
-            this.setState({giftPackageItemsData:giftPackageItemsData})
+            this.setState({giftPackageItemsData:giftPackageItemsData});
         } else if(id==='add'){
             const {giftContentData} = this.state;
             let filteredGiftContentData = giftContentData.filter((item)=>{

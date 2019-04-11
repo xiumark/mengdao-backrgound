@@ -195,7 +195,7 @@ class SendSysDiamond extends React.Component {
     handleChange(event,tableItem, column){//一个令人疑惑的巨大BUG，这个以及下一个函数内部不能放入console，否则不能打包。其他的地方却不受任何影响，很奇怪
         const {giftPackageItemsData} = this.state;
         let key = tableItem.key;
-        giftPackageItemsData[key-1].num = event.target.value;
+        giftPackageItemsData[key].num = event.target.value;
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
     handleClick(event, tableItem, column){
@@ -203,10 +203,10 @@ class SendSysDiamond extends React.Component {
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
         if(id==='decrece'){
-            giftPackageItemsData[key-1].num = tableItem.num-1>0?tableItem.num-1:1;
+            giftPackageItemsData[key].num = tableItem.num-1>0?tableItem.num-1:1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='increce'){
-            giftPackageItemsData[key-1].num = tableItem.num+1;
+            giftPackageItemsData[key].num = tableItem.num+1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='add'){
             //向giftContentData添加数据
@@ -267,14 +267,19 @@ class SendSysDiamond extends React.Component {
 
         getItems(serverId,yxValue,(list)=>{
             let giftPackageItemsData=[];
+            let key = 0;
             for (let i = 0; i < list.length; i++) {
+                
                 let data = list[i]
+                if(data.wildCard.split(':')[0]=='payPoint'){
+                    debugger
+                }
                 // if(data.name =='元宝'){
-                    if(data.wildCard.split(':')[0]=='sysDiamond'){
+                    if((data.wildCard.split(':')[0]=='sysDiamond')||(data.wildCard.split(':')[0]=='gov')){
                     // data.wildCard.split(':')[0]=='sysDiamond'
-                    let tableItem = Object.assign(data, {num:1});
+                    let tableItem = Object.assign(data, {num:1}, {key: key});
                     giftPackageItemsData.push(tableItem);
-                    // key = key + 1;
+                    key++;
                 }
             }
             this.setState({ giftPackageItemsData: giftPackageItemsData}, () => {

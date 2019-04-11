@@ -108,14 +108,12 @@ export function setRankListStorage(rankYx, rankServerId){
 /**
  * 充值订单列表缓存设置orderList
  */
-export function setOrderListStorage(orderYx, orderServerId, orderStartTime, orderEndTime, 
-    orderCurrPage, ordernumPerPage, ordernumContainType){
+export function setOrderListStorage(orderYx, orderServerId, orderStartTime, orderEndTime, ordernumPerPage, ordernumContainType){
     // localStorage.orderExpireTime=new Date();
     orderYx&&(localStorage.orderYx = orderYx);
     orderServerId&&(localStorage.orderServerId=orderServerId);
     orderStartTime&&(localStorage.orderStartTime=orderStartTime);
     orderEndTime&&(localStorage.orderEndTime=orderEndTime);
-    orderCurrPage&&(localStorage.orderCurrPage=orderCurrPage);
     ordernumPerPage&&(localStorage.ordernumPerPage=ordernumPerPage);
     ordernumContainType&&(localStorage.ordernumContainType=ordernumContainType);
     // orderSortType&&(localStorage.orderSortType=orderSortType);

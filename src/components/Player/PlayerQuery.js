@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, Form, Select, Button , Input, Table, Radio } from 'antd';
+import { Card, Form, Select, Button , Input, Table, Radio, Row } from 'antd';
 import './index.less';
-import { getServiceList, getYxList, getPlayerInfo, modifyPlayerIdentity } from '../../api/service';
+import { getServiceList, getYxList, getPlayerInfo, modifyPlayerIdentity,changePlayerName } from '../../api/service';
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -271,6 +271,15 @@ class PlayerQuery extends React.Component {
                     });
                 }
             });
+        } else if(v==PlayerQueryType.PLAYER_NAME_MODIFY){
+            this.props.form.validateFields(['yx', 'serverId', 'playerName', 'afterPlayerName'],(err, values) => {
+                if (!err) {
+                    let { yx, serverId, playerName, afterPlayerName } = values;
+                    changePlayerName(yx, serverId, playerName, afterPlayerName,()=>{
+                        // this.setState({ playerData: list });
+                    });
+                }
+            });
         }
     }
 
@@ -281,7 +290,7 @@ class PlayerQuery extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const {filteredServiceList, yxList} = this.state;
+        const {filteredServiceList, yxList, queryTypeState} = this.state;
         const { playerData, serviceList } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -306,85 +315,95 @@ class PlayerQuery extends React.Component {
             },
         };
         return <div>
-            <Card title="获取玩家信息">
-            <Form onSubmit = {this.handleSubmit}>
-                <FormItem
-                    {...formItemLayout}
-                    label="查询方式"
-                    >
-                    {getFieldDecorator('queryType', {
-                        initialValue: '1' ,
-                        rules: [
-                            { required: true, message: '请选择查询方式' },
-                        ],
-                    })(
-                        <RadioGroup onChange={this.checkChange}>
-                            <Radio value="1">角色名称</Radio>
-                            <Radio value="2">userID</Radio>
-                            <Radio value="3">角色ID</Radio>
-                        </RadioGroup>
-                    )}
-                </FormItem>
-                {/* <Row>
-                    <Col className="gutter-row" md={12}> */}
-                        <FormItem {...formItemLayout} label="服务器名称" >
-                        {getFieldDecorator('serverId', {
+            <Card title="玩家信息">
+                <Form onSubmit = {this.handleSubmit}>
+                    <FormItem
+                        {...formItemLayout}
+                        label="操作方式"
+                        >
+                        {getFieldDecorator('queryType', {
+                            initialValue: '1' ,
                             rules: [
-                                { required: true, message: '请选择服务器名称' },
+                                { required: true, message: '请选择操作方式' },
                             ],
                         })(
-                            <Select placeholder="选择服务器名称" onChange = {(value)=>this.onServerChange(value)}>
-                                {filteredServiceList.map((item, index) => {
-                                    return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
-                                })}
-                            </Select>
+                            <RadioGroup onChange={this.checkChange}>
+                                <Radio value="1">通过角色名称查询</Radio>
+                                <Radio value="2">通过userID查询</Radio>
+                                <Radio value="3">通过角色ID查询</Radio>
+                                <Radio value="4">变更玩家名称</Radio>
+                            </RadioGroup>
                         )}
-                        </FormItem>
-                    {/* </Col>
-                    <Col className="gutter-row" md={12}> */}
-                        <FormItem {...formItemLayout} label="渠道" >
-                            {getFieldDecorator('yx', {
+                    </FormItem>
+                    {/* <Row>
+                        <Col className="gutter-row" md={12}> */}
+                            <FormItem {...formItemLayout} label="服务器名称" >
+                            {getFieldDecorator('serverId', {
                                 rules: [
-                                    { required: true, message: '请选择渠道' },
+                                    { required: true, message: '请选择服务器名称' },
                                 ],
                             })(
-                                <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
-                                    {yxList.map((item, index) => {
-                                        return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
+                                <Select placeholder="选择服务器名称" onChange = {(value)=>this.onServerChange(value)}>
+                                    {filteredServiceList.map((item, index) => {
+                                        return <Option key={item.serverId} value={`${item.serverId}`}>{item.serverName}</Option>
                                     })}
                                 </Select>
                             )}
-                        </FormItem>
-                    {/* </Col>
-                </Row> */}
-                {this.state.queryTypeState==PlayerQueryType.PLAYER_NAME&&
-                <FormItem {...formItemLayout} label={"角色的名称"}>
-                    {getFieldDecorator('playerName', {
-                        rules: [{ required: true, message: '请输入角色的名称' }],
-                    })(
-                        <Input placeholder="请输入角色的名称,多个角色用逗号分开" />
-                    )}
-                </FormItem>}
-                {this.state.queryTypeState==PlayerQueryType.USER_ID&&
-                <FormItem {...formItemLayout} label={"userId"}>
-                    {getFieldDecorator('userId', {
-                        rules: [{ required: true, message: '请输入userId' }],
-                    })(
-                        <Input placeholder="请输入用户Id,多个Id用逗号分开" />
-                    )}
-                </FormItem>}
-                {this.state.queryTypeState==PlayerQueryType.PLAYER_ID&&
-                <FormItem {...formItemLayout} label={"角色的Id"}>
-                    {getFieldDecorator('playerId', {
-                        rules: [{ required: true, message: '请输入角色Id"' }],
-                    })(
-                        <Input placeholder="请输入角色Id,多个Id用逗号分开" />
-                    )}
-                </FormItem>}
-                <FormItem {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit" >查询</Button>
-                </FormItem>
-            </Form>
+                            </FormItem>
+                        {/* </Col>
+                        <Col className="gutter-row" md={12}> */}
+                            <FormItem {...formItemLayout} label="渠道" >
+                                {getFieldDecorator('yx', {
+                                    rules: [
+                                        { required: true, message: '请选择渠道' },
+                                    ],
+                                })(
+                                    <Select placeholder="请选择渠道" onChange = {(value)=>this.onYxChange(value)}>
+                                        {yxList.map((item, index) => {
+                                            return <Option key={index} value={`${item.yx}`}>{item.yx}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </FormItem>
+                        {/* </Col>
+                    </Row> */}
+                    {(queryTypeState==PlayerQueryType.PLAYER_NAME||queryTypeState==PlayerQueryType.PLAYER_NAME_MODIFY)&&
+                    <FormItem {...formItemLayout} label={"角色的名称"}>
+                        {getFieldDecorator('playerName', {
+                            rules: [{ required: true, message: '请输入角色的名称' }],
+                        })(
+                            <Input placeholder="请输入角色的名称,多个角色用逗号分开" />
+                        )}
+                    </FormItem>}
+                    {queryTypeState==PlayerQueryType.USER_ID&&
+                    <FormItem {...formItemLayout} label={"userId"}>
+                        {getFieldDecorator('userId', {
+                            rules: [{ required: true, message: '请输入userId' }],
+                        })(
+                            <Input placeholder="请输入用户Id,多个Id用逗号分开" />
+                        )}
+                    </FormItem>}
+                    {queryTypeState==PlayerQueryType.PLAYER_ID&&
+                    <FormItem {...formItemLayout} label={"角色的Id"}>
+                        {getFieldDecorator('playerId', {
+                            rules: [{ required: true, message: '请输入角色Id"' }],
+                        })(
+                            <Input placeholder="请输入角色Id,多个Id用逗号分开" />
+                        )}
+                    </FormItem>}
+                    {queryTypeState==PlayerQueryType.PLAYER_NAME_MODIFY&&
+                    <FormItem {...formItemLayout} label={"玩家新名称"}>
+                        {getFieldDecorator('afterPlayerName', {
+                            rules: [{ required: true, message: '请输入玩家新名称' }],
+                        })(
+                            <Input placeholder="请输入玩家新名称" />
+                        )}
+                    </FormItem>}
+                    <FormItem {...tailFormItemLayout}>
+                        <Button type="primary" htmlType="submit" disabled={queryTypeState!=PlayerQueryType.PLAYER_NAME_MODIFY?false:true}>查询</Button>
+                        <Button type="primary" htmlType="submit" style={{ marginLeft: 12}} disabled={queryTypeState==PlayerQueryType.PLAYER_NAME_MODIFY?false:true}>更改玩家名称</Button>
+                    </FormItem>
+                </Form>
             </Card>
             <Card title="玩家列表">
                 <Table pagination={{ pageSize: 8 }}
@@ -399,9 +418,11 @@ export default Form.create()(PlayerQuery);
  * @param PLAYER_NAME 通过角色名称获取
  * @param USER_ID     通过userId获取
  * @param PLAYER_ID   通过角色Id获取
+ * @param PLAYER_NAME_MODIFY   通过角色Id获取
  */
 export const PlayerQueryType = {
     PLAYER_NAME :1,
     USER_ID : 2,
     PLAYER_ID : 3,
+    PLAYER_NAME_MODIFY : 4,   //变更用户名
 }

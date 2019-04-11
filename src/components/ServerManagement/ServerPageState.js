@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Form, Select, Button, message, Row, Col, Table, Radio } from 'antd';
 import './index.less';
-import { getServiceList, getYxList, getAllServerStateData, requestSetServerState } from '../../api/service';
+import { getServiceList, getYxList, getServerStateDataByYxAndServerId, requestSetServerState } from '../../api/service';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
@@ -11,13 +11,13 @@ class ServerPageState extends React.Component {
         super(props);
         this.state = {
             serviceList: [
-                {yx:'渠道1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
-                {yx:'渠道1', serverId: "2", serverName: "sg_dev", serverState: 0 },
-                {yx:'渠道2', serverId: "90002", serverName: "sg_90002", serverState: 0 }
+                // {yx:'渠道1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
+                // {yx:'渠道1', serverId: "2", serverName: "sg_dev", serverState: 0 },
+                // {yx:'渠道2', serverId: "90002", serverName: "sg_90002", serverState: 0 }
             ],
             filteredServiceList: [
-                {yx:'渠道1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
-                {yx:'渠道1', serverId: "2", serverName: "sg_dev", serverState: 0 },
+                // {yx:'渠道1', serverId: "1", serverName: "sg_banshu", serverState: 0 },
+                // {yx:'渠道1', serverId: "2", serverName: "sg_dev", serverState: 0 },
             ],
             yxList:[
                 // {yx:'渠道1' ,key:1},
@@ -27,12 +27,7 @@ class ServerPageState extends React.Component {
             serverState:'1',
             yx:'',
             serverId:'',
-            allServerStateData: [//游戏服状态信息
-                {yx:'渠道1', serverId:"1", serverName:"sg_banshu1",  serverState:1,},
-                {yx:'渠道2', serverId:"2", serverName:"sg_banshu2",  serverState:2,},
-                {yx:'渠道3', serverId:"3", serverName:"sg_banshu3",  serverState:3,},
-                {yx:'渠道4', serverId:"4", serverName:"sg_banshu4",  serverState:4,},
-            ],
+
             serverStateToChange:
             {
             },
@@ -72,14 +67,13 @@ class ServerPageState extends React.Component {
         ];
         this.renderHandleType = this.renderHandleType.bind(this);
         this.chooseServerState = this.chooseServerState.bind(this);
-        this.onServerChange = this.onServerChange.bind(this);
     }
     
     //渲染单服操作选项
     renderHandleType(textValue, tableItem, column) {
         return (
             <div>
-                <RadioGroup onChange={(event)=>this.checkSingleStateChange(event, tableItem, column)} value={tableItem.serverState+''}>
+                <RadioGroup onChange={(event)=>this.onSingleStateChange(event, tableItem, column)} value={tableItem.serverState+''}>
                     <Radio value="1">新服</Radio>
                     <Radio value="2">火爆</Radio>
                     <Radio value="3">维护</Radio>
@@ -93,7 +87,7 @@ class ServerPageState extends React.Component {
     renderServerState(textValue, tableItem, column) {
         return (
             <div>
-                <button style={{backgroundColor:this.getServerStateColor(tableItem.serverState), minWidth:'60'}} onClick ={(event) => this.chooseServerState(event, tableItem, column)}>{this.getServerStateText(tableItem.serverState)}</button>
+                <button style={{backgroundColor:this.getServerStateColor(tableItem.serverState), minWidth:'60',minHeight:'30'}} onClick ={(event) => this.chooseServerState(event, tableItem, column)}>{this.getServerStateText(tableItem.serverState)}</button>
             </div>
         );
     }
@@ -135,18 +129,18 @@ class ServerPageState extends React.Component {
         this.setState({serverState:e.target.value});  
     }
 
-    //单服状态修改
-    checkSingleStateChange=(event, tableItem, column)=>{
-        let v = event.target.value;
-        this.requestSetServerState(tableItem.yx, tableItem.serverId, v);
-    }
+
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
-        const{serviceList} = this.state;
-        let filteredServiceList = serviceList.filter((item, index)=>{
-            return item.yx===value;
-        });
-        this.setState({filteredServiceList:filteredServiceList, yx:value});
+        getServiceList((res) => {
+            let serviceList = res;
+            this.getYxList(res);
+            let filteredServiceList = serviceList.filter((item)=>{
+                return item.yx===value;
+            });
+            this.setState({serviceList: res, filteredServiceList:filteredServiceList, yx:value});
+        })
+        
     }
 
     getYxList=(data)=>{//获取渠道列表
@@ -162,48 +156,70 @@ class ServerPageState extends React.Component {
         });
     }
 
-    onServerChange(serverId){
-        let {yx} = this.state;
-        this.setState({serverId:serverId},()=>{
-            this.getAllServerStateData(yx,serverId);
-        })
-    }
 
-    //点击获取按钮
-    onGetClick=()=>{
+
+    //单服设置成功
+    onServerStateSetSuc=()=>{
         let {yx,serverId} = this.state;
-        if(yx&&serverId){
-            this.getAllServerStateData(yx,serverId);
+        if(yx&&serverId&&serverId!=''){
+            // this.getServerStateDataByYxAndServerId(yx,serverId);
+            this.getServerStateDataByYx(yx);
+        }else if(yx&&(yx!='')){
+            this.getServerStateDataByYx(yx);
         }else{
-            message.info('请选择渠道和区服');
+            this.getServerStateDataByNoYx();
+            // message.info('请选择渠道,或者渠道和区服');
         }
     }
-    //获取服务列表数据
-    getAllServerStateData=(yx,serverId)=>{
-        getAllServerStateData(yx,serverId,(list)=>{
-            this.setState({allServerStateData:list});
+
+    //获取渠道和serverId对应的服务列表数据
+    getServerStateDataByYxAndServerId=(yx,serverId)=>{
+        getServerStateDataByYxAndServerId(yx,serverId,(list)=>{
+            this.setState({filteredServiceList:list});
+        });
+    }
+
+    //获取全部服务列表数据
+    getServerStateDataByNoYx = (yx)=>{
+        getServerStateDataByYxAndServerId('','',(list)=>{
+            this.setState({filteredServiceList:list});
+        });
+    }
+    //获取渠道对应的服务列表数据
+    getServerStateDataByYx = (yx)=>{
+        getServerStateDataByYxAndServerId(yx,'',(list)=>{
+            this.setState({filteredServiceList:list});
         });
     }
 
     //设置全渠道区服状态
-    onSetYxServerState=(e)=>{
+    onYxStateChange = (e)=>{
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                let { yx, serverId, serverState} = values;
-                this.requestSetServerState(yx, serverId, serverState);
+                let { yx, serverState} = values;
+                this.setServerState(yx, '', serverState);
             }
         });
     }
+
+    //设置单服状态
+    onSingleStateChange=(event, tableItem, column)=>{
+        let v = event.target.value;
+        this.setServerState(tableItem.yx, tableItem.serverId, v);
+    }
     
-    requestSetServerState=(yx, serverId, serverState)=>{
+    //请求
+    setServerState=(yx, serverId, serverState)=>{
         requestSetServerState(yx, serverId, serverState,()=>{
-            this.onGetClick();
+            this.setState({yx:yx,serverId:serverId},()=>{
+                this.onServerStateSetSuc();
+            });
         })
     }
 
     render() {
-        const {filteredServiceList, yxList, allServerStateData, serverState} = this.state;
+        const {filteredServiceList, yxList} = this.state;
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
             labelCol: {
@@ -258,8 +274,8 @@ class ServerPageState extends React.Component {
                                             ],
                                         })(
                                             <RadioGroup onChange={this.checkYxStateChange}>
-                                            <Radio value="1">一键火爆</Radio>
-                                            <Radio value="2">一键维护</Radio>
+                                            <Radio value="2">一键火爆</Radio>
+                                            <Radio value="3">一键维护</Radio>
                                             </RadioGroup>
                                         )}
                                     </FormItem>
@@ -267,7 +283,7 @@ class ServerPageState extends React.Component {
                             </Row>
                             <Row>
                                 <FormItem {...tailFormItemLayout} >
-                                    <Button type="primary" htmlType="submit" onClick = {this.onSetYxServerState}>确认</Button>
+                                    <Button type="primary" htmlType="submit" onClick = {this.onYxStateChange}>确认</Button>
                                 </FormItem>
                             </Row>
                         </Form>
@@ -275,8 +291,7 @@ class ServerPageState extends React.Component {
                 </Col>
                 <Col md={16}>
                     <Card title="单服操作">
-                        {/* <Button type="primary"  style={{ marginBottom: 20}} onClick = {this.onGetClick}>获取游戏服</Button> */}
-                        <Table pagination={{ pageSize: 10 }} columns={this.columnsAll} dataSource={allServerStateData} size={'small'} />
+                        <Table pagination={{ pageSize: 10 }} columns={this.columnsAll} dataSource={filteredServiceList} size={'small'} />
                     </Card>
                 </Col>
             </Row>

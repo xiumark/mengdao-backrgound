@@ -171,7 +171,7 @@ class GiftPackage extends React.Component {
     handleChange(event,tableItem, column){//一个令人疑惑的巨大BUG，这个以及下一个函数内部不能放入console，否则不能打包。其他的地方却不受任何影响，很奇怪
         const {giftPackageItemsData} = this.state;
         let key = tableItem.key
-        giftPackageItemsData[key-1].num = event.target.value;
+        giftPackageItemsData[key].num = event.target.value;
         this.setState({giftPackageItemsData:giftPackageItemsData})
     }
     handleClick(event, tableItem, column){
@@ -179,10 +179,10 @@ class GiftPackage extends React.Component {
         const key = tableItem.key//数组下标
         const {giftPackageItemsData} = this.state;
         if(id==='decrece'){
-            giftPackageItemsData[key-1].num = tableItem.num-1>0?tableItem.num-1:1;
+            giftPackageItemsData[key].num = tableItem.num-1>0?tableItem.num-1:1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='increce'){
-            giftPackageItemsData[key-1].num = tableItem.num+1;
+            giftPackageItemsData[key].num = tableItem.num+1;
             this.setState({giftPackageItemsData:giftPackageItemsData})
         } else if(id==='add'){
             const {giftContentData} = this.state;

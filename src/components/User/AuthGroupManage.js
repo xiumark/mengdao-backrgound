@@ -193,7 +193,7 @@ class AuthGroupManage extends React.Component {
         let authStr ='';
         for (let i=0;i<authListDataToEdit.length;i++) {
             let item = authListDataToEdit[i];
-          authStr=authStr+item.authId+';'
+          authStr=authStr+item.authId+':'
         }
         return authStr;
     }

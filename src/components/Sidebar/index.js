@@ -67,9 +67,9 @@ class Sidebar extends React.PureComponent {
           //   isAnounceOpen++
           // }
           // let k = j;
-          if(child[j].authIndex==10){
+          if(child[j].authIndex==10){     
             anounceChild =child[j];  //公告页签
-            if(authList.indexOf(10)&&authList.indexOf(8)){
+            if((authList.indexOf('10')>-1)&&(authList.indexOf('8')>-1)){     //权限8：发送系统跑马灯
               filteredChild.push(anounceChild)
             }
           // }
