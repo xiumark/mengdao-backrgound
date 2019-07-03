@@ -107,9 +107,9 @@ class ServerPageNotice extends React.Component {
     }
 
     onYxChange=(value)=>{//渠道列表变换引起服务列表更新
-        this.setState({yx:value});
-        this.getAllUpdateNotice()
-
+        this.setState({yx:value},()=>{
+            this.getAllUpdateNotice();
+        });
     }
 
     getYxList=(data)=>{//获取渠道列表
@@ -212,12 +212,12 @@ class ServerPageNotice extends React.Component {
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
             labelCol: {
-                xs: { span: 6 },
-                sm: { span: 6 },
+                xs: { span: 4 },
+                sm: { span: 4 },
             },
             wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 14 },
+                xs: { span: 18 },
+                sm: { span: 18 },
             },
         };
         const tailFormItemLayout = {
@@ -237,8 +237,7 @@ class ServerPageNotice extends React.Component {
             <Card title="新建选服页公告">
                 <Form id="requestAddUpdateNotice">
                     <Row>
-                        <Col className="gutter-row"  md={12} sm={12} xs={24}>
-                            <FormItem {...formItemLayout} label="渠道" >
+                    <FormItem {...formItemLayout} label="渠道" >
                                 {getFieldDecorator('yx', {
                                     rules: [
                                         { required: false, message: '请选择渠道' },
@@ -260,16 +259,18 @@ class ServerPageNotice extends React.Component {
                                     <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
                                 )}
                             </FormItem>
-
+                    </Row>
+                    <Row>
+                        <Col className="gutter-row"  md={16} sm={16} xs={24}>
                             <FormItem {...formItemLayout} label={"公告内容"} >
                                 {getFieldDecorator('content', {
                                     rules: [{ required: true, message: '请输入公告内容' }],
                                 })(
-                                    <textarea style={{ minHeight: 120, width: "100%" }} onChange = {this.onContentChange} placeholder="请输入公告内容" />
+                                    <textarea style={{ minHeight: 630, width: "100%" }} onChange = {this.onContentChange} placeholder="请输入公告内容" />
                                 )}
                             </FormItem>
                         </Col>
-                        <Col className="gutter-row"  md={12} sm={12} xs={24}>
+                        <Col className="gutter-row"  md={8} sm={8} xs={24}>
                             {/* 线上 */}
                             <iframe id='sgPreview' style={{border:0,width:"100%",height:630}} src="preview/index.html"/>
                             {/* 本地 */}

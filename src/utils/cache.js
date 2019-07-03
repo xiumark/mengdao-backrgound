@@ -11,7 +11,7 @@ export function setCookie(key, value) {
             return;
         }
 
-        document.cookie = key+"="+JSON.stringify(value)+"; path=/";
+        document.cookie = key+"="+JSON.stringify(value)+";path=/";
         // $.cookie(key, JSON.stringify(value), {expires:1});
     }catch (err){
         // console.log('存cookie错误:'+key);
@@ -30,7 +30,7 @@ export function getCookie(key) {
 
 export function deleteCookie(key){
     try{
-        document.cookie = key+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        document.cookie = key+"=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
     }catch (err){
         // console.log('删cookie错误:'+key);
     }

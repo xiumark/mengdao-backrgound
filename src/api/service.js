@@ -620,7 +620,7 @@ export function getPlayerInfo(queryId, serverId, playerName, userId, yx, playerI
     if(queryId=='playerName'){
         querystring = `playerId=1&serverId=${serverId}&yx=${yx}&playerName=${playerName}`;
     }else if(queryId=='userIdyx'){
-        querystring = `playerId=2&serverId=${serverId}&userId=${userId}&yx=${yx}`;
+        querystring = `playerId=2&serverId=${serverId}&yx=${yx}&userId=${userId}`;
     }else if(queryId=='playerId'){
         querystring = `playerId=3&serverId=${serverId}&yx=${yx}&playerName=${playerId}`;
     }

@@ -66,6 +66,11 @@ class PlayerQuery extends React.Component {
 
     columns = [
         {
+            title: 'UID',
+            dataIndex: 'userId',
+            key: 'userId',
+        },
+        {
             title: 'ID',
             dataIndex: 'playerId',
             key: 'playerId',
@@ -95,8 +100,6 @@ class PlayerQuery extends React.Component {
             dataIndex: 'vipLv',
             key: 'vipLv',
         },
-
-
         {
             title: '战斗力',
             dataIndex: 'fightCapacity',

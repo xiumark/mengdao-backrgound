@@ -26,7 +26,13 @@ export function setKeyForList(itemList){
     let itemKeyList = [];
     for(let i = 0;i<itemList.length;i++){
         let item = itemList[i];
-        itemKeyList.push(Object.assign({},item,{key:i}))
+        if(item.playerName){ //有playerName字段的时候要做特殊处理
+            let playerNameStrArray = item.playerName.split('_');
+            if(!playerNameStrArray[1]) { playerNameStrArray[1] = '' }
+            itemKeyList.push(Object.assign({}, item, {key:i, playerName: playerNameStrArray[0], userId: playerNameStrArray[1]}));
+        }else{
+            itemKeyList.push(Object.assign({},item,{key:i}));
+        }
     }
     return itemKeyList;
 }
